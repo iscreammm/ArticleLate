@@ -1,0 +1,97 @@
+package com.articlelate.restapi.utils;
+
+import java.sql.*;
+
+public class DataBase {
+
+    static String DB_URL;
+    static String USER;
+    static String PASS;
+
+    public DataBase(String DB_URL, String USER, String PASS) throws SQLException, ClassNotFoundException {
+        this.DB_URL = DB_URL;
+        this.USER = USER;
+        this.PASS = PASS;
+
+        initialSetUp();
+    }
+
+    private void initialSetUp() throws SQLException, ClassNotFoundException{
+        Connection dbConnection = null;
+        Statement statement = null;
+
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS auth_data (\n" +
+                "    id integer NOT NULL UNIQUE,\n" +
+                "    login character varying(16) NOT NULL,\n" +
+                "    pass character varying(16) NOT NULL\n" +
+                ");" +
+
+                "CREATE TABLE IF NOT EXISTS user_info (\n" +
+                "    id integer NOT NULL UNIQUE,\n" +
+                "    info character varying(1000),\n" +
+                "    loginid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    name character varying(30) NOT NULL,\n" +
+                "    identificator character varying(30) NOT NULL,\n" +
+                "    profilepicture character varying(50) NOT NULL\n" +
+                ");" +
+
+                "CREATE TABLE IF NOT EXISTS categories (\n" +
+                "    id integer NOT NULL UNIQUE,\n" +
+                "    name character varying(20) NOT NULL\n" +
+                ");" +
+
+                "CREATE TABLE IF NOT EXISTS posts (\n" +
+                "    id integer NOT NULL UNIQUE,\n" +
+                "    authorid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    posttime timestamp without time zone NOT NULL,\n" +
+                "    postcategoryid integer REFERENCES categories(id) NOT NULL,\n" +
+                "    postpicture character varying(50),\n" +
+                "    posttext character varying(10000) NOT NULL,\n" +
+                "    postlikes integer\n" +
+                ");"+
+
+                "CREATE TABLE IF NOT EXISTS commentaries (\n" +
+                "    id integer NOT NULL UNIQUE,\n" +
+                "    userid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    postid integer REFERENCES posts(id) NOT NULL,\n" +
+                "    commenttime timestamp without time zone NOT NULL,\n" +
+                "    commenttext character varying(3000) NOT NULL\n" +
+                ");"+
+
+                "CREATE TABLE IF NOT EXISTS notifications (\n" +
+                "    id integer NOT NULL UNIQUE,\n" +
+                "    userid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    postid integer REFERENCES posts(id) NOT NULL\n" +
+                ");"+
+
+                "CREATE TABLE IF NOT EXISTS relationships (\n" +
+                "    followerid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    subscribeid integer REFERENCES auth_data(id) NOT NULL\n" +
+                ");";
+
+        dbConnection = getDBConnection();
+        statement = dbConnection.createStatement();
+
+        statement.execute(createTableSQL);
+
+        if (statement != null) {
+            statement.close();
+        }
+        if (dbConnection != null) {
+            dbConnection.close();
+        }
+    }
+
+    private Connection getDBConnection() throws ClassNotFoundException, SQLException {
+        Connection dbConnection = null;
+
+        Class.forName("org.postgresql.Driver");
+
+        System.out.println("PostgreSQL JDBC Driver successfully connected");
+
+        dbConnection = DriverManager.getConnection(DB_URL, USER, PASS);
+
+        return dbConnection;
+    }
+}
+
