@@ -42,7 +42,7 @@ public class DataBase {
 
                 "CREATE TABLE IF NOT EXISTS posts (\n" +
                 "    id integer NOT NULL UNIQUE,\n" +
-                "    authorid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    authorid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    posttime timestamp without time zone NOT NULL,\n" +
                 "    postcategoryid integer REFERENCES categories(id) NOT NULL,\n" +
                 "    postpicture character varying(50),\n" +
@@ -52,7 +52,7 @@ public class DataBase {
 
                 "CREATE TABLE IF NOT EXISTS commentaries (\n" +
                 "    id integer NOT NULL UNIQUE,\n" +
-                "    userid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    postid integer REFERENCES posts(id) NOT NULL,\n" +
                 "    commenttime timestamp without time zone NOT NULL,\n" +
                 "    commenttext character varying(3000) NOT NULL\n" +
@@ -60,7 +60,7 @@ public class DataBase {
 
                 "CREATE TABLE IF NOT EXISTS notifications (\n" +
                 "    id integer NOT NULL UNIQUE,\n" +
-                "    userid integer REFERENCES auth_data(id) NOT NULL,\n" +
+                "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    postid integer REFERENCES posts(id) NOT NULL\n" +
                 ");"+
 
