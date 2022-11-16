@@ -1,6 +1,8 @@
 import root from "../index";
 import "../styles/login.css";
 import React, { useState } from "react";
+import MainPage from "./MainPage";
+import { BrowserRouter } from 'react-router-dom';
 
 const App = () => {
   const [isReg, setIsReg] = useState(false);
@@ -17,7 +19,17 @@ const App = () => {
               <img className="authorizationLogo" src="login/authorization.PNG" alt="Authorization"/>
               <input className="loginInput" placeholder="Введите логин"/>
               <p className="password"> <input className="loginInput"  placeholder="Введите пароль" /> <img className="passwordIcon" src="login/eye.jpg"/> </p>
-              <button className="buttonLogin" style={{marginTop: "0.5vw"}}> Войти </button>
+              <button className="buttonLogin" style={{marginTop: "0.5vw"}}
+                onClick={() => {
+                  root.render(
+                    <BrowserRouter>
+                      <MainPage />
+                    </BrowserRouter>
+                  )
+                }}
+              >
+              Войти 
+              </button>
               <button className="buttonLogin" style={{margin: "3vw auto 0"}} onClick={() => { setIsReg(true) }}> Регистрация </button>
             </div>) : (
               <div className="registration">
