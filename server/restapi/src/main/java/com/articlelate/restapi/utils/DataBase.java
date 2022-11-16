@@ -65,8 +65,8 @@ public class DataBase {
                 ");"+
 
                 "CREATE TABLE IF NOT EXISTS relationships (\n" +
-                "    followerid integer REFERENCES auth_data(id) NOT NULL,\n" +
-                "    subscribeid integer REFERENCES auth_data(id) NOT NULL\n" +
+                "    followerid integer REFERENCES user_info(id) NOT NULL,\n" +
+                "    subscribeid integer REFERENCES user_info(id) NOT NULL\n" +
                 ");";
 
         dbConnection = getDBConnection();
