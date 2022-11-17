@@ -21,13 +21,13 @@ public class DataBase {
         Statement statement = null;
 
         String createTableSQL = "CREATE TABLE IF NOT EXISTS auth_data (\n" +
-                "    id integer NOT NULL UNIQUE,\n" +
+                "    id serial PRIMARY KEY,\n" +
                 "    login character varying(16) NOT NULL,\n" +
                 "    pass character varying(16) NOT NULL\n" +
                 ");" +
 
                 "CREATE TABLE IF NOT EXISTS user_info (\n" +
-                "    id integer NOT NULL UNIQUE,\n" +
+                "    id serial PRIMARY KEY,\n" +
                 "    info character varying(1000),\n" +
                 "    loginid integer REFERENCES auth_data(id) NOT NULL,\n" +
                 "    name character varying(30) NOT NULL,\n" +
@@ -36,12 +36,12 @@ public class DataBase {
                 ");" +
 
                 "CREATE TABLE IF NOT EXISTS categories (\n" +
-                "    id integer NOT NULL UNIQUE,\n" +
+                "    id serial PRIMARY KEY,\n" +
                 "    name character varying(20) NOT NULL\n" +
                 ");" +
 
                 "CREATE TABLE IF NOT EXISTS posts (\n" +
-                "    id integer NOT NULL UNIQUE,\n" +
+                "    id serial PRIMARY KEY,\n" +
                 "    authorid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    posttime timestamp without time zone NOT NULL,\n" +
                 "    postcategoryid integer REFERENCES categories(id) NOT NULL,\n" +
@@ -51,7 +51,7 @@ public class DataBase {
                 ");"+
 
                 "CREATE TABLE IF NOT EXISTS commentaries (\n" +
-                "    id integer NOT NULL UNIQUE,\n" +
+                "    id serial PRIMARY KEY,\n" +
                 "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    postid integer REFERENCES posts(id) NOT NULL,\n" +
                 "    commenttime timestamp without time zone NOT NULL,\n" +
@@ -59,7 +59,7 @@ public class DataBase {
                 ");"+
 
                 "CREATE TABLE IF NOT EXISTS notifications (\n" +
-                "    id integer NOT NULL UNIQUE,\n" +
+                "    id serial PRIMARY KEY,\n" +
                 "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    postid integer REFERENCES posts(id) NOT NULL\n" +
                 ");"+
