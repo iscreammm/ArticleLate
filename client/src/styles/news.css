@@ -30,6 +30,11 @@
   height: 3vw;
   padding: 0.5vw;
   border-top: 0;
+  cursor: pointer;
+}
+
+.categoryItem:hover {
+  background-color: #FFBDBD;
 }
 
 .categoryItem img {

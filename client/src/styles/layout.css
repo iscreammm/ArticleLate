@@ -9,6 +9,7 @@
   width: 62%;
   border-radius: 100%;
   border: 3px solid #a32a2a;
+  cursor: pointer;
 }
 
 .notificationsIcon {
@@ -18,6 +19,7 @@
   border-radius: 100%;
   right: 5%;
   top: 0%;
+  cursor: pointer;
 }
 
 .menuButton {
