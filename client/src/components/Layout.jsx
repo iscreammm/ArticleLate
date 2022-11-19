@@ -3,7 +3,7 @@ import "../styles/layout.css";
 
 const Layout = () => {
   return (
-    <div>
+    <div className="main">
       <div className='menu'>
         <img className='avatar' src="layout/avatar.png" alt="Avatar" /> 
         <p className='notificationsContainer'> 

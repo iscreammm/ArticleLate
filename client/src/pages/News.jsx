@@ -1,3 +1,4 @@
+import PostsList from "../components/PostsList";
 import "../styles/news.css"
 
 const News = () => {
@@ -12,7 +13,7 @@ const News = () => {
         </div>
       </div>
       <div className="feed">
-        fghjkl;
+        <PostsList />
       </div>
       <div className="categories">
         <ul className="categoriesList">

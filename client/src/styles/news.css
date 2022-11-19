@@ -1,12 +1,16 @@
 .feedContainer {
   width: 60%;
-  margin: 5vw auto 0;
+  margin: 0 auto;
+  padding-top: 5vw;
+  height: 100%;
 }
 
 .feed {
   width: 80%;
   display: inline-block;
   background: #FCCACA;
+  height: 100%;
+  vertical-align: top;
 }
 
 .categories {
