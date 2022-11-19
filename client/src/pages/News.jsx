@@ -3,7 +3,7 @@ import "../styles/news.css"
 
 const News = () => {
   return (
-    <div className="feedContainer">
+    <div className="pageContainer">
       <div className="headersContainer">
         <div className="headerLeft">
           <img src="postfeed/newsheader.PNG" alt="NewsHeader" />
