@@ -10,6 +10,8 @@
   border-radius: 100%;
   border: 3px solid #a32a2a;
   cursor: pointer;
+  position: relative;
+  z-index: 2;
 }
 
 .notificationsIcon {

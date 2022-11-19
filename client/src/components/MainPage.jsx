@@ -12,9 +12,9 @@ const MainPage = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<News />}></Route>
-          <Route path="subs" element={<Subscriptions />}></Route>
-          <Route path="profile" element={<Profile />}></Route>
-          <Route path="userprofile" element={<UserProfile />}></Route>
+          <Route path="/subs" element={<Subscriptions />}></Route>
+          <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/userprofile" element={<UserProfile />}></Route>
         </Route>
       </Routes>
     </>
