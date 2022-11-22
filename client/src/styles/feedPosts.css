@@ -1,6 +1,7 @@
 .postsContainer {
   width: 70%;
-  margin: 4vw auto 0;
+  margin: 0 auto;
+  padding: 4vw 0;
 }
 
 .postContent {

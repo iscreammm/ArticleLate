@@ -2,7 +2,6 @@
   width: 60%;
   margin: 0 auto;
   margin-top: 5vw;
-  height: 100%;
 }
 
 .feed {
@@ -11,11 +10,14 @@
   background: #FCCACA;
   height: 100%;
   vertical-align: top;
+  box-shadow: rgb(0 0 0 / 16%) 0px 3px 6px, rgb(0 0 0 / 23%) 0px 3px 6px;
 }
 
 .categories {
   width: 20%;
   display: inline-block;
+  position: sticky;
+  top: 5vw;
 }
 
 .categoriesList {
@@ -45,6 +47,8 @@
 
 .headersContainer {
   height: 5vw;
+  position: sticky;
+  top: 0;
 }
 
 .headerLeft, .headerRight {
