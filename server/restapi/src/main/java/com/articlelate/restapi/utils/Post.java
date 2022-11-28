@@ -1,0 +1,28 @@
+package com.articlelate.restapi.utils;
+
+import java.sql.Timestamp;
+
+public class Post {
+    private int id;
+    private int authorId;
+    private String identificator;
+    private String name;
+    private Timestamp time;
+    private String text;
+    private String category;
+    private String image;
+    private int likesCount;
+
+    public Post(int id, int authorId, String identificator, String name,
+                Timestamp time, String text, String category, String image, int likesCount) {
+        this.id = id;
+        this.authorId = authorId;
+        this.identificator = identificator;
+        this.name = name;
+        this.time = time;
+        this.text = text;
+        this.category = category;
+        this.image = image;
+        this.likesCount = likesCount;
+    }
+}
