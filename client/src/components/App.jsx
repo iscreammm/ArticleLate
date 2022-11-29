@@ -1,11 +1,18 @@
 import root from "../index";
 import "../styles/login.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MainPage from "./MainPage";
 import { BrowserRouter } from 'react-router-dom';
+import axios from 'axios';
 
 const App = () => {
   const [isReg, setIsReg] = useState(false);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/verifyLogin?login=Slark228").then(result => {
+      console.log(result)
+    })
+  }, [])
 
   return (
     <div className="main">
@@ -28,7 +35,7 @@ const App = () => {
                   )
                 }}
               >
-              Войти 
+                Войти
               </button>
               <button className="buttonLogin" style={{margin: "3vw auto 0"}} onClick={() => { setIsReg(true) }}> Регистрация </button>
             </div>) : (
