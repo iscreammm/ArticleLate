@@ -1,7 +1,9 @@
 import "../styles/feedPosts.css";
+import { useUser } from "./utilities/userContext";
 
 const Post = () => {
-  
+  const user = useUser();
+
   return (
     <>
       <div className="postContent">
@@ -29,7 +31,7 @@ const Post = () => {
           </div>
           <button
             onClick={() => {
-
+              user.toggleComments();
             }}
           >Комментировать</button>
         </div>

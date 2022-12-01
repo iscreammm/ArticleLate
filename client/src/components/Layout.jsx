@@ -4,24 +4,27 @@ import "../styles/layout.css";
 import root from "../index";
 import CommentModal from './modals/commentModal';
 import { useState } from 'react';
+import { useUser } from './utilities/userContext';
+import NotificationsModal from './modals/notificationsModal';
+import EditUserModal from './modals/editUserModal';
+import CreatePostModal from './modals/createPostModal';
 
 const Layout = () => {
-  const [commentOpen, setCommentOpen] = useState(false);
-
-  const toggleComments = () => {
-    setCommentOpen(prev => !prev);
-  }
+  const user = useUser();
 
   return (
     <>
-      <CommentModal isOpen={commentOpen} toggleComments={toggleComments} />
+      <NotificationsModal />
+      <EditUserModal />
+      <CommentModal />
+      <CreatePostModal />
       <div className="main">
         <div className='menu'>
           <Link to="/userprofile"><img className='avatar' src="layout/avatar.png" alt="Avatar" /></Link> 
           <p className='notificationsContainer'> 
             <img className='notificationsIcon' src="layout/bell.PNG" alt="Bell" 
               onClick={() => {
-                toggleComments();
+                user.toggleNotifications();
               }}
             />  
             <p className='notificationsCount'>0</p>

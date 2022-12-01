@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import MainPage from "./MainPage";
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
+import { UserProvider } from "./utilities/userContext";
 
 const App = () => {
   const [isReg, setIsReg] = useState(false);
@@ -30,7 +31,9 @@ const App = () => {
                 onClick={() => {
                   root.render(
                     <BrowserRouter>
-                      <MainPage />
+                      <UserProvider>
+                        <MainPage />
+                      </UserProvider>
                     </BrowserRouter>
                   )
                 }}

@@ -1,16 +1,16 @@
 import "../../styles/modals/modal.css";
 import { useUser } from "../utilities/userContext";
 
-const CommentModal = () => {
+const NotificationsModal = () => {
   const user = useUser();
 
-  if(!user.commentsOpen) {
+  if(!user.notifOpen) {
     return null;
   }
 
   return (
     <div className='overlay'
-      onClick={user.toggleComments}
+      onClick={user.toggleNotifications}
     >
       <div
         onClick={(e) => {
@@ -20,7 +20,7 @@ const CommentModal = () => {
       >
         <div 
           className="closeBtn" 
-          onClick={user.toggleComments}
+          onClick={user.toggleNotifications}
         >
 
         </div>
@@ -29,4 +29,4 @@ const CommentModal = () => {
   );
 };
 
-export default CommentModal
+export default NotificationsModal
