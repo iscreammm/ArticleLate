@@ -9,6 +9,7 @@
   width: 7%;
   padding: 0.5vw;
   background-color: #FFBDBD;
+  cursor: pointer;
 }
 
 .closeBtn img {

@@ -1,5 +1,6 @@
 import "../../styles/modals/modal.css";
 import { useUser } from "../utilities/userContext";
+import "../../styles/modals/notificationModal.css";
 
 const NotificationsModal = () => {
   const user = useUser();
@@ -16,14 +17,17 @@ const NotificationsModal = () => {
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className='modalContainer'
+        className='modalContainer notificationsModal'
       >
-        <div 
-          className="closeBtn" 
-          onClick={user.toggleNotifications}
-        >
-
+        <button className="clearButton">Очистить</button>
+        <div className="notifications">
+          <div>Вас упомянули под постом</div>
+          <div>Вас упомянули под постом</div>
+          <div>Вас упомянули под постом</div>
+          <div>Вас упомянули под постом</div>
+          <div>Вас упомянули под постом</div>
         </div>
+
       </div>
     </div>
   );

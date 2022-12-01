@@ -1,5 +1,4 @@
 import "../../styles/modals/modal.css";
-import "../../styles/modals/createPost.css";
 import { useUser } from "../utilities/userContext";
 
 const CommentModal = () => {
