@@ -1,4 +1,5 @@
 import "../../styles/modals/modal.css";
+import "../../styles/modals/createPost.css";
 
 const CommentModal = ({ isOpen, toggleComments }) => {
 
@@ -10,19 +11,6 @@ const CommentModal = ({ isOpen, toggleComments }) => {
     <div className='overlay'
       onClick={toggleComments}
     >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        className='modalContainer'
-      >
-        <div 
-          className="closeBtn" 
-          onClick={toggleComments}
-        >
-
-        </div>
-      </div>
     </div>
   );
 };
