@@ -1,30 +1,16 @@
 import "../../styles/modals/modal.css";
-import { useUser } from "../utilities/userContext";
+import "../../styles/modals/createPost.css";
 
-const CommentModal = () => {
-  const user = useUser();
+const CommentModal = ({ isOpen, toggleComments }) => {
 
-  if(!user.commentsOpen) {
+  if(!isOpen) {
     return null;
   }
 
   return (
     <div className='overlay'
-      onClick={user.toggleComments}
+      onClick={toggleComments}
     >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        className='modalContainer'
-      >
-        <div 
-          className="closeBtn" 
-          onClick={user.toggleComments}
-        >
-
-        </div>
-      </div>
     </div>
   );
 };
