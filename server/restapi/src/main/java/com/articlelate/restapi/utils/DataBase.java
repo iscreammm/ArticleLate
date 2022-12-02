@@ -67,6 +67,11 @@ public class DataBase {
                 "CREATE TABLE IF NOT EXISTS relationships (\n" +
                 "    followerid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    subscribeid integer REFERENCES user_info(id) NOT NULL\n" +
+                ");"+
+
+                "CREATE TABLE IF NOT EXISTS likes (\n"+
+                "   userid integer REFERENCES user_info (id),\n"+
+                "   postid integer REFERENCES posts (id)\n" +
                 ");";
 
         dbConnection = getDBConnection();

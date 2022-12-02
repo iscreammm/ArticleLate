@@ -12,9 +12,10 @@ public class Post {
     private String category;
     private String image;
     private int likesCount;
+    private boolean isLiked;
 
     public Post(int id, int authorId, String identificator, String name,
-                Timestamp time, String text, String category, String image, int likesCount) {
+                Timestamp time, String text, String category, String image, int likesCount, boolean isLiked) {
         this.id = id;
         this.authorId = authorId;
         this.identificator = identificator;
@@ -24,5 +25,6 @@ public class Post {
         this.category = category;
         this.image = image;
         this.likesCount = likesCount;
+        this.isLiked = isLiked;
     }
 }

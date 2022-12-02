@@ -50,7 +50,6 @@ public class RestapiController {
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность логина", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -134,7 +133,6 @@ public class RestapiController {
             return gson.toJson(new Message<>("Error", "Не удалось зарегистрировать пользователя", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -185,7 +183,6 @@ public class RestapiController {
             return gson.toJson(new Message<>("Error", "Не удалось выполнить вход", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -213,7 +210,7 @@ public class RestapiController {
 
             ResultSet rs = statement.executeQuery(sql);
 
-            while(rs.next()) {
+            while (rs.next()) {
                 follows = rs.getInt("follows_count");
             }
 
@@ -226,7 +223,7 @@ public class RestapiController {
 
             rs = statement.executeQuery(sql);
 
-            while(rs.next()) {
+            while (rs.next()) {
                 followers = rs.getInt("followers_count");
             }
 
@@ -245,7 +242,6 @@ public class RestapiController {
             return gson.toJson(new Message<>("Error", "Не удалось загрузить профиль пользователя", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -276,7 +272,7 @@ public class RestapiController {
 
                 ResultSet rs = statement.executeQuery(sql);
 
-                while(rs.next()) {
+                while (rs.next()) {
                     time = rs.getTimestamp("posttime");
                 }
             }
@@ -301,16 +297,14 @@ public class RestapiController {
                         rs.getString("identificator"), rs.getString("name"),
                         rs.getTimestamp("posttime"), rs.getString("posttext"),
                         rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes")));
+                        rs.getInt("postlikes"),isLiked(userId, rs.getInt("id"))));
             }
 
             data = gson.toJson(postList);
         } catch (SQLException e) {
-            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты пользователя", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -348,15 +342,13 @@ public class RestapiController {
 
             ResultSet rs = statement.executeQuery(sql);
 
-            while(rs.next()) {
+            while (rs.next()) {
                 data = rs.getInt("follows_count");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось подписаться на пользователя", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -393,14 +385,13 @@ public class RestapiController {
 
             ResultSet rs = statement.executeQuery(sql);
 
-            while(rs.next()) {
+            while (rs.next()) {
                 data = rs.getInt("follows_count");
             }
         } catch (SQLException e) {
             return gson.toJson(new Message<>("Error", "Не удалось отписаться от пользователя", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -437,7 +428,6 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (IOException e) {
-            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
 
         } catch (SQLException e) {
@@ -445,7 +435,6 @@ public class RestapiController {
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -485,7 +474,6 @@ public class RestapiController {
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность идентификатора", -1));
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -502,7 +490,7 @@ public class RestapiController {
         PostData post = gson.fromJson(dataJson, PostData.class);
 
         try {
-            data = loadImage(post.getImage(), "postPictures");
+            data = "placeholder";//loadImage(post.getImage(), "postPictures");
 
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
 
@@ -519,23 +507,21 @@ public class RestapiController {
 
             statement.execute(sql);
 
-        } catch (IOException e) {
-            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+        //} catch (IOException e) {
+            //return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
 
         } catch (SQLException e) {
-            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить содержимое поста", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
     }
 
     @PutMapping("/incLikesOnPost")
-    public String incLikesOnPost(@RequestParam int postId) {
+    public String incLikesOnPost(@RequestParam int userId, @RequestParam int postId) {
         int data = 0;
 
         GsonBuilder builder = new GsonBuilder();
@@ -544,17 +530,26 @@ public class RestapiController {
         try {
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
 
+            boolean isLiked = isLiked(userId, postId);
+            String sql = "";
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "UPDATE posts SET postlikes = postlikes + 1"
-                    + " WHERE id = " + postId;
+            if(!isLiked) {
+                sql = "UPDATE posts SET postlikes = postlikes + 1"
+                        + " WHERE id = " + postId;
 
-            dbConnection = db.getDBConnection();
-            statement = dbConnection.createStatement();
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
 
-            statement.execute(sql);
+                statement.execute(sql);
 
+                sql = "INSERT INTO likes (userid, postid) VALUES (" + userId +", "+ postId + ")";
+
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
+                statement.execute(sql);
+            }
             sql = "SELECT postlikes FROM posts WHERE id = " + postId;
 
             dbConnection = db.getDBConnection();
@@ -567,18 +562,18 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось поставить лайк посту", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
     }
 
     @PutMapping("/decLikesOnPost")
-    public String decLikesOnPost(@RequestParam int postId) {
+    public String decLikesOnPost(@RequestParam int userId, @RequestParam int postId) {
         int data = 0;
 
         GsonBuilder builder = new GsonBuilder();
@@ -587,17 +582,27 @@ public class RestapiController {
         try {
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
 
+            String sql = "";
+            boolean isLiked = isLiked(userId, postId);
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "UPDATE posts SET postlikes = postlikes - 1"
-                    + " WHERE id = " + postId;
+            if(isLiked) {
+                sql = "UPDATE posts SET postlikes = postlikes - 1"
+                        + " WHERE id = " + postId;
 
-            dbConnection = db.getDBConnection();
-            statement = dbConnection.createStatement();
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
 
-            statement.execute(sql);
+                statement.execute(sql);
 
+                sql = "DELETE FROM likes WHERE userId = " + userId + "AND postId = " + postId;
+
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
+
+                statement.execute(sql);
+            }
             sql = "SELECT postlikes FROM posts WHERE id = " + postId;
 
             dbConnection = db.getDBConnection();
@@ -610,18 +615,18 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось убрать лайк с поста", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
     }
 
     @GetMapping("/getPost")
-    public String getPost(@RequestParam int postId) {
+    public String getPost(@RequestParam int userId, @RequestParam int postId) {
         String data = "";
 
         GsonBuilder builder = new GsonBuilder();
@@ -652,7 +657,7 @@ public class RestapiController {
                         rs.getString("identificator"), rs.getString("name"),
                         rs.getTimestamp("posttime"), rs.getString("posttext"),
                         rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes")));
+                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
             }
 
         } catch (SQLException e) {
@@ -660,7 +665,6 @@ public class RestapiController {
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -689,7 +693,6 @@ public class RestapiController {
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", 1));
@@ -728,7 +731,6 @@ public class RestapiController {
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -790,10 +792,425 @@ public class RestapiController {
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
-            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
+    }
+
+    @GetMapping("/getPosts")
+    public String getPosts(@RequestParam int userId,
+                           @RequestParam(required = false, defaultValue = "0") int prevPostId,
+                           @RequestParam(required = false, defaultValue = "0") int categoryId) {
+        String data = "";
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            Timestamp time = new Timestamp(System.currentTimeMillis());
+
+            if (prevPostId != 0) {
+                String sql = "SELECT posttime FROM posts WHERE id = " + prevPostId;
+
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
+
+                ResultSet rs = statement.executeQuery(sql);
+
+                while (rs.next()) {
+                    time = rs.getTimestamp("posttime");
+                }
+            }
+            String sql;
+            if (categoryId == 0) {
+
+                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                        + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
+                        + " FROM posts JOIN user_info ON authorid = user_info.id"
+                        + " JOIN categories ON postcategoryid = categories.id"
+                        + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId
+                        + " ORDER BY posttime DESC LIMIT 3";
+            }
+            else {
+                 sql = "SELECT posts.id, authorid, user_info.identificator,"
+                        + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
+                        + " FROM posts JOIN user_info ON authorid = user_info.id"
+                        + " JOIN categories ON postcategoryid = categories.id"
+                        + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId + "AND categories.id = " + categoryId
+                        + " ORDER BY posttime DESC LIMIT 3";
+            }
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            List<Post> postList = new ArrayList<>();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
+                        rs.getString("identificator"), rs.getString("name"),
+                        rs.getTimestamp("posttime"), rs.getString("posttext"),
+                        rs.getString("category"), rs.getString("postpicture"),
+                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+            }
+
+            data = gson.toJson(postList);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить посты новостной ленты", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", data));
+    }
+
+    @GetMapping("/getSubPosts")
+    public String getSubPosts(@RequestParam int userId,
+                           @RequestParam(required = false, defaultValue = "0") int prevPostId,
+                           @RequestParam(required = false, defaultValue = "0") int categoryId) {
+        String data = "";
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            Timestamp time = new Timestamp(System.currentTimeMillis());
+
+            if (prevPostId != 0) {
+                String sql = "SELECT posttime FROM posts WHERE id = " + prevPostId;
+
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
+
+                ResultSet rs = statement.executeQuery(sql);
+
+                while (rs.next()) {
+                    time = rs.getTimestamp("posttime");
+                }
+            }
+            String sql;
+            if (categoryId == 0) {
+
+                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                        + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
+                        + " FROM posts JOIN user_info ON authorid = user_info.id"
+                        + " JOIN categories ON postcategoryid = categories.id"
+                        + " JOIN relationships ON relationships.followerid = \'"+userId+"\'"
+                        + " WHERE  posttime < \'" + time + "\' AND authorid = relationships.subscribeid"
+                        + " ORDER BY posttime DESC LIMIT 3";
+            }
+            else {
+                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                        + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
+                        + " FROM posts JOIN user_info ON authorid = user_info.id"
+                        + " JOIN categories ON postcategoryid = categories.id"
+                        + " JOIN relationships ON relationships.followerid = \'"+userId+"\'"
+                        + " WHERE  posttime < \'" + time + "\' AND authorid = relationships.subscribeid AND categories.id = " + categoryId
+                        + " ORDER BY posttime DESC LIMIT 3";
+            }
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            List<Post> postList = new ArrayList<>();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
+                        rs.getString("identificator"), rs.getString("name"),
+                        rs.getTimestamp("posttime"), rs.getString("posttext"),
+                        rs.getString("category"), rs.getString("postpicture"),
+                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+            }
+
+            data = gson.toJson(postList);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить посты ленты подписок", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", data));
+    }
+
+    @PostMapping("/addComment")
+    public String addComment(@RequestBody String dataJson) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        CommentData commentData = gson.fromJson(dataJson, CommentData.class);
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            handleTag(commentData.getCommentText(), commentData.getPostId());
+
+            String sql = "INSERT INTO commentaries(userid, postid, commenttime, commenttext)"
+                       + " VALUES(" + commentData.getUserId() + ", "+ commentData.getPostId()
+                       +", \'" + new Timestamp(System.currentTimeMillis())
+                       +"\', \'" + commentData.getCommentText() + "\')";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            statement.execute(sql);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось добавить комментарий", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", 1));
+    }
+
+    @PutMapping("/changeComment")
+    public String changeComment(@RequestParam int commentId,
+                                @RequestParam String commentText) {
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        int postId = 0;
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "UPDATE commentaries SET commentText = \'"+ commentText +"\'"
+                       + " WHERE id = " + commentId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            statement.execute(sql);
+
+            sql = "SELECT postid FROM commentaries"
+                    + " WHERE id = " + commentId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                postId = (rs.getInt("postid"));
+            }
+
+            handleTag(commentText, postId);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось изменить комментарий", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", 1));
+    }
+
+    @DeleteMapping("/deleteComment")
+    public String deleteComment(@RequestParam int commentId) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "DELETE FROM commentaries"
+                       + " WHERE id = " + commentId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            statement.execute(sql);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", 1));
+    }
+
+    @GetMapping("/getNotifications")
+    public String getNotifications(@RequestParam int userId) {
+        String data = "";
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            Timestamp time = new Timestamp(0);
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            String sql = "SELECT * FROM notifications"
+                       + " WHERE userid = " + userId
+                       + " ORDER BY id ASC LIMIT 5";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            List<Notification> notificationsList = new ArrayList<>();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                notificationsList.add(new Notification(rs.getInt("id"), rs.getInt("userid"),
+                        rs.getInt("postid")));
+            }
+
+            data = gson.toJson(notificationsList);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить уведомления", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", data));
+    }
+
+    @DeleteMapping("/deleteNotification")
+    public String deleteNotification(@RequestParam int notificationId) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "DELETE FROM notifications"
+                       + " WHERE id = " + notificationId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            statement.execute(sql);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", 0));
+    }
+
+    @DeleteMapping("/deleteAllNotification")
+    public String deleteAllNotification(@RequestParam int userId) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "DELETE FROM notifications"
+                       + " WHERE userid = " + userId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            statement.execute(sql);
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомления", -1));
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
+
+        return gson.toJson(new Message<>("Success", "", 0));
+    }
+
+    private void handleTag(String text, int postId){
+        text.toLowerCase();
+        for (int i = 0; i<text.length(); i++){
+            if (text.charAt(i) == '@'){
+                i++;
+                String tag = "";
+                while((text.charAt(i) > 47 && text.charAt(i)<58) || (text.charAt(i) > 96 && text.charAt(i) < 123)){
+                    tag += text.charAt(i);
+                    if(i + 1 == text.length())
+                        break;
+                    i++;
+                }
+                createNotification(tag, postId);
+            }
+        }
+    }
+
+    private void createNotification(String tag, int postId){
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            int userId = -1;
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "SELECT * FROM  user_info WHERE identificator = \'"+tag+"\'";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            statement.execute(sql);
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if(rs.next()){
+                userId = rs.getInt("id");
+                sql = "INSERT INTO notifications(userId, postId)"
+                        + " VALUES(" + userId + ", \'" + postId + "\'"
+                        + ")";
+
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
+                statement.execute(sql);
+            }
+
+        } catch (SQLException e) {
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+        }
     }
 
     //need test loading image by url!!!
@@ -844,5 +1261,28 @@ public class RestapiController {
             return false;
         else
             return true;
+    }
+
+    private boolean isLiked (int userId, int postId) throws SQLException, ClassNotFoundException {
+        boolean isLiked = false;
+
+        DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        Connection dbConnection = null;
+        Statement statement = null;
+
+        String sql = "SELECT * FROM likes WHERE userid = " + userId + " AND postid =" + postId;
+
+        dbConnection = db.getDBConnection();
+        statement = dbConnection.createStatement();
+
+        statement.execute(sql);
+
+        ResultSet rs = statement.executeQuery(sql);
+
+        if (rs.next()) {
+            isLiked = true;
+        }
+
+        return isLiked;
     }
 }
