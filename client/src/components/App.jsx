@@ -94,35 +94,28 @@ const App = () => {
                 />
               </div>
               <button id="loginButton" className="buttonLogin" style={{marginTop: "1.5vw"}}
+                disabled={((authLogin.length < 8) || (authPass.length < 8)) ? true : false}
                 onClick={async () => {
-                  if (authLogin.length < 8) {
-                    setMessage("Логин слишком короткий");
-                    showMessage('messageLogin', 'loginButton');
-                  } else if (authPass.length < 8) {
-                    setMessage("Пароль слишком короткий");
-                    showMessage('messageLogin', 'loginButton');
-                  } else {
-                    await axios.get("http://localhost:8080/loginUser", {
-                      params: {
-                        login: authLogin,
-                        pass: authPass
-                      }
-                    }).then(result => {
-                      console.log(result)
-                      if (result.data.state === "Error") {
-                        setMessage(result.data.message);
-                        showMessage('messageLogin', 'loginButton');
-                      } else {
-                        root.render(
-                          <BrowserRouter>
-                            <UserProvider>
-                              <MainPage />
-                            </UserProvider>
-                          </BrowserRouter>
-                        );
-                      }
-                    })
-                  }
+                  await axios.get("http://localhost:8080/loginUser", {
+                    params: {
+                      login: authLogin,
+                      pass: authPass
+                    }
+                  }).then(result => {
+                    console.log(result)
+                    if (result.data.state === "Error") {
+                      setMessage(result.data.message);
+                      showMessage('messageLogin', 'loginButton');
+                    } else {
+                      root.render(
+                        <BrowserRouter>
+                          <UserProvider>
+                            <MainPage />
+                          </UserProvider>
+                        </BrowserRouter>
+                      );
+                    }
+                  })
                 }}
               >
                 Войти
