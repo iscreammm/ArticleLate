@@ -1,10 +1,13 @@
-import "../../styles/modals/modal.css";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { useUser } from "../utilities/userContext";
+import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
 const CreatePostModal = () => {
   const user = useUser();
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  
   if(!user.createPostOpen) {
     return null;
   }
@@ -17,7 +20,7 @@ const CreatePostModal = () => {
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className='modalContainer'
+        className='modalContainer createPostContainer'
       >
        <div className="topMenu">
           <div className="categoriesBtn">
@@ -37,14 +40,45 @@ const CreatePostModal = () => {
           <div className="closeBtn" onClick={user.toggleCreatePost}><img src="common/close.png" alt="Close"/></div>
         </div>
         <textarea type="text" className="postInput"  placeholder="Введите что-нибудь"/>
-        <div className="bottomMenu">
-          <div className="uploadImage"> <input type="file"/> </div>
+        <img id="#createPostImage"
+          className="createPostImage"
+          src={selectedImage !== null ? URL.createObjectURL(selectedImage) : ""} 
+          alt="UserImage" 
+        />
+        <div className="bottomMenu" style={{position: selectedImage === null ? "absolute" : "sticky"}}>
+          <div className="uploadImage">
+            <input id="#loadPostImage" type="file"
+              onChange={(event) => {
+                setSelectedImage(event.target.files[0]);
+              }}
+            />
+          </div>
           <div className="formatting">о</div>
           <div className="formatting">П</div>
           <div className="formatting">З</div>
           <div className="formatting">К</div>
           <div className="formatting">Ж</div>
-          <div className="create">Создать</div>
+          <div className="create"
+            onClick={async () => {
+              // Encode the file using the FileReader API
+              const reader = new FileReader();
+              
+              reader.readAsDataURL(selectedImage);
+              reader.onloadend = async () => {
+                const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+
+                await axios.post("http://localhost:8080/createPost", {
+                  authorId: 1,
+                  categoryId: 1,
+                  text: 'abobus228',
+                  image: `${base64String}`
+                }).then(result => {
+                  console.log(result)
+                })
+              };
+              
+            }}
+          >Создать</div>
         </div>
       </div>
     </div>

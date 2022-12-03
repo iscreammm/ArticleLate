@@ -1,5 +1,6 @@
-import "../../styles/modals/modal.css";
+import axios from "axios";
 import { useUser } from "../utilities/userContext";
+import "../../styles/modals/modal.css";
 import "../../styles/modals/editUser.css";
 
 const EditUserModal = () => {
@@ -32,7 +33,9 @@ const EditUserModal = () => {
         <textarea name="" id="" className="editDescription"></textarea>
         <div className="confirmUserChanges">
           <button>Отменить</button>
-          <button>Сохранить</button>
+          <button
+            
+          >Сохранить</button>
         </div>
       </div>
     </div>

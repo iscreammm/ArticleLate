@@ -1,3 +1,7 @@
+.createPostContainer {
+  overflow: auto;
+}
+
 .topMenu {
   width: 100%;
   display: flex;
@@ -64,7 +68,7 @@
   display: flex;
   flex-direction: row;
   height: 3vw;
-  position: absolute;
+  position: sticky;
   bottom: 0;
 }
 
@@ -74,6 +78,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.createPostImage {
+  display: block;
+  margin: 1.5vw auto;
+  max-height: 20vw;
+  width: auto;
 }
 
 .formatting {
