@@ -36,6 +36,7 @@ const Layout = () => {
         <img className='logoMenu' src="common/logo.PNG" alt="Logo" />
         <img className='exit menuButton' src="layout/exit.PNG" alt="Exit" 
           onClick={() => {
+            localStorage.removeItem('userId');
             root.render(
               <App />
             );

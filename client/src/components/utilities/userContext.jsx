@@ -6,7 +6,7 @@ export const useUser = () => {
   return useContext(UserContext);
 }
 
-export const UserProvider = ({ children }) => {
+export const UserProvider = ({ id, children }) => {
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
@@ -30,6 +30,7 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider value={{
+      id: id,
       commentsOpen: commentsOpen,
       notifOpen: notifOpen,
       createPostOpen: createPostOpen,

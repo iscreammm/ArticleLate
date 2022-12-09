@@ -107,9 +107,10 @@ const App = () => {
                       setMessage(result.data.message);
                       showMessage('messageLogin', 'loginButton');
                     } else {
+                      localStorage.setItem('userId', result.data.data);
                       root.render(
                         <BrowserRouter>
-                          <UserProvider>
+                          <UserProvider id={result.data.data}>
                             <MainPage />
                           </UserProvider>
                         </BrowserRouter>
