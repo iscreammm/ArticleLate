@@ -142,13 +142,11 @@ public class RestapiController {
     }
 
     @GetMapping("/loginUser")
-    public String loginUser(@RequestBody String dataJson) {
+    public String loginUser(@RequestParam String login, @RequestParam String pass) {
         int data = 0;
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-
-        AuthData auth = gson.fromJson(dataJson, AuthData.class);
 
         try {
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
@@ -156,7 +154,7 @@ public class RestapiController {
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "SELECT * FROM auth_data WHERE login = \'" + auth.getLogin() + "\'";
+            String sql = "SELECT * FROM auth_data WHERE login = \'" + login + "\'";
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -169,8 +167,8 @@ public class RestapiController {
 
             sql = "SELECT user_info.id FROM user_info"
                     + " JOIN auth_data ON user_info.loginid = auth_data.id"
-                    + " WHERE auth_data.login = \'" + auth.getLogin() + "\'"
-                    + " AND auth_data.pass = \'" + auth.getPass() + "\'";
+                    + " WHERE auth_data.login = \'" + login + "\'"
+                    + " AND auth_data.pass = \'" + pass + "\'";
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -425,18 +423,42 @@ public class RestapiController {
         ProfileData profile = gson.fromJson(dataJson, ProfileData.class);
 
         try {
-            if (!checkIdentificator(profile.getIdentificator())) {
-                return gson.toJson(new Message<>("Error", "Идентификатор не может начинаться с \"user\"", -1));
-            }
-
-            data = loadImage(profile.getImagePath(), "profilePictures");
-
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
 
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "UPDATE user_info SET identificator = \'" + profile.getIdentificator() + "\'"
+            String sql = "SELECT identificator FROM user_INFO WHERE id = " + profile.getId();
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                String identificator = rs.getString("identificator");
+
+                if (profile.getIdentificator().substring(0, 4).equals("user")
+                        && (!identificator.equals(profile.getIdentificator()))) {
+                    return gson.toJson(new Message<>("Error", "Идентификатор не может начинаться с 'user'", -1));
+                }
+            }
+
+            sql = "SELECT id FROM user_info WHERE identificator = \'" + profile.getIdentificator() + "\'"
+                    + " AND id != " + profile.getId();
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                return gson.toJson(new Message<>("Error", "Данный идентификатор уже занят.", -1));
+            }
+
+            data = loadImage(profile.getImagePath(), "profilePictures");
+
+            sql = "UPDATE user_info SET identificator = \'" + profile.getIdentificator() + "\'"
                     + ", name = \'" + profile.getName() + "\', " + " info = \'" + profile.getInfo() + "\'"
                     + ", profilepicture = \'" + data + "\' WHERE id = " + profile.getId();
 
@@ -459,25 +481,21 @@ public class RestapiController {
         return gson.toJson(new Message<>("Success", "", data));
     }
 
-
     @GetMapping("/verifyIdentificator")
-    public String verifyIdentificator(@RequestParam String identificator) {
+    public String verifyIdentificator(@RequestParam String identificator, @RequestParam int userId) {
         boolean data = false;
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
 
         try {
-            if (!checkIdentificator(identificator)) {
-                return gson.toJson(new Message<>("Error", "Идентификатор не может начинаться с \"user\"", -1));
-            }
-
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
 
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "SELECT * FROM user_info WHERE identificator = \'" + identificator + "\'";
+            String sql = "SELECT * FROM user_info WHERE identificator = \'" + identificator + "\'"
+                    + " AND id != " + userId;
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -501,7 +519,6 @@ public class RestapiController {
         return gson.toJson(new Message<>("Success", "", data));
     }
 
-    //not listed in specification
     @PostMapping("/createPost")
     public String createPost(@RequestBody String dataJson) {
         String data = "";
@@ -533,7 +550,7 @@ public class RestapiController {
             return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
 
         } catch (SQLException e) {
-            return gson.toJson(new Message<>("Error", "Не удалось изменить содержимое поста", -1));
+            return gson.toJson(new Message<>("Error", "Не удалось создать пост", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
@@ -709,7 +726,22 @@ public class RestapiController {
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "DELETE FROM posts WHERE id = " + postId;
+            String sql = "SELECT postpicture FROM posts WHERE id = " + postId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            String picPath = "";
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                picPath = rs.getString("postpicture");
+            }
+
+            deleteFile(picPath);
+
+            sql = "DELETE FROM posts WHERE id = " + postId;
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -819,6 +851,41 @@ public class RestapiController {
 
         } catch (SQLException e) {
             return gson.toJson(new Message<>("Error", "Не удалось загрузить комментарии", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
+        }
+
+        return gson.toJson(new Message<>("Success", "", data));
+    }
+
+    @GetMapping("/getIdByIdentificator")
+    public String getIdByIdentificator(@RequestParam String identificator) {
+        int data = -1;
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "SELECT id FROM user_info WHERE identificator = \'" + identificator + "\'";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                data = rs.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            return gson.toJson(new Message<>("Error", "Не удалось проверить идентификатор", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
@@ -1084,7 +1151,7 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (SQLException e) {
-            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
+            return gson.toJson(new Message<>("Error", "Не удалось удалить комментарий", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
@@ -1188,13 +1255,23 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (SQLException e) {
-            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомления", -1));
+            return gson.toJson(new Message<>("Error", "Не удалось удалить все уведомления", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
         }
 
         return gson.toJson(new Message<>("Success", "", 0));
+    }
+
+    private void deleteFile(String filePath) {
+        File file = new File(filePath);
+
+        if (file.delete()) {
+            System.out.println("File was deleted");
+        } else {
+            System.out.println("Wrong filepath!");
+        }
     }
 
     private void handleTag(String text, int postId) throws SQLException, ClassNotFoundException {
@@ -1270,11 +1347,6 @@ public class RestapiController {
         stream.write(imgData);
 
         return foldername + '/' + filename;
-    }
-
-    private boolean checkIdentificator(String identificator) {
-
-        return (!identificator.substring(0, 4).equals("user"));
     }
 
     private boolean isLiked (int userId, int postId) throws SQLException, ClassNotFoundException {
