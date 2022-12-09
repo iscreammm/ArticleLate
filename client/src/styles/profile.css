@@ -43,6 +43,7 @@
   font-size: 1.5em;
   box-shadow: rgb(0 0 0 / 16%) 0px 3px 6px, rgb(0 0 0 / 23%) 0px 3px 6px;
   border-radius: 0.7vw;
+  min-width: 10vw;
 }
 
 .about {

@@ -39,7 +39,7 @@ const CreatePostModal = () => {
           <div className="graySpace"></div>
           <div className="closeBtn" onClick={user.toggleCreatePost}><img src="common/close.png" alt="Close"/></div>
         </div>
-        <textarea type="text" className="postInput"  placeholder="Введите что-нибудь"/>
+        <textarea type="text" className="postInput" placeholder="Введите текст"/>
         <img id="#createPostImage"
           className="createPostImage"
           src={selectedImage !== null ? URL.createObjectURL(selectedImage) : ""} 
@@ -48,6 +48,7 @@ const CreatePostModal = () => {
         <div className="bottomMenu" style={{position: selectedImage === null ? "absolute" : "sticky"}}>
           <div className="uploadImage">
             <input id="#loadPostImage" type="file"
+              accept="image/png, image/jpg, image/jpeg"
               onChange={(event) => {
                 setSelectedImage(event.target.files[0]);
               }}

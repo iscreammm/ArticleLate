@@ -1,17 +1,30 @@
+import { useEffect, useState} from "react";
+import axios from "axios";
 import PostsList from "../components/PostsList";
 import { useUser } from "../components/utilities/userContext";
 import "../styles/profile.css"
 
 const UserProfile = () => {
   const user = useUser();
+  const [profileData, setProfileData] = useState();
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
+      setProfileData(JSON.parse(result.data.data));
+    });
+  }, []);
+  
+  if (profileData === undefined) {
+    return <></>
+  }
 
   return (
     <div className="pageContainer profile">
       <div className="profileInfo">
         <div className="infoColumn">
           <div className="infoText">
-            <p>Аноним</p>
-            <p>@anonim123</p>
+            <p>{profileData.name}</p>
+            <p>@{profileData.identificator}</p>
           </div>
         </div>
         <div className="infoColumn">
@@ -24,8 +37,8 @@ const UserProfile = () => {
         </div>
         <div className="infoColumn">
           <div className="infoText">
-            <p>Подписки: 0</p>
-           <p>Подписчики: 0</p>
+            <p>Подписки: {profileData.followers}</p>
+           <p>Подписчики: {profileData.follows}</p>
           </div>
         </div>
       </div>
