@@ -112,7 +112,7 @@ public class RestapiController {
                     + loginId + ", "
                     + "\'" + user.getName() + "\', "
                     + "\'" + "user" + loginId + "\', "
-                    + "\'" + "pictures/defaultProfilePic" + ".png\')";
+                    + "\'" + "profilePictures/avatar" + ".jpg\')";
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
