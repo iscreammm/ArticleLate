@@ -745,7 +745,18 @@ public class RestapiController {
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
+            statement.execute(sql);
 
+            sql = "DELETE FROM likes WHERE postid = " + postId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+            statement.execute(sql);
+
+            sql = "DELETE FROM commentaries WHERE postid = " + postId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
             statement.execute(sql);
 
         } catch (SQLException e) {
@@ -1161,7 +1172,8 @@ public class RestapiController {
     }
 
     @GetMapping("/getNotifications")
-    public String getNotifications(@RequestParam int userId) {
+    public String getNotifications(@RequestParam int userId,
+                                   @RequestParam (required = false, defaultValue = "0") int prevNotificationId) {
         String data = "";
 
         GsonBuilder builder = new GsonBuilder();
@@ -1179,7 +1191,7 @@ public class RestapiController {
             statement = dbConnection.createStatement();
 
             String sql = "SELECT * FROM notifications"
-                    + " WHERE userid = " + userId
+                    + " WHERE userid = " + userId + " AND id > " + prevNotificationId
                     + " ORDER BY id ASC LIMIT 5";
 
             dbConnection = db.getDBConnection();
