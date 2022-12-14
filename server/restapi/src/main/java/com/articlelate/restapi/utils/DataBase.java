@@ -36,9 +36,13 @@ public class DataBase {
                 ");" +
 
                 "CREATE TABLE IF NOT EXISTS categories (\n" +
-                "    id serial PRIMARY KEY,\n" +
+                "    id integer PRIMARY KEY,\n" +
                 "    name character varying(20) NOT NULL\n" +
                 ");" +
+
+                "INSERT INTO categories(id, name) VALUES(1, 'IT'), (2, 'Игры'), (3, 'Кино'), " +
+                "(4, 'Арты'), (5, 'Юмор'), (6, 'Наука'), (7, 'Музыка'), (8, 'Новости') " +
+                "ON CONFLICT(id) DO NOTHING;" +
 
                 "CREATE TABLE IF NOT EXISTS posts (\n" +
                 "    id serial PRIMARY KEY,\n" +
