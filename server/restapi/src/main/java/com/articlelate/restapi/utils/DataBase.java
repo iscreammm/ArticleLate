@@ -49,7 +49,7 @@ public class DataBase {
                 "    authorid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    posttime timestamp without time zone NOT NULL,\n" +
                 "    postcategoryid integer REFERENCES categories(id) NOT NULL,\n" +
-                "    postpicture character varying(50),\n" +
+                "    postpicture character varying(100),\n" +
                 "    posttext character varying(10000) NOT NULL,\n" +
                 "    postlikes integer\n" +
                 ");"+

@@ -45,6 +45,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность логина", -1));
 
         } catch (ClassNotFoundException e) {
@@ -131,6 +132,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось зарегистрировать пользователя", -1));
 
         } catch (ClassNotFoundException e) {
@@ -182,6 +184,7 @@ public class RestapiController {
             data = rs.getInt("id");
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось выполнить вход", -1));
 
         } catch (ClassNotFoundException e) {
@@ -244,6 +247,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить профиль пользователя", -1));
 
         } catch (ClassNotFoundException e) {
@@ -310,6 +314,7 @@ public class RestapiController {
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты пользователя", -1));
 
         } catch (ClassNotFoundException e) {
@@ -357,6 +362,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось подписаться на пользователя", -1));
 
         } catch (ClassNotFoundException e) {
@@ -403,6 +409,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось отписаться от пользователя", -1));
 
         } catch (ClassNotFoundException e) {
@@ -468,9 +475,11 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (IOException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить информацию профиля", -1));
 
         } catch (ClassNotFoundException e) {
@@ -509,6 +518,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность идентификатора", -1));
 
         } catch (ClassNotFoundException e) {
@@ -547,9 +557,11 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (IOException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось создать пост", -1));
 
         } catch (ClassNotFoundException e) {
@@ -604,6 +616,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось поставить лайк посту", -1));
 
         } catch (ClassNotFoundException e) {
@@ -659,6 +672,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось убрать лайк с поста", -1));
 
         } catch (ClassNotFoundException e) {
@@ -705,6 +719,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить пост", -1));
 
         } catch (ClassNotFoundException e) {
@@ -760,6 +775,7 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить пост", -1));
 
         } catch (ClassNotFoundException e) {
@@ -796,9 +812,11 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (IOException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить содержимое поста", -1));
 
         } catch (ClassNotFoundException e) {
@@ -861,6 +879,7 @@ public class RestapiController {
             data = gson.toJson(commentList);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить комментарии", -1));
 
         } catch (ClassNotFoundException e) {
@@ -896,6 +915,7 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить идентификатор", -1));
 
         } catch (ClassNotFoundException e) {
@@ -973,10 +993,12 @@ public class RestapiController {
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты новостной ленты", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -1051,10 +1073,12 @@ public class RestapiController {
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты ленты подписок", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -1086,10 +1110,12 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось добавить комментарий", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", 1));
@@ -1133,10 +1159,12 @@ public class RestapiController {
             handleTag(commentText, postId);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить комментарий", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", 1));
@@ -1162,10 +1190,12 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить комментарий", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", 1));
@@ -1209,10 +1239,12 @@ public class RestapiController {
             data = gson.toJson(notificationsList);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить уведомления", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -1238,10 +1270,12 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", 0));
@@ -1267,10 +1301,12 @@ public class RestapiController {
             statement.execute(sql);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить все уведомления", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
         }
 
         return gson.toJson(new Message<>("Success", "", 0));
@@ -1338,6 +1374,8 @@ public class RestapiController {
     }
 
     private String loadImage(String url, String foldername) throws IOException {
+        foldername = "../client/public/" + foldername;
+
         File folder = new File(foldername);
 
         if (!folder.exists()) {
