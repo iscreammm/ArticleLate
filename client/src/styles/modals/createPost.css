@@ -80,6 +80,11 @@
   align-items: center;
 }
 
+.loadImgLabel {
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
 .createPostImage {
   display: block;
   margin: 1.5vw auto;
@@ -93,13 +98,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+
+.formatting:hover {
+  background-color: #f0f0f0;
 }
 
 .create {
   width: 25%;
-  background-color: #FFBDBD;
-  font-size: 1.25em;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.createButton {
+  height: 100%;
+  border: none;
+  width: 100%;
+  font-size: 1em;
+  background-color: #FFBDBD;
+  cursor: pointer;
+}
+
+.createButton:hover, .uploadImage:hover, .categoriesSelect:hover, .closeBtn:hover {
+  background-color: #ffd5d5;
+}
+
+.createButton:disabled {
+  background-color: #f3d7d7;
+  cursor: default;
 }
