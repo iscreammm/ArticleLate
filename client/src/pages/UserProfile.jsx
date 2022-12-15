@@ -10,6 +10,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
+      console.log(JSON.parse(result.data.data))
       setProfileData(JSON.parse(result.data.data));
     });
   }, []);
@@ -28,8 +29,8 @@ const UserProfile = () => {
           </div>
         </div>
         <div className="infoColumn">
-          <img className="userAvatar" src="layout/avatar.png" alt="Avatar2" />
-          <img className="profileInfoButton" src="profile/change.png" alt="Change" 
+          <img className="userAvatar" src={`${profileData.imagePath}`} alt="Avatar2" />
+          <img className="profileInfoButton" src="profile/change.png" alt="Change"
             onClick={() => {
               user.toggleInfoEditing();
             }}
@@ -42,7 +43,9 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      <p className="about">Анонимный пользователь сайта, который сидит тут и не знает, что написать о себе.</p>
+      <p className="about" style={{textAlign: profileData.info === "" ? "center" : ""}}>
+        {profileData.info === "" ? "Информация не указана" : profileData.info}
+      </p>
       <div style={{textAlign: "center"}}>
         <img className="createPostButton" src="profile/createpost.png" alt="CreatePost" 
           onClick={() => {
