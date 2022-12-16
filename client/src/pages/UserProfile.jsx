@@ -10,10 +10,9 @@ const UserProfile = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
-      console.log(JSON.parse(result.data.data))
       setProfileData(JSON.parse(result.data.data));
     });
-  }, []);
+  }, [user.refreshUser]);
   
   if (profileData === undefined) {
     return <></>

@@ -11,6 +11,7 @@ export const UserProvider = ({ id, children }) => {
   const [notifOpen, setNotifOpen] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
   const [editUserOpen, setEditUserModal] = useState(false);
+  const [refreshUser, setRefreshUser] = useState(false);
   
   const toggleComments = () => {
     setCommentsOpen(prev => !prev);
@@ -28,6 +29,10 @@ export const UserProvider = ({ id, children }) => {
     setEditUserModal(prev => !prev);
   }
 
+  const reloadUser = () => {
+    setRefreshUser(prev => !prev);
+  }
+
   return (
     <UserContext.Provider value={{
       id: id,
@@ -35,7 +40,8 @@ export const UserProvider = ({ id, children }) => {
       notifOpen: notifOpen,
       createPostOpen: createPostOpen,
       editUserOpen: editUserOpen,
-      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing
+      refreshUser: refreshUser,
+      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, reloadUser
     }}>
       { children }
     </UserContext.Provider>

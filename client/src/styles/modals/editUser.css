@@ -11,6 +11,19 @@
 .editUserAvatar img {
   border-radius: 100%;
   border: 3px solid #a32a2a;
+  width: 80%;
+}
+
+.newAvatarBtn {
+  background-color: #FCCACA;
+  padding: 0.4vw;
+  font-size: 1.1em;
+  cursor: pointer;
+  margin-top: 0.5vw;
+  border: 1px solid black;
+  display: block;
+  width: 50%;
+  margin: 0 auto;
 }
 
 .editUserInformation {
