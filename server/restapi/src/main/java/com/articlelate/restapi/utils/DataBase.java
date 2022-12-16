@@ -32,7 +32,7 @@ public class DataBase {
                 "    loginid integer REFERENCES auth_data(id) NOT NULL,\n" +
                 "    name character varying(30) NOT NULL,\n" +
                 "    identificator character varying(30) NOT NULL,\n" +
-                "    profilepicture character varying(50) NOT NULL\n" +
+                "    profilepicture character varying(100) NOT NULL\n" +
                 ");" +
 
                 "CREATE TABLE IF NOT EXISTS categories (\n" +

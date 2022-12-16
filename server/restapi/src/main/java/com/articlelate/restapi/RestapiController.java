@@ -463,7 +463,28 @@ public class RestapiController {
                 return gson.toJson(new Message<>("Error", "Данный идентификатор уже занят.", -1));
             }
 
-            data = loadImage(profile.getImagePath(), "profilePictures");
+            if (profile.getImagePath().contains("profilePictures")) {
+                data = profile.getImagePath();
+            } else {
+                data = loadImage(profile.getImagePath(), "profilePictures");
+
+                sql = "SELECT profilepicture FROM user_info WHERE id = " + profile.getId();
+
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
+
+                String picPath = "";
+
+                rs = statement.executeQuery(sql);
+
+                if (rs.next()) {
+                    picPath = rs.getString("profilepicture");
+                }
+
+                if (!picPath.contains("avatar")) {
+                    deleteFile("../client/public/" + picPath);
+                }
+            }
 
             sql = "UPDATE user_info SET identificator = \'" + profile.getIdentificator() + "\'"
                     + ", name = \'" + profile.getName() + "\', " + " info = \'" + profile.getInfo() + "\'"
@@ -796,12 +817,31 @@ public class RestapiController {
         PostData post = gson.fromJson(dataJson, PostData.class);
 
         try {
-            data = loadImage(post.getImage(), "postPictures");
-
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
 
             Connection dbConnection = null;
             Statement statement = null;
+
+            if (post.getImage().contains("postPictures")) {
+                data = post.getImage();
+            } else {
+                data = loadImage(post.getImage(), "postPictures");
+
+                String sql = "SELECT postpicture FROM posts WHERE id = " + post.getId();
+
+                dbConnection = db.getDBConnection();
+                statement = dbConnection.createStatement();
+
+                String picPath = "";
+
+                ResultSet rs = statement.executeQuery(sql);
+
+                if (rs.next()) {
+                    picPath = rs.getString("postpicture");
+                }
+
+                deleteFile("../client/public/" + picPath);
+            }
 
             String sql = "UPDATE posts SET postpicture = \'" + data + "\'"
                     + ", posttext = \'" + post.getText() + "\' WHERE id = " + post.getId();
@@ -1374,9 +1414,7 @@ public class RestapiController {
     }
 
     private String loadImage(String url, String foldername) throws IOException {
-        foldername = "../client/public/" + foldername;
-
-        File folder = new File(foldername);
+        File folder = new File("../client/public/" + foldername);
 
         if (!folder.exists()) {
             folder.mkdir();
@@ -1385,7 +1423,7 @@ public class RestapiController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         String filename = sdf.format(System.currentTimeMillis()) + ".jpg";
-        File imgFile = new File(foldername, filename);
+        File imgFile = new File("../client/public/" + foldername, filename);
 
         if (!imgFile.exists()) {
             imgFile.createNewFile();
@@ -1394,7 +1432,9 @@ public class RestapiController {
         byte[] imgData = Base64.getDecoder().decode(url);
 
         OutputStream stream = new FileOutputStream(imgFile);
+
         stream.write(imgData);
+        stream.close();
 
         return foldername + '/' + filename;
     }
