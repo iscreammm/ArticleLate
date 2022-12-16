@@ -435,7 +435,7 @@ public class RestapiController {
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "SELECT identificator FROM user_INFO WHERE id = " + profile.getId();
+            String sql = "SELECT identificator FROM user_info WHERE id = " + profile.getId();
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
