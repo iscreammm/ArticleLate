@@ -325,6 +325,43 @@ public class RestapiController {
         return gson.toJson(new Message<>("Success", "", data));
     }
 
+    @GetMapping("/getIsSubscribe")
+    public String getIsSubscribe(@RequestParam int followerId, @RequestParam int userId) {
+        boolean data = false;
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "SELECT * FROM relationships WHERE followerid = " + followerId
+                    + " AND subscribeid = " + userId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                data = true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось проверить подписку на пользователя", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
+        }
+
+        return gson.toJson(new Message<>("Success", "", data));
+    }
+
     @PostMapping("/followUser")
     public String followUser(@RequestBody String dataJson) {
         int data = 0;
