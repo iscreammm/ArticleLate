@@ -3,7 +3,6 @@ import App from './App';
 import "../styles/layout.css";
 import root from "../index";
 import CommentModal from './modals/commentModal';
-import { useState } from 'react';
 import { useUser } from './utilities/userContext';
 import NotificationsModal from './modals/notificationsModal';
 import EditUserModal from './modals/editUserModal';
@@ -31,7 +30,6 @@ const Layout = () => {
           </p>
           <Link to="/"><img className='menuButton' src="layout/news.PNG" alt="News" style={{margin: '2rem 0 0.7rem'}} /></Link> 
           <Link to="/subs"><img className='menuButton' src="layout/subs.PNG" alt="Subs" /></Link> 
-              
         </div>
         <img className='logoMenu' src="common/logo.PNG" alt="Logo" />
         <img className='exit menuButton' src="layout/exit.PNG" alt="Exit" 

@@ -2,7 +2,7 @@ import { useEffect, useState} from "react";
 import axios from "axios";
 import PostsList from "../components/PostsList";
 import { useUser } from "../components/utilities/userContext";
-import "../styles/profile.css"
+import "../styles/profile.css";
 
 const UserProfile = () => {
   const user = useUser();
@@ -37,8 +37,8 @@ const UserProfile = () => {
         </div>
         <div className="infoColumn">
           <div className="infoText">
-            <p>Подписки: {profileData.followers}</p>
-           <p>Подписчики: {profileData.follows}</p>
+            <p>Подписки: {profileData.follows}</p>
+           <p>Подписчики: {profileData.followers}</p>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@ const UserProfile = () => {
         />
       </div>
       <div style={{background: "#F0ADAD"}}>
-        <PostsList />
+        <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${user.id}`} />
       </div>
     </div>
   );

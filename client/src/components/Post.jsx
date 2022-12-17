@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import axios from "axios";
 import { useUser } from "./utilities/userContext";
 import "../styles/feedPosts.css";
@@ -6,10 +7,13 @@ import "../styles/feedPosts.css";
 const Post = ({ data }) => {
   const user = useUser();
   const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
+  const [author, setAuthor] = useState("profilePictures/avatar.jpg");
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
-      setAuthorAvatar(JSON.parse(result.data.data).imagePath);
+      const resData = JSON.parse(result.data.data);
+      setAuthorAvatar(resData.imagePath);
+      setAuthor(resData.identificator);
     });
   }, []);
   
@@ -26,7 +30,13 @@ const Post = ({ data }) => {
       <div className="postContent">
         <div className="postInfo">
           <div className="postUserInfo">
-            <img src={authorAvatar} alt="AvatarCircle" />
+            <Link to="/profile"
+              onClick={() => {
+                user.setSelectedUser(author);
+              }}
+            >
+              <img src={authorAvatar} alt="AvatarCircle" />
+            </Link>
             <div style={{marginTop: "0.15vw", textAlign: "center"}}>
               <p style={{fontSize: '1.2em'}}>{data.name}</p>
               <p>@{data.identificator}</p>
