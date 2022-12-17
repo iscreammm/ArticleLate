@@ -1,28 +1,45 @@
-import "../styles/feedPosts.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useUser } from "./utilities/userContext";
+import "../styles/feedPosts.css";
 
-const Post = () => {
+const Post = ({ data }) => {
   const user = useUser();
+  const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
+      setAuthorAvatar(JSON.parse(result.data.data).imagePath);
+    });
+  }, []);
+  
+
+  const getDateFormat = () => {
+    let time = new Date(data.time);
+
+    return (time.getDay() + "." + time.getMonth() + "." + time.getFullYear() + " "
+      + time.getHours() + ":" + time.getMinutes());
+  }
 
   return (
     <>
       <div className="postContent">
         <div className="postInfo">
           <div className="postUserInfo">
-            <img src="post/avatarcircle.png" alt="AvatarCircle" />
+            <img src={authorAvatar} alt="AvatarCircle" />
             <div style={{marginTop: "0.15vw", textAlign: "center"}}>
-              <p style={{fontSize: '1.2em'}}>Аниматор</p>
-              <p>@animator2048</p>
+              <p style={{fontSize: '1.2em'}}>{data.name}</p>
+              <p>@{data.identificator}</p>
             </div>
           </div>
           <div className="postDate">
-            <p>19.11.2022 17:11</p>
-            <p>Игры</p>
+            <p>{getDateFormat()}</p>
+            <p>{data.category}</p>
           </div>
         </div>
         <div className="postMainContent">
-          hgjkl;''
-          <img src="post/imagepost.png" alt="ImagePost" />
+          <p dangerouslySetInnerHTML={{__html: data.text}}></p>
+          <img src={data.image} alt="ImagePost" />
         </div>
         <div className="postBottom">
           <div className="likeContainer">
