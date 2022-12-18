@@ -9,6 +9,8 @@ const Post = ({ data }) => {
   const user = useUser();
   const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
   const [author, setAuthor] = useState();
+  const [isLiked, setIsLiked] = useState(data.isLiked);
+  const [likes, setLikes] = useState(data.likesCount);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
@@ -17,6 +19,16 @@ const Post = ({ data }) => {
       setAuthor(resData.identificator);
     });
   }, []);
+
+  const refreshLikes = () => {
+    axios.get(`http://localhost:8080/getPost?userId=${data.authorId}&postId=${data.id}`).then(result => {
+      const resData = JSON.parse(result.data.data);
+      setIsLiked(resData.isLiked);
+      setLikes(resData.likesCount);
+      data.isLiked = resData.isLiked;
+      data.likesCount = resData.likesCount;
+    });
+  }
 
   return (
     <>
@@ -42,16 +54,38 @@ const Post = ({ data }) => {
         </div>
         <div className="postMainContent">
           <p dangerouslySetInnerHTML={{__html: data.text}}></p>
-          <img src={data.image} alt="ImagePost" />
+          <img src={data.image} alt="ImagePost"
+            style={{display: data.image === "" ? "none" : "block"}}
+          />
         </div>
         <div className="postBottom">
           <div className="likeContainer">
-            <img src="post/whitelike.png" alt="WhiteLike" />
-            <p>0</p>
+            <img src={isLiked ? "post/redlike.png" : "post/whitelike.png"} alt="WhiteLike"
+              onClick={async () => {
+                if (!isLiked) {
+                  await axios.put(`http://localhost:8080/incLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
+                    if (result.data.state === "Success") {
+                      refreshLikes();
+                    } else {
+                      console.log(result.data.message)
+                    }
+                  });
+                } else {
+                  await axios.put(`http://localhost:8080/decLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
+                    if (result.data.state === "Success") {
+                      refreshLikes();
+                    } else {
+                      console.log(result.data.message)
+                    }
+                  });
+                }
+              }}
+            />
+            <p>{likes}</p>
           </div>
           <button
             onClick={() => {
-              user.setSelectedPost({data, author, authorAvatar});
+              user.setSelectedPost({data, author, authorAvatar, refreshLikes});
               user.toggleComments();
             }}
           >

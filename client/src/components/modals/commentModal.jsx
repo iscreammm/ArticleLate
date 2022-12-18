@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../utilities/userContext";
@@ -11,6 +11,8 @@ const CommentModal = () => {
   const user = useUser();
   const [isInsert, setIsInsert] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [isLiked, setIsLiked] = useState();
+  const [likes, setLikes] = useState();
 
   if(!user.commentsOpen) {
     return null;
@@ -19,6 +21,14 @@ const CommentModal = () => {
   const handleComment = (e) => {
     setCommentText(e.target.value);
   };
+
+  const refreshLikes = () => {
+    axios.get(`http://localhost:8080/getPost?userId=${user.selectedPost.data.authorId}&postId=${user.selectedPost.data.id}`).then(result => {
+      const resData = JSON.parse(result.data.data);
+      setIsLiked(resData.isLiked);
+      setLikes(resData.likesCount);
+    });
+  }
 
   return (
     <div className="overlay"
@@ -56,8 +66,38 @@ const CommentModal = () => {
           </div>
           <div className="postBottom">
             <div className="likeContainer">
-              <img src="post/whitelike.png" alt="WhiteLike" />
-              <p>0</p>
+              <img
+                src={isLiked === undefined ?
+                  (user.selectedPost.data.isLiked ? "post/redlike.png" : "post/whitelike.png")
+                    : (isLiked ? "post/redlike.png" : "post/whitelike.png")}
+                alt="WhiteLike"
+                onClick={async () => {
+                  const liked = isLiked === undefined ? user.selectedPost.data.isLiked : isLiked;
+                  
+                  if (!liked) {
+                    await axios.put(`http://localhost:8080/incLikesOnPost?userId=${user.id}&postId=${user.selectedPost.data.id}`).then(result => {
+                      if (result.data.state === "Success") {
+                        refreshLikes();
+                        user.selectedPost.refreshLikes();
+                      } else {
+                        console.log(result.data.message)
+                      }
+                    });
+                  } else {
+                    await axios.put(`http://localhost:8080/decLikesOnPost?userId=${user.id}&postId=${user.selectedPost.data.id}`).then(result => {
+                      if (result.data.state === "Success") {
+                        refreshLikes();
+                        user.selectedPost.refreshLikes();
+                      } else {
+                        console.log(result.data.message)
+                      }
+                    });
+                  }
+                }}
+              />
+              <p>
+                {likes === undefined ? user.selectedPost.data.likesCount : likes}
+              </p>
             </div>
             <button
               onClick={() => {

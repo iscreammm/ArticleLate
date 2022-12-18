@@ -95,6 +95,19 @@ const CreatePostModal = () => {
           <div className="create">
             <button className="createButton"
               onClick={async () => {
+                if (selectedImage === null) {
+                  await axios.post("http://localhost:8080/createPost", {
+                    authorId: user.id,
+                    categoryId: selectedCat,
+                    text: postText,
+                    image: ""
+                  }).then(result => {
+                    console.log(result)
+                  });
+
+                  return;
+                }
+
                 const reader = new FileReader();
                 
                 reader.readAsDataURL(selectedImage);
@@ -108,7 +121,7 @@ const CreatePostModal = () => {
                     image: `${base64String}`
                   }).then(result => {
                     console.log(result)
-                  })
+                  });
                 };
               }}
               disabled={((selectedCat === 0) || (postText === "")) ? true : false}
