@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import { useUser } from "./utilities/userContext";
+import { getDateFormat } from "../js/functions";
 import "../styles/feedPosts.css";
 
 const Post = ({ data }) => {
   const user = useUser();
   const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
-  const [author, setAuthor] = useState("profilePictures/avatar.jpg");
+  const [author, setAuthor] = useState();
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
@@ -16,21 +17,13 @@ const Post = ({ data }) => {
       setAuthor(resData.identificator);
     });
   }, []);
-  
-
-  const getDateFormat = () => {
-    let time = new Date(data.time);
-
-    return (time.getDay() + "." + time.getMonth() + "." + time.getFullYear() + " "
-      + time.getHours() + ":" + time.getMinutes());
-  }
 
   return (
     <>
       <div className="postContent">
         <div className="postInfo">
           <div className="postUserInfo">
-            <Link to="/profile"
+            <Link to={data.authorId === user.id ? "/userProfile" : "/profile"}
               onClick={() => {
                 user.setSelectedUser(author);
               }}
@@ -43,7 +36,7 @@ const Post = ({ data }) => {
             </div>
           </div>
           <div className="postDate">
-            <p>{getDateFormat()}</p>
+            <p>{getDateFormat(data.time)}</p>
             <p>{data.category}</p>
           </div>
         </div>
@@ -58,9 +51,12 @@ const Post = ({ data }) => {
           </div>
           <button
             onClick={() => {
+              user.setSelectedPost({data, author, authorAvatar});
               user.toggleComments();
             }}
-          >Комментировать</button>
+          >
+            Комментировать
+          </button>
         </div>
       </div>
     </>

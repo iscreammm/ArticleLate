@@ -1,0 +1,52 @@
+.commentsModalContainer {
+  background: none;
+  border: none;
+  height: auto;
+}
+
+.commentInsert {
+  border-top: 1px solid black;
+  display: flex;
+  padding: 0.7vw;
+  align-items: center;
+  justify-content: center;
+}
+
+.commentInput {
+  width: 85%;
+  overflow: auto;
+  padding: 0.2vw;
+  height: 2.5vw;
+  background-color: #d9d9d9;
+  font-size: 1.2em;
+}
+
+.submitComment {
+  display: block;
+  margin: 1vw auto;
+  background-color: #FCCACA;
+  cursor: pointer;
+  padding: 0.3vw 0.8vw;
+}
+
+.commentContainer {
+  padding: 0.5vw;
+  display: flex;
+  border-top: 1px solid black;
+}
+
+.commentAvatar {
+  width: 3vw;
+  height: 3vw;
+  display: block;
+  border-radius: 100%;
+}
+
+.commentInfo {
+  text-align: left;
+  margin: 0.3vw 0 0 0.3vw;
+}
+
+.commentText {
+  margin-top: 0.2vw;
+}

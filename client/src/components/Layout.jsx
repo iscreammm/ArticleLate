@@ -1,15 +1,24 @@
+import { useEffect, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
+import axios from 'axios';
 import App from './App';
-import "../styles/layout.css";
 import root from "../index";
 import CommentModal from './modals/commentModal';
 import { useUser } from './utilities/userContext';
 import NotificationsModal from './modals/notificationsModal';
 import EditUserModal from './modals/editUserModal';
 import CreatePostModal from './modals/createPostModal';
+import "../styles/layout.css";
 
 const Layout = () => {
   const user = useUser();
+  const [avatar, setAvatar] = useState();
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
+      setAvatar(JSON.parse(result.data.data).imagePath);
+    });
+  }, [user.refreshUser]);
 
   return (
     <>
@@ -19,7 +28,9 @@ const Layout = () => {
       <CreatePostModal />
       <div className="main">
         <div className='menu'>
-          <Link to="/userprofile"><img className='avatar' src="layout/avatar.png" alt="Avatar" /></Link> 
+          <Link className="avatar" to="/userprofile">
+            <img src={avatar} alt="Avatar" style={{display: avatar === undefined ? "none" : "block"}} />
+          </Link> 
           <p className='notificationsContainer'> 
             <img className='notificationsIcon' src="layout/bell.PNG" alt="Bell" 
               onClick={() => {

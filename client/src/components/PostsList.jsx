@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Post from "./Post";
-import { useUser } from "./utilities/userContext";
 import "../styles/feedPosts.css";
 
 const PostsList = ({ queryString, category }) => {
-  const user = useUser();
   const [posts, setPosts] = useState();
 
   useEffect(() => {
@@ -14,7 +12,6 @@ const PostsList = ({ queryString, category }) => {
       setPosts(JSON.parse(result.data.data));
       console.log(JSON.parse(result.data.data))
     });
-    console.log("use")
   }, [category]);
 
   if (posts === undefined) {

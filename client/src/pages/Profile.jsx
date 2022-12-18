@@ -61,7 +61,7 @@ const Profile = () => {
                   } else {
                     console.log(result.data.message)
                   }
-                })
+                });
               } else {
                 axios.post("http://localhost:8080/followUser", {
                   followerId: user.id,
@@ -72,7 +72,7 @@ const Profile = () => {
                   } else {
                     console.log(result.data.message)
                   }
-                })
+                });
               }
             }}
           />
@@ -88,7 +88,7 @@ const Profile = () => {
         {profileData.info === "" ? "Информация не указана" : profileData.info}
       </p>
       <div style={{background: "#F0ADAD"}}>
-        <PostsList />
+      <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${profileId}`} />
       </div>
     </div>
   );
