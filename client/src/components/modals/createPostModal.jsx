@@ -102,6 +102,8 @@ const CreatePostModal = () => {
                     image: ""
                   }).then(result => {
                     if (result.data.state === "Success") {
+                      user.setLoadPost(true);
+                      clearData();
                       user.toggleCreatePost();
                     } else {
                       console.log(result.data.message)
@@ -121,6 +123,8 @@ const CreatePostModal = () => {
                       image: `${base64String}`
                     }).then(result => {
                       if (result.data.state === "Success") {
+                        user.setLoadPost(true);
+                        clearData();
                         user.toggleCreatePost();
                       } else {
                         console.log(result.data.message)

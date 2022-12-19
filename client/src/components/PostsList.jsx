@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Post from "./Post";
 import "../styles/feedPosts.css";
+import { useUser } from "./utilities/userContext";
 
 const PostsList = ({ queryString, category }) => {
+  const user = useUser();
   const [posts, setPosts] = useState();
 
   useEffect(() => {
@@ -13,6 +15,20 @@ const PostsList = ({ queryString, category }) => {
       console.log(JSON.parse(result.data.data))
     });
   }, [category]);
+
+  useEffect(() => {
+    if (user.loadPost) {
+      axios.get(`http://localhost:8080/getUserPosts?userId=${user.id}`).then(result => {
+        if (result.data.state === "Success") {
+          console.log(JSON.parse(result.data.data)[0])
+          setPosts(posts => [{...JSON.parse(result.data.data)[0]}, ...posts]);
+          user.setLoadPost(undefined);
+        } else {
+          console.log("Не удалось загрузить добавленный пост")
+        }
+      });
+    }
+  }, [user.loadPost]);
 
   if (posts === undefined) {
     return <></>

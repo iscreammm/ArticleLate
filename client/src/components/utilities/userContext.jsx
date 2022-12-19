@@ -17,6 +17,7 @@ export const UserProvider = ({ id, children }) => {
   const [selectedPost, setSelectedPost] = useState();
   const [editPost, setEditPost] = useState();
   const [postToRefresh, setPostToRefresh] = useState();
+  const [loadPost, setLoadPost] = useState();
 
   const toggleComments = () => {
     setCommentsOpen(prev => !prev);
@@ -55,8 +56,9 @@ export const UserProvider = ({ id, children }) => {
       selectedPost: selectedPost,
       editPost: editPost,
       postToRefresh: postToRefresh,
+      loadPost: loadPost,
       toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost,
-      reloadUser, setSelectedUser, setSelectedPost, setEditPost, setPostToRefresh
+      reloadUser, setSelectedUser, setSelectedPost, setEditPost, setPostToRefresh, setLoadPost
     }}>
       { children }
     </UserContext.Provider>
