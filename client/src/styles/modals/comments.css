@@ -1,7 +1,9 @@
 .commentsModalContainer {
-  background: none;
-  border: none;
-  height: auto;
+  background: none !important;
+  border: none !important;
+  height: auto !important;
+  overflow: auto;
+  max-height: 40vw !important;
 }
 
 .commentInsert {
@@ -19,6 +21,10 @@
   height: 2.5vw;
   background-color: #d9d9d9;
   font-size: 1.2em;
+  max-width: 85%;
+  min-width: 85%;
+  max-height: 2.5vw;
+  min-height: 2.5vw;
 }
 
 .modifyComment {

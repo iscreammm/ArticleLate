@@ -94,36 +94,29 @@ const App = () => {
                 />
               </div>
               <button id="loginButton" className="buttonLogin" style={{marginTop: "1.5vw"}}
-                disabled={((authLogin.length < 1) || (authPass.length < 1)) ? true : false}
+                disabled={((authLogin.length < 8) || (authPass.length < 8)) ? true : false}
                 onClick={async () => {
-                  if (authLogin.length < 8) {
-                    setMessage("Логин слишком короткий");
-                    showMessage('messageLogin', 'loginButton');
-                  } else if (authPass.length < 8) {
-                    setMessage("Пароль слишком короткий");
-                    showMessage('messageLogin', 'loginButton');
-                  } else {
-                    await axios.get("http://localhost:8080/loginUser", {
+                  await axios.get("http://localhost:8080/loginUser", {
                     params: {
                       login: authLogin,
                       pass: authPass
-                    }}).then(result => {
-                      console.log(result)
-                      if (result.data.state === "Error") {
-                        setMessage(result.data.message);
-                        showMessage('messageLogin', 'loginButton');
-                      } else {
-                        localStorage.setItem('userId', result.data.data);
-                        root.render(
-                          <BrowserRouter>
-                            <UserProvider id={result.data.data}>
-                              <MainPage />
-                            </UserProvider>
-                          </BrowserRouter>
-                        );
-                      }
-                    })
-                  }
+                    }
+                  }).then(result => {
+                    console.log(result)
+                    if (result.data.state === "Error") {
+                      setMessage(result.data.message);
+                      showMessage('messageLogin', 'loginButton');
+                    } else {
+                      localStorage.setItem('userId', result.data.data);
+                      root.render(
+                        <BrowserRouter>
+                          <UserProvider>
+                            <MainPage />
+                          </UserProvider>
+                        </BrowserRouter>
+                      );
+                    }
+                  })
                 }}
               >
                 Войти
@@ -162,9 +155,6 @@ const App = () => {
                       } else {
                         if (result.data.data) {
                           setMessage("Логин свободен");
-                          showMessage('messageReg', 'regButton');
-                        } else {
-                          setMessage("Логин занят");
                           showMessage('messageReg', 'regButton');
                         }
                       }
@@ -211,7 +201,7 @@ const App = () => {
                       setMessage("Пароль слишком короткий");
                       showMessage('messageReg', 'regButton');
                     } else if (repRegPass.length < 8) {
-                      setMessage("Повторный пароль слишком короткий");
+                      setMessage("Пароль слишком короткий");
                       showMessage('messageReg', 'regButton');
                     } else if (regPass !== repRegPass) {
                       setMessage("Пароли не совпадают");
@@ -226,10 +216,6 @@ const App = () => {
                           setMessage(result.data.message);
                           showMessage('messageReg', 'regButton');
                         } else {
-                          setRegLogin("");
-                          setRegPass("");
-                          setRepRegPass("");
-                          setName("");
                           setIsReg(false);
                         }
                       });

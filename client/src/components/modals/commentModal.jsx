@@ -65,7 +65,7 @@ const CommentModal = () => {
             </div>
           </div>
           <div className="postMainContent">
-            <p dangerouslySetInnerHTML={{__html: user.selectedPost.data.text}}></p>
+            <p dangerouslySetInnerHTML={{__html: user.selectedPost.data.text}} style={{textAlign: "left"}} ></p>
             <img src={user.selectedPost.data.image} alt="ImagePost" />
           </div>
           <div className="postBottom">

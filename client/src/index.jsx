@@ -11,6 +11,7 @@ const root = ReactDOM.createRoot(
 
 function restoreSession() {
   const id = localStorage.getItem('userId');
+  console.log(id);
 
   if (id) {
     root.render(

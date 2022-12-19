@@ -39,9 +39,10 @@
 }
 
 .postButtons button {
-  margin: 0 0.3vw;
   width: 2.5vw;
   border: none;
+  background: none;
+  margin: 0 0.5vw;
 }
 
 .postDate {

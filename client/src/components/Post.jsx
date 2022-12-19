@@ -93,7 +93,7 @@ const Post = ({ data }) => {
           }
           <div className="postDate">
             <p>{getDateFormat(data.time)}</p>
-            <p>{category}</p>
+            <p><b>{category}</b></p>
           </div>
         </div>
         <div className="postMainContent">
