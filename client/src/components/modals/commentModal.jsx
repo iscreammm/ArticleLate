@@ -14,6 +14,11 @@ const CommentModal = () => {
   const [isLiked, setIsLiked] = useState();
   const [likes, setLikes] = useState();
 
+  useEffect(() => {
+
+  }, [])
+  
+
   if(!user.commentsOpen) {
     return null;
   }
@@ -32,7 +37,11 @@ const CommentModal = () => {
 
   return (
     <div className="overlay"
-      onClick={user.toggleComments}
+      onClick={() => {
+        setIsInsert(false);
+        setCommentText("");
+        user.toggleComments();
+      }}
     >
       <div className="modalContainer commentsModalContainer"
         onClick={(e) => {
