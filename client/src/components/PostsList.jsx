@@ -25,7 +25,7 @@ const PostsList = ({ queryString, category }) => {
   return (
     <div className="postsContainer">
       {posts.map(post => {
-        return <Post data={post} />
+        return <Post key={post.id} data={post} />
       })}
     </div>
   );

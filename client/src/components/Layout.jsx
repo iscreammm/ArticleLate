@@ -3,11 +3,12 @@ import { Outlet, Link } from 'react-router-dom';
 import axios from 'axios';
 import App from './App';
 import root from "../index";
-import CommentModal from './modals/commentModal';
 import { useUser } from './utilities/userContext';
+import CommentModal from './modals/commentModal';
 import NotificationsModal from './modals/notificationsModal';
 import EditUserModal from './modals/editUserModal';
 import CreatePostModal from './modals/createPostModal';
+import EditPostModal from './modals/postEditModal';
 import "../styles/layout.css";
 
 const Layout = () => {
@@ -26,6 +27,7 @@ const Layout = () => {
       <EditUserModal />
       <CommentModal />
       <CreatePostModal />
+      <EditPostModal />
       <div className="main">
         <div className='menu'>
           <Link className="avatar" to="/userprofile">

@@ -18,7 +18,7 @@ const CommentsList = ({ postId }) => {
   return (
     <div className="commentsContainer">
       {comments.map(comment => {
-        return <Comment data={comment} />
+        return <Comment key={comment.id} data={comment} />
       })}
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../utilities/userContext";
@@ -13,11 +13,6 @@ const CommentModal = () => {
   const [commentText, setCommentText] = useState("");
   const [isLiked, setIsLiked] = useState();
   const [likes, setLikes] = useState();
-
-  useEffect(() => {
-
-  }, [])
-  
 
   if(!user.commentsOpen) {
     return null;
@@ -48,7 +43,7 @@ const CommentModal = () => {
           e.stopPropagation();
         }}
       >
-        <div className="postContent">
+        <div className="postContent" style={{margin: "0 auto"}}>
           <div className="postInfo">
             <div className="postUserInfo">
               <Link to={user.selectedPost.data.authorId === user.id ? "/userProfile" : "/profile"}

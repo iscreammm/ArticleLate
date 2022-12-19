@@ -10,11 +10,14 @@ export const UserProvider = ({ id, children }) => {
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
+  const [editPostOpen, setEditPostOpen] = useState(false);
   const [editUserOpen, setEditUserModal] = useState(false);
   const [refreshUser, setRefreshUser] = useState(false);
   const [selectedUser, setSelectedUser] = useState();
   const [selectedPost, setSelectedPost] = useState();
-  
+  const [editPost, setEditPost] = useState();
+  const [postToRefresh, setPostToRefresh] = useState();
+
   const toggleComments = () => {
     setCommentsOpen(prev => !prev);
   }
@@ -25,6 +28,10 @@ export const UserProvider = ({ id, children }) => {
 
   const toggleCreatePost = () => {
     setCreatePostOpen(prev => !prev);
+  }
+
+  const toggleEditPost = () => {
+    setEditPostOpen(prev => !prev);
   }
 
   const toggleInfoEditing = () => {
@@ -41,12 +48,15 @@ export const UserProvider = ({ id, children }) => {
       commentsOpen: commentsOpen,
       notifOpen: notifOpen,
       createPostOpen: createPostOpen,
+      editPostOpen: editPostOpen,
       editUserOpen: editUserOpen,
       refreshUser: refreshUser,
       selectedUser: selectedUser,
       selectedPost: selectedPost,
-      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, reloadUser,
-      setSelectedUser, setSelectedPost
+      editPost: editPost,
+      postToRefresh: postToRefresh,
+      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost,
+      reloadUser, setSelectedUser, setSelectedPost, setEditPost, setPostToRefresh
     }}>
       { children }
     </UserContext.Provider>

@@ -9,8 +9,12 @@ const Post = ({ data }) => {
   const user = useUser();
   const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
   const [author, setAuthor] = useState();
+  const [category, setCategory] = useState(data.category);
+  const [text, setText] = useState(data.text);
+  const [image, setImage] = useState(data.image);
   const [isLiked, setIsLiked] = useState(data.isLiked);
   const [likes, setLikes] = useState(data.likesCount);
+  const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
@@ -19,6 +23,24 @@ const Post = ({ data }) => {
       setAuthor(resData.identificator);
     });
   }, []);
+
+  useEffect(() => {
+    if (user.postToRefresh === data.id) {
+      axios.get(`http://localhost:8080/getPost?userId=${data.authorId}&postId=${data.id}`).then(result => {
+        const resData = JSON.parse(result.data.data);
+        setCategory(resData.category);
+        setText(resData.text);
+        setImage(resData.image);
+        data.category = resData.category;
+        data.text = resData.text;
+        data.image = resData.image;
+      });
+    }
+  }, [user.postToRefresh]);
+
+  if (deleted) {
+    return <></>
+  }
 
   const refreshLikes = () => {
     axios.get(`http://localhost:8080/getPost?userId=${data.authorId}&postId=${data.id}`).then(result => {
@@ -34,7 +56,7 @@ const Post = ({ data }) => {
     <>
       <div className="postContent">
         <div className="postInfo">
-          <div className="postUserInfo">
+          <div className="postUserInfo" style={{width: data.authorId !== user.id ? "100%" : "60%"}}>
             <Link to={data.authorId === user.id ? "/userProfile" : "/profile"}
               onClick={() => {
                 user.setSelectedUser(author);
@@ -47,15 +69,37 @@ const Post = ({ data }) => {
               <p>@{data.identificator}</p>
             </div>
           </div>
+          {data.authorId !== user.id ? <></> :
+            <div className="postButtons">
+              <button onClick={() => {
+                user.setEditPost(data);
+                user.toggleEditPost();
+              }}>
+                <img src="common/edit.jpg" alt="Modify" />
+              </button>
+              <button onClick={() => {
+                  axios.delete(`http://localhost:8080/deletePost?postId=${data.id}`).then(result => {
+                    if (result.data.state === "Success") {
+                      setDeleted(true);
+                    } else {
+                      console.log(result.data.message)
+                    }
+                  });
+                }}
+              >
+                <img src="common/delete.jpg" alt="Delete" />
+              </button>
+            </div>  
+          }
           <div className="postDate">
             <p>{getDateFormat(data.time)}</p>
-            <p>{data.category}</p>
+            <p>{category}</p>
           </div>
         </div>
         <div className="postMainContent">
-          <p dangerouslySetInnerHTML={{__html: data.text}}></p>
-          <img src={data.image} alt="ImagePost"
-            style={{display: data.image === "" ? "none" : "block"}}
+          <p dangerouslySetInnerHTML={{__html: text}}></p>
+          <img src={image} alt="ImagePost"
+            style={{display: image === "" ? "none" : "block"}}
           />
         </div>
         <div className="postBottom">

@@ -1,31 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../utilities/userContext";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
-const CreatePostModal = () => {
+const EditPostModal = () => {
   const user = useUser();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedCat, setSelectedCat] = useState(0);
   const [postText, setPostText] = useState("");
-
-  if(!user.createPostOpen) {
+  const [selectedCat, setSelectedCat] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(true);
+  
+  useEffect(() => {
+    if (user.editPostOpen) {
+      setPostText(user.editPost.text);
+      setSelectedCat(getCatId(user.editPost.category));
+    }
+  }, [user.editPostOpen]);
+  
+  if(!user.editPostOpen) {
     return null;
   }
 
-  const clearData = () => {
-    setSelectedImage(null);
-    setSelectedCat(0);
-    setPostText("");
-  };
-  
-  const handleCatChange = (e) => {
-    setSelectedCat(e.target.value);
-  };
+  const getCatId = (category) => {
+    let catId;
+
+    switch(category) {
+      case "It":
+        catId = 1;
+        break;
+      case "Игры":
+        catId = 2;
+        break;
+      case "Кино":
+        catId = 3;
+        break;
+      case "Арты":
+        catId = 4;
+        break;
+      case "Юмор":
+        catId = 5;
+        break;
+      case "Наука":
+        catId = 6;
+        break;
+      case "Музыка":
+        catId = 7;
+        break;
+      case "Новости":
+        catId = 8;
+        break;
+      default:
+        console.log("Unknown category");
+    }
+
+    return catId;
+  }
 
   const handleTextChange = (e) => {
     setPostText(e.target.value);
+    setDisabled(selectedCat, e.target.value);
+  };
+
+  const handleCatChange = (e) => {
+    setSelectedCat(e.target.value);
+    setDisabled(e.target.value, postText);
   };
 
   function addFormatting(tagName) {
@@ -34,6 +73,15 @@ const CreatePostModal = () => {
     let end = element.selectionEnd;
     setPostText(postText.slice(0, start) + `<${tagName}>` +
         postText.slice(start, end)+ `</${tagName}>` + postText.slice(end));
+  }
+
+  const setDisabled = (cat, text) => {
+    if ((getCatId(user.editPost.category) === parseInt(cat)) && (user.editPost.text === text)
+        && (selectedImage === null)) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
   }
 
   return (
@@ -45,7 +93,6 @@ const CreatePostModal = () => {
               value={selectedCat}
               onChange={handleCatChange}
             >
-              <option value={0} disabled hidden>Категории</option>
               <option value={1}>It</option>
               <option value={2}>Игры</option>
               <option value={3}>Кино</option>
@@ -59,8 +106,8 @@ const CreatePostModal = () => {
           <div className="graySpace"></div>
           <div className="closeBtn"
             onClick={() => {
-              clearData();
-              user.toggleCreatePost();
+              setSelectedImage(null);
+              user.toggleEditPost();
             }}
           >
           <img src="common/close.png" alt="Close"/></div>
@@ -72,10 +119,10 @@ const CreatePostModal = () => {
         />
         <img id="#createPostImage" alt="Create post"
           className="createPostImage"
-          src={selectedImage !== null ? URL.createObjectURL(selectedImage) : ""}
-          style={{display: selectedImage ? "block" : "none"}}
+          src={selectedImage !== null ? URL.createObjectURL(selectedImage) : user.editPost.image}
+          style={{display: selectedImage || user.editPost.image ? "block" : "none"}}
         />
-        <div className="bottomMenu" style={{position: selectedImage === null ? "absolute" : "sticky"}}>
+        <div className="bottomMenu" style={{position: !selectedImage && !user.editPost.image ? "absolute" : "sticky"}}>
           <div className="uploadImage">
             <label className="loadImgLabel" htmlFor="#loadPostImage">Загрузить изображение</label>
             <input id="#loadPostImage" type="file"
@@ -94,44 +141,50 @@ const CreatePostModal = () => {
           <div className="create">
             <button className="createButton"
               onClick={async () => {
-                if (selectedImage === null) {
-                  await axios.post("http://localhost:8080/createPost", {
-                    authorId: user.id,
-                    categoryId: selectedCat,
-                    text: postText,
-                    image: ""
-                  }).then(result => {
-                    if (result.data.state === "Success") {
-                      user.toggleCreatePost();
-                    } else {
-                      console.log(result.data.message)
-                    }
-                  });
+                if(postText === "") {
+                  console.log("error");
                 } else {
-                  const reader = new FileReader();
-                  
-                  reader.readAsDataURL(selectedImage);
-                  reader.onloadend = async () => {
-                    const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-
-                    await axios.post("http://localhost:8080/createPost", {
-                      authorId: user.id,
-                      categoryId: selectedCat,
+                  if (!selectedImage) {
+                    await axios.put("http://localhost:8080/changePost", {
+                      id: user.editPost.id,
                       text: postText,
-                      image: `${base64String}`
+                      categoryId: parseInt(selectedCat),
+                      image: user.editPost.image
                     }).then(result => {
                       if (result.data.state === "Success") {
-                        user.toggleCreatePost();
+                        user.setPostToRefresh(user.editPost.id);
+                        user.toggleEditPost();
                       } else {
                         console.log(result.data.message)
                       }
                     });
-                  };
+                  } else {
+                    const reader = new FileReader();
+                    
+                    reader.readAsDataURL(selectedImage);
+                    reader.onloadend = async () => {
+                      const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+
+                      await axios.put("http://localhost:8080/changePost", {
+                        id: user.editPost.id,
+                        text: postText,
+                        categoryId: parseInt(selectedCat),
+                        image: `${base64String}`
+                      }).then(result => {
+                        if (result.data.state === "Success") {
+                          user.setPostToRefresh(user.editPost.id);
+                          user.toggleEditPost();
+                        } else {
+                          console.log(result.data.message)
+                        }
+                      });
+                    };
+                  }
                 }
               }}
-              disabled={((selectedCat === 0) || (postText === "")) ? true : false}
+              disabled={isDisabled}
             >
-              Создать
+              Сохранить
             </button>
           </div>
         </div>
@@ -140,4 +193,4 @@ const CreatePostModal = () => {
   );
 };
 
-export default CreatePostModal
+export default EditPostModal

@@ -38,7 +38,7 @@ const Comment = ({ data }) => {
           <button onClick={() => setModifying(true)}
             disabled={modifying}
           >
-            <img className="modifyCommentBtn" src="common/logo.png" alt="Modify" />
+            <img src="common/edit.jpg" alt="Modify" />
           </button>
           <button onClick={() => {
               axios.delete(`http://localhost:8080/deleteComment?commentId=${data.id}`).then(result => {
@@ -50,7 +50,7 @@ const Comment = ({ data }) => {
               });
             }}
           >
-            <img className="modifyCommentBtn" src="common/logo.png" alt="Delete" />
+            <img src="common/delete.jpg" alt="Delete" />
           </button>
         </div>  
       }
