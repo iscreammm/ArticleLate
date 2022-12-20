@@ -1,6 +1,7 @@
 package com.articlelate.restapi.utils;
 
 import java.sql.*;
+import java.util.Properties;
 
 public class DataBase {
 
@@ -32,20 +33,24 @@ public class DataBase {
                 "    loginid integer REFERENCES auth_data(id) NOT NULL,\n" +
                 "    name character varying(30) NOT NULL,\n" +
                 "    identificator character varying(30) NOT NULL,\n" +
-                "    profilepicture character varying(50) NOT NULL\n" +
+                "    profilepicture character varying(100) NOT NULL\n" +
                 ");" +
 
                 "CREATE TABLE IF NOT EXISTS categories (\n" +
-                "    id serial PRIMARY KEY,\n" +
+                "    id integer PRIMARY KEY,\n" +
                 "    name character varying(20) NOT NULL\n" +
                 ");" +
+
+                "INSERT INTO categories(id, name) VALUES(1, 'IT'), (2, 'Игры'), (3, 'Кино'), " +
+                "(4, 'Арты'), (5, 'Юмор'), (6, 'Наука'), (7, 'Музыка'), (8, 'Новости') " +
+                "ON CONFLICT(id) DO NOTHING;" +
 
                 "CREATE TABLE IF NOT EXISTS posts (\n" +
                 "    id serial PRIMARY KEY,\n" +
                 "    authorid integer REFERENCES user_info(id) NOT NULL,\n" +
                 "    posttime timestamp without time zone NOT NULL,\n" +
                 "    postcategoryid integer REFERENCES categories(id) NOT NULL,\n" +
-                "    postpicture character varying(50),\n" +
+                "    postpicture character varying(100),\n" +
                 "    posttext character varying(10000) NOT NULL,\n" +
                 "    postlikes integer\n" +
                 ");"+
@@ -94,7 +99,14 @@ public class DataBase {
 
         System.out.println("PostgreSQL JDBC Driver successfully connected");
 
-        dbConnection = DriverManager.getConnection(DB_URL, USER, PASS);
+        Properties props = new Properties();
+
+        props.setProperty("user", USER);
+        props.setProperty("password", PASS);
+        props.setProperty("useUnicode","true");
+        props.setProperty("characterEncoding","windows-1251");
+
+        dbConnection = DriverManager.getConnection(DB_URL, props);
 
         return dbConnection;
     }

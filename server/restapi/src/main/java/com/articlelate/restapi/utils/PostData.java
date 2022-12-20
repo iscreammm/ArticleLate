@@ -7,9 +7,10 @@ public class PostData {
     private String text;
     private String image;
 
-    public PostData(int id, String text, String image) {
+    public PostData(int id, String text, int categoryId, String image) {
         this.id = id;
         this.text = text;
+        this.categoryId = categoryId;
         this.image = image;
 
         this.authorId = 0;
