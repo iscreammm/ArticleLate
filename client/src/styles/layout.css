@@ -1,0 +1,72 @@
+.menu {
+  width: 10%;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+}
+
+.avatar {
+  display: block;
+  width: 62%;
+  min-height: 6vw;
+  min-width: 62%;
+  border-radius: 100%;
+  border: 3px solid #a32a2a;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+.avatar img {
+  border-radius: 100%;
+}
+
+.notificationsIcon {
+  width: 35%;
+  position: absolute;
+  background-color: #FFF;
+  border-radius: 100%;
+  right: 5%;
+  top: 0%;
+  cursor: pointer;
+}
+
+.menuButton {
+  cursor: pointer;
+  background-color: #FFBDBD;
+}
+
+.menuButton:hover {
+  background-color: #FD7676;
+}
+
+.notificationsCount {
+  right: 0;
+  top: -14%;
+  position: absolute;
+  background: #FFF;
+  padding: 2px 6px;
+  border-radius: 100%;
+  border: 2px solid #a32a2a;
+}
+
+.notificationsContainer {
+  position: absolute;
+  width: 100%;
+  top: 24%;
+  height: 4vw;
+}
+
+.logoMenu {
+  width: 10%;
+  position: absolute;
+  top: 5%;
+  right: 5%;
+}
+
+.exit {
+  width: 10%;
+  position: absolute;
+  bottom: 5%;
+  left: 5%; 
+}
