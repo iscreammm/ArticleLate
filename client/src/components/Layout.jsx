@@ -10,6 +10,7 @@ import EditUserModal from './modals/editUserModal';
 import CreatePostModal from './modals/createPostModal';
 import EditPostModal from './modals/postEditModal';
 import "../styles/layout.css";
+import ErrorModal from './modals/errorModal';
 
 const Layout = () => {
   const user = useUser();
@@ -32,6 +33,7 @@ const Layout = () => {
       <CommentModal />
       <CreatePostModal />
       <EditPostModal />
+      <ErrorModal />
       <div className="main">
         <div className='menu'>
           <Link className="avatar" to="/userprofile">

@@ -22,7 +22,8 @@ const PostsList = ({ queryString, category }) => {
           setPosts(posts => [{...JSON.parse(result.data.data)[0]}, ...posts]);
           user.setLoadPost(undefined);
         } else {
-          console.log("Не удалось загрузить добавленный пост")
+          user.setErrorMessage("Не удалось загрузить добавленный пост");
+          user.toggleError();
         }
       });
     }

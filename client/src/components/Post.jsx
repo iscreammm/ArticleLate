@@ -78,7 +78,8 @@ const Post = ({ data }) => {
                     if (result.data.state === "Success") {
                       setDeleted(true);
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   });
                 }}
@@ -107,7 +108,8 @@ const Post = ({ data }) => {
                     if (result.data.state === "Success") {
                       refreshLikes();
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   });
                 } else {
@@ -115,7 +117,8 @@ const Post = ({ data }) => {
                     if (result.data.state === "Success") {
                       refreshLikes();
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   });
                 }
@@ -125,7 +128,6 @@ const Post = ({ data }) => {
           </div>
           <button
             onClick={() => {
-              console.log(data, author, authorAvatar)
               user.setSelectedPost({data, authorAvatar, refreshLikes});
               user.toggleComments();
             }}

@@ -21,7 +21,7 @@ const Comment = ({ data }) => {
     return <></>
   }
 
-  const addLinks = () => {
+  async function addLinks() {
     let temp = text;
     const reg = new RegExp("@\\w{1,30}", "g");
     let matches = temp.match(reg);
@@ -35,18 +35,34 @@ const Comment = ({ data }) => {
           start = temp.indexOf(matches[i]);
           end = start + matches[i].length;
           result.push(temp.slice(0, start));
-          result.push(<Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}>{matches[i]}</Link>);
+          await axios.get(`http://localhost:8080/verifyIdentificator?identificator=${data.identificator}`).then(result => {
+            if (result.data.state === "Success") {
+              if (result.data.data) {
+                result.push(<Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}>{matches[i]}</Link>); 
+              } else {
+                result.push(matches[i]);
+              }
+            }
+          })
         } else {
           start = temp.indexOf(matches[i]);
           result.push(temp.slice(end, start));
 
           end = start + matches[i].length;
-          result.push(
-            <Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}
-              onClick={() => user.toggleComments()}
-            >{matches[i]}</Link>
-          );
-
+          await axios.get(`http://localhost:8080/verifyIdentificator?identificator=${data.identificator}`).then(result => {
+            if (result.data.state === "Success") {
+              if (result.data.data) {
+                result.push(
+                  <Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}
+                    onClick={() => user.toggleComments()}
+                  >{matches[i]}</Link>
+                );
+              } else {
+                result.push(matches[i]);
+              }
+            }
+          })
+          
           if (i === (matches.length - 1)) {
             result.push(temp.slice(end, temp.length));
           }
@@ -89,7 +105,8 @@ const Comment = ({ data }) => {
                 if (result.data.state === "Success") {
                   setDeleted(true);
                 } else {
-                  console.log(result.data.message)
+                  user.setErrorMessage(result.data.message);
+                  user.toggleError();
                 }
               });
             }}
@@ -106,7 +123,8 @@ const Comment = ({ data }) => {
                 addLinks();
                 setModifying(false);
               } else {
-                console.log(result.data.message)
+                user.setErrorMessage(result.data.message);
+                user.toggleError();
               }
             });
           }}

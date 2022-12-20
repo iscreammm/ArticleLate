@@ -61,7 +61,8 @@ const Profile = () => {
                   if (result.data.state === "Success") {
                     setIsSubscribed(false);
                   } else {
-                    console.log(result.data.message)
+                    user.setErrorMessage(result.data.message);
+                    user.toggleError();
                   }
                 });
               } else {
@@ -72,7 +73,8 @@ const Profile = () => {
                   if (result.data.state === "Success") {
                     setIsSubscribed(true);
                   } else {
-                    console.log(result.data.message)
+                    user.setErrorMessage(result.data.message);
+                    user.toggleError();
                   }
                 });
               }

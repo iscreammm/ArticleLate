@@ -85,7 +85,8 @@ const CommentModal = () => {
                         refreshLikes();
                         user.selectedPost.refreshLikes();
                       } else {
-                        console.log(result.data.message)
+                        user.setErrorMessage(result.data.message);
+                        user.toggleError();
                       }
                     });
                   } else {
@@ -94,7 +95,8 @@ const CommentModal = () => {
                         refreshLikes();
                         user.selectedPost.refreshLikes();
                       } else {
-                        console.log(result.data.message)
+                        user.setErrorMessage(result.data.message);
+                        user.toggleError();
                       }
                     });
                   }
@@ -133,7 +135,8 @@ const CommentModal = () => {
                       setCommentText("");
                       setIsInsert(false);
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   })
                 }}
