@@ -1,6 +1,7 @@
 package com.articlelate.restapi.utils;
 
 import java.sql.*;
+import java.util.Properties;
 
 public class DataBase {
 
@@ -98,7 +99,14 @@ public class DataBase {
 
         System.out.println("PostgreSQL JDBC Driver successfully connected");
 
-        dbConnection = DriverManager.getConnection(DB_URL, USER, PASS);
+        Properties props = new Properties();
+
+        props.setProperty("user", USER);
+        props.setProperty("password", PASS);
+        props.setProperty("useUnicode","true");
+        props.setProperty("characterEncoding","windows-1251");
+
+        dbConnection = DriverManager.getConnection(DB_URL, props);
 
         return dbConnection;
     }

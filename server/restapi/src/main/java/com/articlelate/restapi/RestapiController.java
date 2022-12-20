@@ -597,7 +597,9 @@ public class RestapiController {
         PostData post = gson.fromJson(dataJson, PostData.class);
 
         try {
-            data = loadImage(post.getImage(), "postPictures");
+            if (!post.getImage().equals("")) {
+                data = loadImage(post.getImage(), "postPictures");
+            }
 
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
 
@@ -861,7 +863,7 @@ public class RestapiController {
 
             if (post.getImage().contains("postPictures")) {
                 data = post.getImage();
-            } else {
+            } else if (!post.getImage().equals("")){
                 data = loadImage(post.getImage(), "postPictures");
 
                 String sql = "SELECT postpicture FROM posts WHERE id = " + post.getId();
@@ -877,11 +879,15 @@ public class RestapiController {
                     picPath = rs.getString("postpicture");
                 }
 
-                deleteFile("../client/public/" + picPath);
+                if (!picPath.equals("")) {
+                    deleteFile("../client/public/" + picPath);
+                }
             }
 
             String sql = "UPDATE posts SET postpicture = \'" + data + "\'"
-                    + ", posttext = \'" + post.getText() + "\' WHERE id = " + post.getId();
+                    + ", posttext = \'" + post.getText() + "\'"
+                    + ", postcategoryid = " + post.getCategoryId()
+                    + " WHERE id = " + post.getId();
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
