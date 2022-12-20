@@ -1333,6 +1333,42 @@ public class RestapiController {
         return gson.toJson(new Message<>("Success", "", data));
     }
 
+    @GetMapping("/getNotificationsCount")
+    public String getNotificationsCount(@RequestParam int userId) {
+        int data = 0;
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try {
+            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+
+            Connection dbConnection = null;
+            Statement statement = null;
+
+            String sql = "SELECT COUNT(*) AS notifications_count FROM notifications WHERE userid = " + userId;
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                data = rs.getInt("notifications_count");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver is not found");
+            e.printStackTrace();
+        }
+
+        return gson.toJson(new Message<>("Success", "", data));
+    }
+
     @DeleteMapping("/deleteNotification")
     public String deleteNotification(@RequestParam int notificationId) {
         GsonBuilder builder = new GsonBuilder();
