@@ -6,12 +6,19 @@
 }
 
 .avatar {
+  display: block;
   width: 62%;
+  min-height: 6vw;
+  min-width: 62%;
   border-radius: 100%;
   border: 3px solid #a32a2a;
   cursor: pointer;
   position: relative;
   z-index: 2;
+}
+
+.avatar img {
+  border-radius: 100%;
 }
 
 .notificationsIcon {

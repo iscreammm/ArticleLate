@@ -30,3 +30,8 @@
   cursor: pointer;
   border: 1px solid black;
 }
+
+.noNotifications {
+  font-size: 1.5em;
+  margin-top: 6vw;
+}

@@ -5,6 +5,7 @@
 }
 
 .postContent {
+  margin-bottom: 2.5vw;
   border: 2px solid black;
   border-radius: 1.2vw;
   background-color: white;
@@ -29,15 +30,26 @@
 
 .postUserInfo {
   padding: 0.3vw;
-  width: 65%;
+  width: 100%;
   display: flex;
+}
+
+.postButtons {
+  width: 50%;
+}
+
+.postButtons button {
+  width: 2.5vw;
+  border: none;
+  background: none;
+  margin: 0 0.5vw;
 }
 
 .postDate {
   display: inline-block;
   text-align: center;
   vertical-align: middle;
-  width: 35%;
+  width: 50%;
 }
 
 .postMainContent {

@@ -1,22 +1,35 @@
+import { useEffect, useState} from "react";
+import axios from "axios";
 import PostsList from "../components/PostsList";
 import { useUser } from "../components/utilities/userContext";
-import "../styles/profile.css"
+import "../styles/profile.css";
 
 const UserProfile = () => {
   const user = useUser();
+  const [profileData, setProfileData] = useState();
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
+      setProfileData(JSON.parse(result.data.data));
+    });
+  }, [user.refreshUser]);
+  
+  if (profileData === undefined) {
+    return <></>
+  }
 
   return (
     <div className="pageContainer profile">
       <div className="profileInfo">
         <div className="infoColumn">
           <div className="infoText">
-            <p>Аноним</p>
-            <p>@anonim123</p>
+            <p>{profileData.name}</p>
+            <p>@{profileData.identificator}</p>
           </div>
         </div>
         <div className="infoColumn">
-          <img className="userAvatar" src="layout/avatar.png" alt="Avatar2" />
-          <img className="profileInfoButton" src="profile/change.png" alt="Change" 
+          <img className="userAvatar" src={`${profileData.imagePath}`} alt="Avatar2" />
+          <img className="profileInfoButton" src="profile/change.png" alt="Change"
             onClick={() => {
               user.toggleInfoEditing();
             }}
@@ -24,12 +37,14 @@ const UserProfile = () => {
         </div>
         <div className="infoColumn">
           <div className="infoText">
-            <p>Подписки: 0</p>
-           <p>Подписчики: 0</p>
+            <p>Подписки: {profileData.follows}</p>
+           <p>Подписчики: {profileData.followers}</p>
           </div>
         </div>
       </div>
-      <p className="about">Анонимный пользователь сайта, который сидит тут и не знает, что написать о себе.</p>
+      <p className="about" style={{textAlign: profileData.info === "" ? "center" : ""}}>
+        {profileData.info === "" ? "Информация не указана" : profileData.info}
+      </p>
       <div style={{textAlign: "center"}}>
         <img className="createPostButton" src="profile/createpost.png" alt="CreatePost" 
           onClick={() => {
@@ -38,7 +53,7 @@ const UserProfile = () => {
         />
       </div>
       <div style={{background: "#F0ADAD"}}>
-        <PostsList />
+        <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${user.id}`} />
       </div>
     </div>
   );
