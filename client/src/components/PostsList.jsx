@@ -12,7 +12,6 @@ const PostsList = ({ queryString, category }) => {
     let query = queryString + (category !== undefined ? `&categoryId=${category}` : "");
     axios.get(query).then(result => {
       setPosts(JSON.parse(result.data.data));
-      console.log(JSON.parse(result.data.data))
     });
   }, [category]);
 
@@ -20,7 +19,6 @@ const PostsList = ({ queryString, category }) => {
     if (user.loadPost) {
       axios.get(`http://localhost:8080/getUserPosts?userId=${user.id}`).then(result => {
         if (result.data.state === "Success") {
-          console.log(JSON.parse(result.data.data)[0])
           setPosts(posts => [{...JSON.parse(result.data.data)[0]}, ...posts]);
           user.setLoadPost(undefined);
         } else {

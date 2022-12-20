@@ -102,7 +102,6 @@ const App = () => {
                       pass: authPass
                     }
                   }).then(result => {
-                    console.log(result)
                     if (result.data.state === "Error") {
                       setMessage(result.data.message);
                       showMessage('messageLogin', 'loginButton');

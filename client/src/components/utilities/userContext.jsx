@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 const UserContext = React.createContext()
 
@@ -13,11 +14,21 @@ export const UserProvider = ({ id, children }) => {
   const [editPostOpen, setEditPostOpen] = useState(false);
   const [editUserOpen, setEditUserModal] = useState(false);
   const [refreshUser, setRefreshUser] = useState(false);
-  const [selectedUser, setSelectedUser] = useState();
   const [selectedPost, setSelectedPost] = useState();
   const [editPost, setEditPost] = useState();
   const [postToRefresh, setPostToRefresh] = useState();
   const [loadPost, setLoadPost] = useState();
+  const [identificator, setIdentificator] = useState();
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/getProfile?userId=${id}`).then(result => {
+      setIdentificator(JSON.parse(result.data.data).identificator);
+    });
+  }, [refreshUser])
+
+  if (!identificator) {
+    return <></>
+  }
 
   const toggleComments = () => {
     setCommentsOpen(prev => !prev);
@@ -46,19 +57,19 @@ export const UserProvider = ({ id, children }) => {
   return (
     <UserContext.Provider value={{
       id: id,
+      identificator: identificator,
       commentsOpen: commentsOpen,
       notifOpen: notifOpen,
       createPostOpen: createPostOpen,
       editPostOpen: editPostOpen,
       editUserOpen: editUserOpen,
       refreshUser: refreshUser,
-      selectedUser: selectedUser,
       selectedPost: selectedPost,
       editPost: editPost,
       postToRefresh: postToRefresh,
       loadPost: loadPost,
       toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost,
-      reloadUser, setSelectedUser, setSelectedPost, setEditPost, setPostToRefresh, setLoadPost
+      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setLoadPost
     }}>
       { children }
     </UserContext.Provider>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../components/utilities/userContext";
 import PostsList from "../components/PostsList";
@@ -6,12 +7,13 @@ import "../styles/profile.css";
 
 const Profile = () => {
   const user = useUser();
+  const { identifier } = useParams();
   const [profileId, setProfileId] = useState();
   const [profileData, setProfileData] = useState();
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  useEffect(() => {
-    axios.get(`http://localhost:8080/getIdByIdentificator?identificator=${user.selectedUser}`).then(result => {
+  useEffect(async () => {
+    await axios.get(`http://localhost:8080/getIdByIdentificator?identificator=${identifier}`).then(result => {
       setProfileId(result.data.data);
       axios.get(`http://localhost:8080/getProfile?userId=${result.data.data}`).then(res => {
         setProfileData(JSON.parse(res.data.data));
@@ -22,7 +24,7 @@ const Profile = () => {
         }
       });
     });
-  }, [])
+  }, [identifier]);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${profileId}`).then(res => {

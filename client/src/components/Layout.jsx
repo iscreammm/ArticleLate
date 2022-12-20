@@ -14,10 +14,14 @@ import "../styles/layout.css";
 const Layout = () => {
   const user = useUser();
   const [avatar, setAvatar] = useState();
+  const [notificationsCount, setNotificationsCount] = useState(0);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
       setAvatar(JSON.parse(result.data.data).imagePath);
+    });
+    axios.get(`http://localhost:8080/getNotificationsCount?userId=${user.id}`).then(result => {
+      setNotificationsCount(result.data.data);
     });
   }, [user.refreshUser]);
 
@@ -39,7 +43,7 @@ const Layout = () => {
                 user.toggleNotifications();
               }}
             />  
-            <p className='notificationsCount'>0</p>
+            <p className='notificationsCount'>{notificationsCount}</p>
           </p>
           <Link to="/"><img className='menuButton' src="layout/news.PNG" alt="News" style={{margin: '2rem 0 0.7rem'}} /></Link> 
           <Link to="/subs"><img className='menuButton' src="layout/subs.PNG" alt="Subs" /></Link> 

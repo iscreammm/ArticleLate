@@ -79,7 +79,7 @@
   margin: 0 0.3vw;
   width: 1.5vw;
   cursor: pointer;
-  /*border: none;*/
+  height: 1.5vw;
 }
 
 .saveComment {

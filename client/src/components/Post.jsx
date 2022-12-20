@@ -56,12 +56,8 @@ const Post = ({ data }) => {
     <>
       <div className="postContent">
         <div className="postInfo">
-          <div className="postUserInfo" style={{width: data.authorId !== user.id ? "100%" : "60%"}}>
-            <Link to={data.authorId === user.id ? "/userProfile" : "/profile"}
-              onClick={() => {
-                user.setSelectedUser(author);
-              }}
-            >
+          <div className="postUserInfo" style={{width: data.authorId !== user.id ? "100%" : "67%"}}>
+            <Link to={`/profile/${data.identificator}`}>
               <img src={authorAvatar} alt="AvatarCircle" />
             </Link>
             <div style={{marginTop: "0.15vw", textAlign: "center"}}>
@@ -129,7 +125,8 @@ const Post = ({ data }) => {
           </div>
           <button
             onClick={() => {
-              user.setSelectedPost({data, author, authorAvatar, refreshLikes});
+              console.log(data, author, authorAvatar)
+              user.setSelectedPost({data, authorAvatar, refreshLikes});
               user.toggleComments();
             }}
           >

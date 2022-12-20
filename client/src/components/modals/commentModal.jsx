@@ -46,9 +46,8 @@ const CommentModal = () => {
         <div className="postContent" style={{margin: "0 auto"}}>
           <div className="postInfo">
             <div className="postUserInfo">
-              <Link to={user.selectedPost.data.authorId === user.id ? "/userProfile" : "/profile"}
+              <Link to={`/profile/${user.selectedPost.data.identificator}`}
                 onClick={() => {
-                  user.setSelectedUser(user.selectedPost.author);
                   user.toggleComments();
                 }}
               >
@@ -66,7 +65,9 @@ const CommentModal = () => {
           </div>
           <div className="postMainContent">
             <p dangerouslySetInnerHTML={{__html: user.selectedPost.data.text}} style={{textAlign: "left"}} ></p>
-            <img src={user.selectedPost.data.image} alt="ImagePost" />
+            <img src={user.selectedPost.data.image} alt="ImagePost"
+              style={{display: user.selectedPost.data.image ? "block" : "none"}}
+            />
           </div>
           <div className="postBottom">
             <div className="likeContainer">
