@@ -547,9 +547,9 @@ public class RestapiController {
 
         return gson.toJson(new Message<>("Success", "", data));
     }
-
     @GetMapping("/verifyIdentificator")
-    public String verifyIdentificator(@RequestParam String identificator, @RequestParam int userId) {
+    public String verifyIdentificator(@RequestParam String identificator,
+                                      @RequestParam(required = false, defaultValue = "0") int userId) {
         boolean data = false;
 
         GsonBuilder builder = new GsonBuilder();
@@ -561,8 +561,11 @@ public class RestapiController {
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "SELECT * FROM user_info WHERE identificator = \'" + identificator + "\'"
-                    + " AND id != " + userId;
+            String sql = "SELECT * FROM user_info WHERE identificator = \'" + identificator + "\'";
+
+            if (userId != 0) {
+                sql += " AND id != " + userId;
+            }
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();

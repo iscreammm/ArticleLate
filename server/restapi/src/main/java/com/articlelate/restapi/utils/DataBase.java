@@ -66,7 +66,7 @@ public class DataBase {
                 "CREATE TABLE IF NOT EXISTS notifications (\n" +
                 "    id serial PRIMARY KEY,\n" +
                 "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
-                "    postid integer REFERENCES posts(id) NOT NULL\n" +
+                "    postid integer NOT NULL\n" +
                 ");"+
 
                 "CREATE TABLE IF NOT EXISTS relationships (\n" +
@@ -76,7 +76,7 @@ public class DataBase {
 
                 "CREATE TABLE IF NOT EXISTS likes (\n"+
                 "   userid integer REFERENCES user_info (id),\n"+
-                "   postid integer REFERENCES posts (id)\n" +
+                "   postid integer\n" +
                 ");";
 
         dbConnection = getDBConnection();
