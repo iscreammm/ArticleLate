@@ -3,6 +3,7 @@ package com.articlelate.restapi;
 import com.articlelate.restapi.utils.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.web.bind.annotation.*;
 
@@ -599,9 +600,11 @@ public class RestapiController {
 
         PostData post = gson.fromJson(dataJson, PostData.class);
 
+        String imagePath = "";
+
         try {
             if (!post.getImage().equals("")) {
-                data = loadImage(post.getImage(), "postPictures");
+                imagePath = loadImage(post.getImage(), "postPictures");
             }
 
             DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
@@ -611,13 +614,33 @@ public class RestapiController {
 
             String sql = "INSERT INTO posts(authorid, posttime, postcategoryid, postpicture, posttext, postlikes)"
                     + " VALUES(" + post.getAuthorId() + ", \'" + new Timestamp(System.currentTimeMillis()) + "\'"
-                    + ", " + post.getCategoryId() + ", \'" + data + "\', \'" + post.getText() + "\'"
+                    + ", " + post.getCategoryId() + ", \'" + imagePath + "\', \'" + post.getText() + "\'"
                     + ", " + 0 + ")";
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            sql = "SELECT id FROM posts WHERE postpicture = \'" + imagePath + "\'";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            int postId = 0;
+
+            while (rs.next()) {
+                postId = rs.getInt("id");
+            }
+
+            JsonObject json = new JsonObject();
+
+            json.addProperty("postId", postId);
+            json.addProperty("imagePath", imagePath);
+
+            data = json.toString();
 
         } catch (IOException e) {
             e.printStackTrace();
