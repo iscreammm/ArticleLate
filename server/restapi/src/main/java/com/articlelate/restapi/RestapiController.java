@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class RestapiController {
@@ -622,7 +623,7 @@ public class RestapiController {
 
             statement.execute(sql);
 
-            sql = "SELECT id FROM posts WHERE postpicture = \'" + imagePath + "\'";
+            sql = "SELECT id, posttime FROM posts WHERE postpicture = \'" + imagePath + "\'";
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -630,14 +631,19 @@ public class RestapiController {
             ResultSet rs = statement.executeQuery(sql);
 
             int postId = 0;
+            Timestamp postTime = new Timestamp(0);
 
             while (rs.next()) {
                 postId = rs.getInt("id");
+                postTime = rs.getTimestamp("posttime");
             }
 
             JsonObject json = new JsonObject();
 
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, hh:mm:ss aaa", Locale.ENGLISH);
+
             json.addProperty("postId", postId);
+            json.addProperty("postTime", dateFormat.format(postTime));
             json.addProperty("imagePath", imagePath);
 
             data = json.toString();
