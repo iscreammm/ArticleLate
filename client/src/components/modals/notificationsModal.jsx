@@ -14,7 +14,8 @@ const NotificationsModal = () => {
       if (result.data.state === "Success") {
         setNotifications(JSON.parse(result.data.data));
       } else {
-        console.log(result.data.message);
+        user.setErrorMessage(result.data.message);
+        user.toggleError();
       }
     });
   }, [])
@@ -40,7 +41,8 @@ const NotificationsModal = () => {
               if (deletionResult.data.state === "Success") {
                 setNotifications(undefined);
               } else {
-                console.log(deletionResult.data.message);
+                user.setErrorMessage(deletionResult.data.message);
+                user.toggleError();
               }
             });
           }}

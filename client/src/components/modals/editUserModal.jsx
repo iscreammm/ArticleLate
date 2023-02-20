@@ -13,6 +13,7 @@ const EditUserModal = () => {
   const [avatar, setAvatar] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [message, setMessage] = useState();
   
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
@@ -78,8 +79,25 @@ const EditUserModal = () => {
             <input id="#loadUserAvatar" type="file"
               accept="image/png, image/jpg, image/jpeg"
               onChange={(event) => {
-                setSelectedImage(event.target.files[0]);
-                setIsDisabled(false);
+                  let reader = new FileReader();
+                  reader.readAsDataURL(event.target.files[0]);
+                  reader.onload = function (e) {
+                    var image = new Image();
+                    image.src = e.target.result;
+
+                    image.onload = function () {
+                      if (event.target.files[0].size > (1024 * 1024 * 5)) {
+                        user.setErrorMessage("Размер файла слишком большой");
+                        user.toggleError();
+                      } else if ((this.width !== this.height) || (this.width < 400) || (this.width > 1024)) {
+                        user.setErrorMessage("Изображение должно быть квадратным и быть меньше 1024x1024 и больше 400x400");
+                        user.toggleError();
+                      } else {
+                        setSelectedImage(event.target.files[0]);
+                        setIsDisabled(false);
+                      }
+                    };
+                  };
               }}
               style={{display: "none"}}
             />
@@ -96,7 +114,25 @@ const EditUserModal = () => {
               onChange={handleIdentifier}
               maxLength={30}
             />
-            <button className="checkId">Проверить идентификатор</button>
+            <button className="checkId" onClick={() => {
+              if (identifier.slice(0, 4) === "user") {
+                user.setErrorMessage("Идентификатор не может начинаться с user");
+                user.toggleError();
+              }
+              axios.get(`http://localhost:8080/verifyIdentificator?identificator=${identifier}&userId=${user.id}`).then(result => {
+                if (result.data.state === "Error") {
+                  user.setErrorMessage(result.data.message);
+                  user.toggleError()
+                } else {
+                  if (result.data.data) {
+                    setMessage("Идентификатор свободен");
+                  } else {
+                    setMessage("Идентификатор занят");
+                  }
+                }
+              });
+            }}>Проверить идентификатор</button>
+            <p style={{display: message ? "block" : "none"}}>{message}</p>
           </div>
         </div>
         <textarea name="" id="" className="editDescription"
@@ -126,7 +162,8 @@ const EditUserModal = () => {
                   image = reader.result.replace('data:', '').replace(/^.+,/, '');
                   await changeProfile(user.id, identifier, name, infoText, image).then(result => {
                     if (result.data.state === "Error") {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     } else {
                       clearData();
                       user.reloadUser();
@@ -138,7 +175,8 @@ const EditUserModal = () => {
                 image = profileData.imagePath;
                 await changeProfile(user.id, identifier, name, infoText, image).then(result => {
                   if (result.data.state === "Error") {
-                    console.log(result.data.message)
+                    user.setErrorMessage(result.data.message);
+                    user.toggleError();
                   } else {
                     clearData();
                     user.reloadUser();
@@ -159,7 +197,7 @@ const EditUserModal = () => {
 async function changeProfile(id, identifier, name, info, img) {
   return await axios.put("http://localhost:8080/changeProfile", {
     id: id,
-    identificator: identifier,
+    identificator: identifier.toLowerCase(),
     name: name,
     info: info,
     imagePath: `${img}`

@@ -128,7 +128,24 @@ const EditPostModal = () => {
             <input id="#loadPostImage" type="file"
               accept="image/png, image/jpg, image/jpeg"
               onChange={(event) => {
-                setSelectedImage(event.target.files[0]);
+                let reader = new FileReader();
+                  reader.readAsDataURL(event.target.files[0]);
+                  reader.onload = function (e) {
+                    var image = new Image();
+                    image.src = e.target.result;
+
+                    image.onload = function () {
+                      if (event.target.files[0].size > (1024 * 1024 * 10)) {
+                        user.setErrorMessage("Размер файла слишком большой");
+                        user.toggleError();
+                      } else if (((this.height < 400) && (this.width < 400)) || ((this.height > 1920) && (this.width > 1920))) {
+                        user.setErrorMessage("Изображение должно быть меньше 1920x1920 и больше 400x400");
+                        user.toggleError();
+                      } else {
+                        setSelectedImage(event.target.files[0]);
+                      }
+                    };
+                  };
               }}
               style={{display: "none"}}
             />
@@ -142,7 +159,8 @@ const EditPostModal = () => {
             <button className="createButton"
               onClick={async () => {
                 if(postText === "") {
-                  console.log("error");
+                  user.setErrorMessage("Нельзя сохранить пустой текст");
+                  user.toggleError();
                 } else {
                   if (!selectedImage) {
                     await axios.put("http://localhost:8080/changePost", {
@@ -155,7 +173,8 @@ const EditPostModal = () => {
                         user.setPostToRefresh(user.editPost.id);
                         user.toggleEditPost();
                       } else {
-                        console.log(result.data.message)
+                        user.setErrorMessage(result.data.message);
+                        user.toggleError();
                       }
                     });
                   } else {
@@ -175,7 +194,8 @@ const EditPostModal = () => {
                           user.setPostToRefresh(user.editPost.id);
                           user.toggleEditPost();
                         } else {
-                          console.log(result.data.message)
+                          user.setErrorMessage(result.data.message);
+                          user.toggleError();
                         }
                       });
                     };

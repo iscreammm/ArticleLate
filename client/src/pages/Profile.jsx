@@ -12,8 +12,8 @@ const Profile = () => {
   const [profileData, setProfileData] = useState();
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  useEffect(async () => {
-    await axios.get(`http://localhost:8080/getIdByIdentificator?identificator=${identifier}`).then(result => {
+  useEffect(() => {
+    axios.get(`http://localhost:8080/getIdByIdentificator?identificator=${identifier}`).then(result => {
       setProfileId(result.data.data);
       axios.get(`http://localhost:8080/getProfile?userId=${result.data.data}`).then(res => {
         setProfileData(JSON.parse(res.data.data));
@@ -61,7 +61,8 @@ const Profile = () => {
                   if (result.data.state === "Success") {
                     setIsSubscribed(false);
                   } else {
-                    console.log(result.data.message)
+                    user.setErrorMessage(result.data.message);
+                    user.toggleError();
                   }
                 });
               } else {
@@ -72,7 +73,8 @@ const Profile = () => {
                   if (result.data.state === "Success") {
                     setIsSubscribed(true);
                   } else {
-                    console.log(result.data.message)
+                    user.setErrorMessage(result.data.message);
+                    user.toggleError();
                   }
                 });
               }
@@ -90,7 +92,7 @@ const Profile = () => {
         {profileData.info === "" ? "Информация не указана" : profileData.info}
       </p>
       <div style={{background: "#F0ADAD"}}>
-      <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${profileId}`} />
+        <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${profileId}`} />
       </div>
     </div>
   );

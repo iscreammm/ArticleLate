@@ -4,7 +4,7 @@ import { useUser } from "../utilities/userContext";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
-const CreatePostModal = () => {
+const CreatePostModal = ({ setNewPost, userName }) => {
   const user = useUser();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCat, setSelectedCat] = useState(0);
@@ -81,7 +81,24 @@ const CreatePostModal = () => {
             <input id="#loadPostImage" type="file"
               accept="image/png, image/jpg, image/jpeg"
               onChange={(event) => {
-                setSelectedImage(event.target.files[0]);
+                let reader = new FileReader();
+                  reader.readAsDataURL(event.target.files[0]);
+                  reader.onload = function (e) {
+                    var image = new Image();
+                    image.src = e.target.result;
+
+                    image.onload = function () {
+                      if (event.target.files[0].size > (1024 * 1024 * 10)) {
+                        user.setErrorMessage("Размер файла слишком большой");
+                        user.toggleError();
+                      } else if (((this.height < 400) && (this.width < 400)) || ((this.height > 1920) && (this.width > 1920))) {
+                        user.setErrorMessage("Изображение должно быть меньше 1920x1920 и больше 400x400");
+                        user.toggleError();
+                      } else {
+                        setSelectedImage(event.target.files[0]);
+                      }
+                    };
+                  };
               }}
               style={{display: "none"}}
             />
@@ -102,11 +119,28 @@ const CreatePostModal = () => {
                     image: ""
                   }).then(result => {
                     if (result.data.state === "Success") {
-                      user.setLoadPost(true);
+                      console.log(result)
+                      const resObject = JSON.parse(result.data.data);
+                      let e = document.getElementById("CategoriesID");
+                      let catText = e.options[e.selectedIndex].text;
+                      setNewPost({
+                        authorId: user.id,
+                        categoryId: selectedCat,
+                        id: resObject.postId,
+                        identificator: user.identificator,
+                        image: "",
+                        isLiked: false,
+                        likesCount: 0,
+                        category: catText,
+                        name: userName,
+                        text: postText,
+                        time: resObject.postTime
+                      });
                       clearData();
                       user.toggleCreatePost();
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   });
                 } else {
@@ -123,11 +157,27 @@ const CreatePostModal = () => {
                       image: `${base64String}`
                     }).then(result => {
                       if (result.data.state === "Success") {
-                        user.setLoadPost(true);
+                        const resObject = JSON.parse(result.data.data);
+                        let e = document.getElementById("CategoriesID");
+                        let catText = e.options[e.selectedIndex].text;
+                        setNewPost({
+                          authorId: user.id,
+                          categoryId: selectedCat,
+                          id: resObject.postId,
+                          identificator: user.identificator,
+                          image: resObject.imagePath,
+                          isLiked: false,
+                          likesCount: 0,
+                          category: catText,
+                          name: userName,
+                          text: postText,
+                          time: resObject.postTime
+                        });
                         clearData();
                         user.toggleCreatePost();
                       } else {
-                        console.log(result.data.message)
+                        user.setErrorMessage(result.data.message);
+                        user.toggleError();
                       }
                     });
                   };

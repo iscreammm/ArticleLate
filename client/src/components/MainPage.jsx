@@ -16,9 +16,8 @@ const MainPage = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<News />}></Route>
           <Route path="subs" element={<Subscriptions />}></Route>
-          <Route path="userprofile" element={<UserProfile />}></Route>
           <Route path="profile/:identifier" element={<Profile />}></Route>
-          <Route path={`profile/${user.identificator}`} element={<Navigate to="/userprofile" replace />}></Route>
+          <Route path={`profile/${user.identificator}`}  element={<UserProfile />}></Route>
         </Route>
       </Routes>
     </>

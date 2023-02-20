@@ -13,11 +13,12 @@ export const UserProvider = ({ id, children }) => {
   const [createPostOpen, setCreatePostOpen] = useState(false);
   const [editPostOpen, setEditPostOpen] = useState(false);
   const [editUserOpen, setEditUserModal] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
   const [refreshUser, setRefreshUser] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   const [selectedPost, setSelectedPost] = useState();
   const [editPost, setEditPost] = useState();
   const [postToRefresh, setPostToRefresh] = useState();
-  const [loadPost, setLoadPost] = useState();
   const [identificator, setIdentificator] = useState();
 
   useEffect(() => {
@@ -36,6 +37,10 @@ export const UserProvider = ({ id, children }) => {
 
   const toggleNotifications = () => {
     setNotifOpen(prev => !prev);
+  }
+
+  const toggleError = () => {
+    setErrorOpen(prev => !prev);
   }
 
   const toggleCreatePost = () => {
@@ -67,9 +72,10 @@ export const UserProvider = ({ id, children }) => {
       selectedPost: selectedPost,
       editPost: editPost,
       postToRefresh: postToRefresh,
-      loadPost: loadPost,
-      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost,
-      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setLoadPost
+      errorOpen: errorOpen,
+      errorMessage: errorMessage,
+      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost, toggleError,
+      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setErrorMessage
     }}>
       { children }
     </UserContext.Provider>

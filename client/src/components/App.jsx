@@ -60,7 +60,7 @@ const App = () => {
         messageBlock.style.display = 'none';
         messageBlock.classList.remove('smoothOut');
         button.disabled = false;
-      }, 1000)
+      }, 1000);
     }, 1500);
   }
 
@@ -108,11 +108,11 @@ const App = () => {
                     } else {
                       localStorage.setItem('userId', result.data.data);
                       root.render(
-                        <BrowserRouter>
-                          <UserProvider>
-                            <MainPage />
-                          </UserProvider>
-                        </BrowserRouter>
+                        <UserProvider id={result.data.data}>
+                          <BrowserRouter>
+                              <MainPage />
+                          </BrowserRouter>
+                        </UserProvider>
                       );
                     }
                   })
@@ -154,6 +154,9 @@ const App = () => {
                       } else {
                         if (result.data.data) {
                           setMessage("Логин свободен");
+                          showMessage('messageReg', 'regButton');
+                        } else {
+                          setMessage("Логин занят");
                           showMessage('messageReg', 'regButton');
                         }
                       }

@@ -8,7 +8,6 @@ import "../styles/feedPosts.css";
 const Post = ({ data }) => {
   const user = useUser();
   const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
-  const [author, setAuthor] = useState();
   const [category, setCategory] = useState(data.category);
   const [text, setText] = useState(data.text);
   const [image, setImage] = useState(data.image);
@@ -17,10 +16,10 @@ const Post = ({ data }) => {
   const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
+    console.log(data.time)
     axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
       const resData = JSON.parse(result.data.data);
       setAuthorAvatar(resData.imagePath);
-      setAuthor(resData.identificator);
     });
   }, []);
 
@@ -78,7 +77,8 @@ const Post = ({ data }) => {
                     if (result.data.state === "Success") {
                       setDeleted(true);
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   });
                 }}
@@ -107,7 +107,8 @@ const Post = ({ data }) => {
                     if (result.data.state === "Success") {
                       refreshLikes();
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   });
                 } else {
@@ -115,7 +116,8 @@ const Post = ({ data }) => {
                     if (result.data.state === "Success") {
                       refreshLikes();
                     } else {
-                      console.log(result.data.message)
+                      user.setErrorMessage(result.data.message);
+                      user.toggleError();
                     }
                   });
                 }
@@ -125,7 +127,6 @@ const Post = ({ data }) => {
           </div>
           <button
             onClick={() => {
-              console.log(data, author, authorAvatar)
               user.setSelectedPost({data, authorAvatar, refreshLikes});
               user.toggleComments();
             }}

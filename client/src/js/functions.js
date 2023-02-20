@@ -6,7 +6,11 @@ export function getDateFormat(date) {
   today = today.length === 1 ? ('0' + today) : today;
   
   let hours = time.getHours();
-  hours = hours < 10 ? ('0' + hours) : hours;
+  if (date.includes("PM")) {
+    hours = hours + 12;
+  } else {
+    hours = '0' + hours;
+  }
 
   let minutes = time.getMinutes();
   minutes = minutes< 10 ? ('0' + minutes) : minutes;
