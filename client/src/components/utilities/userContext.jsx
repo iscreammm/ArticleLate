@@ -72,9 +72,10 @@ export const UserProvider = ({ id, children }) => {
       selectedPost: selectedPost,
       editPost: editPost,
       postToRefresh: postToRefresh,
-      loadPost: loadPost,
-      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost,
-      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setLoadPost
+      errorOpen: errorOpen,
+      errorMessage: errorMessage,
+      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost, toggleError,
+      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setErrorMessage
     }}>
       { children }
     </UserContext.Provider>
