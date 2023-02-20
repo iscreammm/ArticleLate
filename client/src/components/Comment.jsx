@@ -35,34 +35,18 @@ const Comment = ({ data }) => {
           end = start + matches[i].length;
           console.log(matches[i].slice(1))
           result.push(temp.slice(0, start));
-          await axios.get(`http://localhost:8080/verifyIdentificator?identificator=${matches[i].slice(1)}&userId=${user.id}`).then(res => {
-            if (res.data.state === "Success") {
-              if (res.data.data) {
-                result.push(<Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}>{matches[i]}</Link>);
-              } else {
-                result.push(matches[i]);
-              }
-            }
-          })
+          result.push(<Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}>{matches[i]}</Link>);
         } else {
           start = temp.indexOf(matches[i]);
           result.push(temp.slice(end, start));
 
           end = start + matches[i].length;
-          await axios.get(`http://localhost:8080/verifyIdentificator?identificator=${matches[i].slice(1)}&userId=${user.id}`).then(res => {
-            if (res.data.state === "Success") {
-              if (res.data.data) {
-                result.push(
-                  <Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}
-                    onClick={() => user.toggleComments()}
-                  >{matches[i]}</Link>
-                );
-              } else {
-                result.push(matches[i]);
-              }
-            }
-          })
-          
+          result.push(
+            <Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}
+              onClick={() => user.toggleComments()}
+            >{matches[i]}</Link>
+          );
+
           if (i === (matches.length - 1)) {
             result.push(temp.slice(end, temp.length));
           }

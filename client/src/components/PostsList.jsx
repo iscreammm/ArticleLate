@@ -14,9 +14,15 @@ const PostsList = ({ queryString, category, newPost, setNewPost }) => {
   }, [category]);
 
   useEffect(() => {
-    if (newPost) {
-      setPosts(posts => [newPost, ...posts]);
-      setNewPost(undefined);
+    if (user.loadPost) {
+      axios.get(`http://localhost:8080/getUserPosts?userId=${user.id}`).then(result => {
+        if (result.data.state === "Success") {
+          setPosts(posts => [{...JSON.parse(result.data.data)[0]}, ...posts]);
+          user.setLoadPost(undefined);
+        } else {
+          console.log("Не удалось загрузить добавленный пост")
+        }
+      });
     }
   }, [newPost]);
 
