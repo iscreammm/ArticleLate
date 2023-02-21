@@ -1,11 +1,11 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import News from '../pages/News';
 import Subscriptions from '../pages/Subscriptions';
 import Profile from '../pages/Profile';
 import UserProfile from '../pages/UserProfile';
 import Layout from './Layout';
 import { useUser } from './utilities/userContext';
-import Login from '../pages/Login';
+import LoginPage from '../pages/LoginPage';
 import RequireAuth from './utilities/RequireAuth';
 
 const App = () => {
@@ -14,7 +14,8 @@ const App = () => {
   return (
     <>
       <Routes>
-        <Route path="login" element={<Login />}></Route>
+        <Route path="login/*" element={<LoginPage />}></Route>
+        <Route path="login" element={<Navigate to="auth" replace />} />
         <Route path="/" element={<Layout />}>
           <Route index element={
             <RequireAuth>
