@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import App from './App';
-import root from "../index";
 import { useUser } from './utilities/userContext';
 import CommentModal from './modals/commentModal';
 import NotificationsModal from './modals/notificationsModal';
 import EditUserModal from './modals/editUserModal';
-import CreatePostModal from './modals/createPostModal';
 import EditPostModal from './modals/postEditModal';
-import "../styles/layout.css";
 import ErrorModal from './modals/errorModal';
+import "../styles/layout.css";
 
 const Layout = () => {
   const user = useUser();
+  const navigate = useNavigate();
   const [avatar, setAvatar] = useState();
   const [notificationsCount, setNotificationsCount] = useState(0);
 
@@ -31,14 +29,13 @@ const Layout = () => {
       <NotificationsModal />
       <EditUserModal />
       <CommentModal />
-      <CreatePostModal />
       <EditPostModal />
       <ErrorModal />
       <div className="main">
         <div className='menu'>
-          <Link className="avatar" to="/userprofile">
+          <Link className="avatar" to={`profile/${user.identificator}`}>
             <img src={avatar} alt="Avatar" style={{display: avatar === undefined ? "none" : "block"}} />
-          </Link> 
+          </Link>
           <p className='notificationsContainer'> 
             <img className='notificationsIcon' src="layout/bell.PNG" alt="Bell" 
               onClick={() => {
@@ -53,10 +50,7 @@ const Layout = () => {
         <img className='logoMenu' src="common/logo.PNG" alt="Logo" />
         <img className='exit menuButton' src="layout/exit.PNG" alt="Exit" 
           onClick={() => {
-            localStorage.removeItem('userId');
-            root.render(
-              <App />
-            );
+            user.signOut(() => navigate('/', {replace: true}))
           }}
         />
         <Outlet />

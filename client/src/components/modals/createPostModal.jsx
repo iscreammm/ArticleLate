@@ -4,7 +4,7 @@ import { useUser } from "../utilities/userContext";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
-const CreatePostModal = () => {
+const CreatePostModal = ({ setNewPost, userName }) => {
   const user = useUser();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCat, setSelectedCat] = useState(0);
@@ -119,7 +119,23 @@ const CreatePostModal = () => {
                     image: ""
                   }).then(result => {
                     if (result.data.state === "Success") {
-                      user.setLoadPost(true);
+                      console.log(result)
+                      const resObject = JSON.parse(result.data.data);
+                      let e = document.getElementById("CategoriesID");
+                      let catText = e.options[e.selectedIndex].text;
+                      setNewPost({
+                        authorId: user.id,
+                        categoryId: selectedCat,
+                        id: resObject.postId,
+                        identificator: user.identificator,
+                        image: "",
+                        isLiked: false,
+                        likesCount: 0,
+                        category: catText,
+                        name: userName,
+                        text: postText,
+                        time: resObject.postTime
+                      });
                       clearData();
                       user.toggleCreatePost();
                     } else {
@@ -141,7 +157,22 @@ const CreatePostModal = () => {
                       image: `${base64String}`
                     }).then(result => {
                       if (result.data.state === "Success") {
-                        user.setLoadPost(true);
+                        const resObject = JSON.parse(result.data.data);
+                        let e = document.getElementById("CategoriesID");
+                        let catText = e.options[e.selectedIndex].text;
+                        setNewPost({
+                          authorId: user.id,
+                          categoryId: selectedCat,
+                          id: resObject.postId,
+                          identificator: user.identificator,
+                          image: resObject.imagePath,
+                          isLiked: false,
+                          likesCount: 0,
+                          category: catText,
+                          name: userName,
+                          text: postText,
+                          time: resObject.postTime
+                        });
                         clearData();
                         user.toggleCreatePost();
                       } else {

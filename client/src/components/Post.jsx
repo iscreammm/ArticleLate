@@ -8,7 +8,6 @@ import "../styles/feedPosts.css";
 const Post = ({ data }) => {
   const user = useUser();
   const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
-  const [author, setAuthor] = useState();
   const [category, setCategory] = useState(data.category);
   const [text, setText] = useState(data.text);
   const [image, setImage] = useState(data.image);
@@ -17,10 +16,10 @@ const Post = ({ data }) => {
   const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
+    console.log(data.time)
     axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
       const resData = JSON.parse(result.data.data);
       setAuthorAvatar(resData.imagePath);
-      setAuthor(resData.identificator);
     });
   }, []);
 

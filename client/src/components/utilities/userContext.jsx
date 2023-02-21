@@ -7,7 +7,8 @@ export const useUser = () => {
   return useContext(UserContext);
 }
 
-export const UserProvider = ({ id, children }) => {
+export const UserProvider = ({ ident, children }) => {
+  const [id, setId] = useState(ident);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
@@ -19,16 +20,29 @@ export const UserProvider = ({ id, children }) => {
   const [selectedPost, setSelectedPost] = useState();
   const [editPost, setEditPost] = useState();
   const [postToRefresh, setPostToRefresh] = useState();
-  const [loadPost, setLoadPost] = useState();
   const [identificator, setIdentificator] = useState();
 
-  useEffect(() => {
-    axios.get(`http://localhost:8080/getProfile?userId=${id}`).then(result => {
-      setIdentificator(JSON.parse(result.data.data).identificator);
-    });
-  }, [refreshUser])
+  const signIn = (newUser, cb) => {
+    setId(newUser);
+    localStorage.setItem('userId', newUser);
+    cb();
+  }
 
-  if (!identificator) {
+  const signOut = (cb) => {
+    setId(null);
+    localStorage.removeItem('userId');
+    cb();
+  }
+
+  useEffect(() => {
+    if (id) {
+      axios.get(`http://localhost:8080/getProfile?userId=${id}`).then(result => {
+        setIdentificator(JSON.parse(result.data.data).identificator);
+      });
+    }
+  }, [refreshUser, id]);
+
+  if ((!identificator) && (id)) {
     return <></>
   }
 
@@ -73,11 +87,11 @@ export const UserProvider = ({ id, children }) => {
       selectedPost: selectedPost,
       editPost: editPost,
       postToRefresh: postToRefresh,
-      loadPost: loadPost,
       errorOpen: errorOpen,
       errorMessage: errorMessage,
       toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost, toggleError,
-      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setLoadPost, setErrorMessage
+      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setErrorMessage,
+      signIn, signOut
     }}>
       { children }
     </UserContext.Provider>
