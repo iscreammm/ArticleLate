@@ -8,6 +8,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -484,7 +486,7 @@ public class RestapiController {
             if (rs.next()) {
                 String identificator = rs.getString("identificator");
 
-                if (profile.getIdentificator().substring(0, 4).equals("user")
+                if (profile.getIdentificator().startsWith("user")
                         && (!identificator.equals(profile.getIdentificator()))) {
                     return gson.toJson(new Message<>("Error", "Идентификатор не может начинаться с 'user'", -1));
                 }
@@ -534,10 +536,6 @@ public class RestapiController {
 
             statement.execute(sql);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
-
         } catch (SQLException e) {
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить информацию профиля", -1));
@@ -545,6 +543,11 @@ public class RestapiController {
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
             e.printStackTrace();
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -1525,7 +1528,13 @@ public class RestapiController {
     }
 
     private String loadImage(String url, String foldername) throws IOException {
-        File folder = new File("../client/public/" + foldername);
+        Path path = Paths.get("");
+
+        String filePath = path.toAbsolutePath().toString();
+
+        filePath = filePath.substring(0, filePath.indexOf("\\server"));
+
+        File folder = new File(filePath + "\\client\\public\\" + foldername);
 
         if (!folder.exists()) {
             folder.mkdir();
@@ -1534,7 +1543,7 @@ public class RestapiController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         String filename = sdf.format(System.currentTimeMillis()) + ".jpg";
-        File imgFile = new File("../client/public/" + foldername, filename);
+        File imgFile = new File(filePath + "\\client\\public\\" + foldername, filename);
 
         if (!imgFile.exists()) {
             imgFile.createNewFile();

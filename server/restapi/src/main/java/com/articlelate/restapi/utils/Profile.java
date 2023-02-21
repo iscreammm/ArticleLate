@@ -17,4 +17,8 @@ public class Profile {
         this.info = info;
         this.imagePath = imagePath;
     }
+
+    public String getIdentificator() {
+        return identificator;
+    }
 }

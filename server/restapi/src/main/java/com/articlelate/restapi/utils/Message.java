@@ -10,4 +10,16 @@ public class Message<T> {
         this.message = message;
         this.data = data;
     }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public T getData() {
+        return data;
+    }
 }

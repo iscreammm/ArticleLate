@@ -27,4 +27,12 @@ public class Post {
         this.likesCount = likesCount;
         this.isLiked = isLiked;
     }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
 }
