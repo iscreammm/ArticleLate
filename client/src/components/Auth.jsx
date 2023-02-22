@@ -72,6 +72,7 @@ const Auth = ({ navigate, fromPage }) => {
         />
         <div className="password">
           <input id="#authPass" className="loginInput" type="password"
+            name="authPass"
             placeholder="Введите пароль"
             maxLength={16}
             value={authPass}
