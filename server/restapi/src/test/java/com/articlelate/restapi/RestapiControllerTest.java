@@ -1,6 +1,7 @@
 package com.articlelate.restapi;
 
 import com.articlelate.restapi.utils.Message;
+import com.articlelate.restapi.utils.Notification;
 import com.articlelate.restapi.utils.Post;
 import com.articlelate.restapi.utils.Profile;
 import com.google.gson.Gson;
@@ -137,7 +138,6 @@ class RestapiControllerTest {
         assertFalse(message.getData());
     }
 
-    //???
     @DisplayName("Success follow")
     @Order(7)
     @Test
@@ -165,7 +165,6 @@ class RestapiControllerTest {
         assertEquals(1.0, message.getData());
     }
 
-    //???
     @DisplayName("Success unfollow")
     @Order(8)
     @Test
@@ -361,7 +360,7 @@ class RestapiControllerTest {
     }
 
     @DisplayName("His identificator test")
-    @Order(14)
+    @Order(15)
     @Test
     void verifyIdentificatorWithUserId() {
         Response response = RestAssured
@@ -377,38 +376,204 @@ class RestapiControllerTest {
         assertTrue(message.getData());
     }
 
-    @Order(8)
+    @DisplayName("Success test")
+    @Order(16)
     @Test
     void addComment() {
+        RestAssured.baseURI = "http://localhost:8080";
+        RequestSpecification request = RestAssured.given();
+
+        JsonObject json = new JsonObject();
+
+        json.addProperty("userId", 1);
+        json.addProperty("postId", 2);
+        json.addProperty("commentText", "someText");
+        request.header("Content-Type", "text/plain");
+        request.body(json.toString());
+
+        Response response = request.post("/addComment")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(1.0, message.getData());
     }
 
-    @Order(9)
+    @DisplayName("Success with tag test")
+    @Order(17)
+    @Test
+    void addCommentWithTag() {
+        RestAssured.baseURI = "http://localhost:8080";
+        RequestSpecification request = RestAssured.given();
+
+        JsonObject json = new JsonObject();
+
+        json.addProperty("userId", 1);
+        json.addProperty("postId", 2);
+        json.addProperty("commentText", "someText @user2");
+        request.header("Content-Type", "text/plain");
+        request.body(json.toString());
+
+        Response response = request.post("/addComment")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(1.0, message.getData());
+    }
+
+    @DisplayName("Success test")
+    @Order(18)
     @Test
     void changeComment() {
+        Response response = RestAssured
+                .put("/changeComment?commentId=1&commentText=someNewText")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(1.0, message.getData());
     }
 
-    @Order(10)
+    @DisplayName("Success with tag test")
+    @Order(19)
+    @Test
+    void changeCommentWithTag() {
+        Response response = RestAssured
+                .put("/changeComment?commentId=1&commentText=someNewText @user2")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(1.0, message.getData());
+    }
+
+    @DisplayName("Success test")
+    @Order(20)
     @Test
     void deleteComment() {
+        Response response = RestAssured
+                .delete("/deleteComment?commentId=1")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(1.0, message.getData());
     }
 
-    @Order(11)
+    @DisplayName("Only userId test")
+    @Order(21)
     @Test
     void getNotifications() {
+        Response response = RestAssured
+                .get("/getNotifications?userId=2")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<String> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        Notification[] notifications = gson.fromJson(message.getData(), Notification[].class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(2, notifications[0].getUserId());
+        assertEquals(2, notifications[1].getUserId());
+        assertTrue(notifications[0].getId() < notifications[1].getId());
+        assertTrue(Arrays.stream(notifications).count() < 6);
     }
 
-    @Order(12)
+    @DisplayName("All parameters test")
+    @Order(22)
+    @Test
+    void getNotificationsAllParams() {
+        Response response = RestAssured
+                .get("/getNotifications?userId=2&prevNotificationId=1")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<String> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        Notification[] notifications = gson.fromJson(message.getData(), Notification[].class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(2, notifications[0].getUserId());
+        assertEquals(2, notifications[1].getUserId());
+        assertTrue(notifications[0].getId() > 1 );
+        assertTrue(notifications[0].getId() < notifications[1].getId());
+        assertTrue(Arrays.stream(notifications).count() < 6);
+    }
+
+    @DisplayName("Success test")
+    @Order(23)
     @Test
     void getNotificationsCount() {
+        Response response = RestAssured
+                .get("/getNotificationsCount?userId=2")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(2.0, message.getData());
     }
 
-    @Order(13)
+    @DisplayName("Success test")
+    @Order(24)
     @Test
     void deleteNotification() {
+        Response response = RestAssured
+                .delete("/deleteNotification?notificationId=4")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(1.0, message.getData());
     }
 
-    @Order(14)
+    @DisplayName("Success test")
+    @Order(25)
     @Test
     void deleteAllNotification() {
+        Response response = RestAssured
+                .delete("/deleteAllNotification?userId=2")
+                .thenReturn();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        Message<Double> message = gson.fromJson(response.getBody().asString(), Message.class);
+
+        assertEquals("Success", message.getState());
+        assertEquals(1.0, message.getData());
     }
 }

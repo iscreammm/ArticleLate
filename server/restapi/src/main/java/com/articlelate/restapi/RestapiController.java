@@ -391,7 +391,7 @@ public class RestapiController {
 
             statement.execute(sql);
 
-            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE followerid = " + relations.getFollowerId();
+            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE subscribeid = " + relations.getUserId();
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -438,7 +438,7 @@ public class RestapiController {
 
             statement.execute(sql);
 
-            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE followerid = " + relations.getFollowerId();
+            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE subscribeid = " + relations.getUserId();;
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -1432,7 +1432,7 @@ public class RestapiController {
             e.printStackTrace();
         }
 
-        return gson.toJson(new Message<>("Success", "", 0));
+        return gson.toJson(new Message<>("Success", "", 1));
     }
 
     @DeleteMapping("/deleteAllNotification")
@@ -1463,7 +1463,7 @@ public class RestapiController {
             e.printStackTrace();
         }
 
-        return gson.toJson(new Message<>("Success", "", 0));
+        return gson.toJson(new Message<>("Success", "", 1));
     }
 
     private void deleteFile(String filePath) {
@@ -1545,13 +1545,13 @@ public class RestapiController {
         String filename = sdf.format(System.currentTimeMillis()) + ".jpg";
         File imgFile = new File(filePath + "\\client\\public\\" + foldername, filename);
 
-        if (!imgFile.exists()) {
-            imgFile.createNewFile();
-        }
-
         byte[] imgData = Base64.getDecoder().decode(url);
 
         OutputStream stream = new FileOutputStream(imgFile);
+
+        if (!imgFile.exists()) {
+            imgFile.createNewFile();
+        }
 
         stream.write(imgData);
         stream.close();
