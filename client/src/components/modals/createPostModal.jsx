@@ -41,7 +41,7 @@ const CreatePostModal = ({ isOpen, toggle, setNewPost, userName }) => {
       <div className='modalContainer createPostContainer'>
        <div className="topMenu">
           <div className="categoriesBtn">
-            <select id="CategoriesID" className="categoriesSelect" name="Categories"
+            <select id="CategoriesID" className="categoriesSelect" name="categories"
               value={selectedCat}
               onChange={handleCatChange}
             >
@@ -57,13 +57,14 @@ const CreatePostModal = ({ isOpen, toggle, setNewPost, userName }) => {
             </select>
           </div>
           <div className="graySpace"></div>
-          <div className="closeBtn"
-            onClick={() => {
+          <div className="closeBtn">
+            <button type="button" onClick={() => {
               clearData();
               toggle();
-            }}
-          >
-          <img src="common/close.png" alt="Close"/></div>
+            }}>
+              <img src="common/close.png" alt="Close"/>
+            </button>
+          </div>
         </div>
         <textarea id="#postTextField" type="text" className="postInput" placeholder="Введите текст"
           maxLength="10000"
