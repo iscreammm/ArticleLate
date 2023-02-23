@@ -11,9 +11,6 @@ export const UserProvider = ({ ident, children }) => {
   const [id, setId] = useState(ident);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [createPostOpen, setCreatePostOpen] = useState(false);
-  const [editPostOpen, setEditPostOpen] = useState(false);
-  const [editUserOpen, setEditUserModal] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [refreshUser, setRefreshUser] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
@@ -58,18 +55,6 @@ export const UserProvider = ({ ident, children }) => {
     setErrorOpen(prev => !prev);
   }
 
-  const toggleCreatePost = () => {
-    setCreatePostOpen(prev => !prev);
-  }
-
-  const toggleEditPost = () => {
-    setEditPostOpen(prev => !prev);
-  }
-
-  const toggleInfoEditing = () => {
-    setEditUserModal(prev => !prev);
-  }
-
   const reloadUser = () => {
     setRefreshUser(prev => !prev);
   }
@@ -80,16 +65,13 @@ export const UserProvider = ({ ident, children }) => {
       identificator: identificator,
       commentsOpen: commentsOpen,
       notifOpen: notifOpen,
-      createPostOpen: createPostOpen,
-      editPostOpen: editPostOpen,
-      editUserOpen: editUserOpen,
       refreshUser: refreshUser,
       selectedPost: selectedPost,
       editPost: editPost,
       postToRefresh: postToRefresh,
       errorOpen: errorOpen,
       errorMessage: errorMessage,
-      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost, toggleError,
+      toggleComments, toggleNotifications, toggleError,
       reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setErrorMessage,
       signIn, signOut
     }}>

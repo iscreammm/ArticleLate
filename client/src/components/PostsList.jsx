@@ -3,7 +3,7 @@ import axios from "axios";
 import Post from "./Post";
 import "../styles/feedPosts.css";
 
-const PostsList = ({ queryString, category, newPost, setNewPost }) => {
+const PostsList = ({ queryString, category, newPost, setNewPost, toggleEditPost }) => {
   const [posts, setPosts] = useState();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const PostsList = ({ queryString, category, newPost, setNewPost }) => {
   return (
     <div className="postsContainer">
       {posts.map(post => {
-        return <Post key={post.id} data={post} />
+        return <Post key={post.id} data={post} toggleEditPost={toggleEditPost} />
       })}
     </div>
   );

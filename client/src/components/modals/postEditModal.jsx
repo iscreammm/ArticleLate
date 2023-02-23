@@ -4,7 +4,7 @@ import { useUser } from "../utilities/userContext";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
-const EditPostModal = () => {
+const EditPostModal = ({ isOpen, toggle }) => {
   const user = useUser();
   const [selectedImage, setSelectedImage] = useState(null);
   const [postText, setPostText] = useState("");
@@ -12,13 +12,13 @@ const EditPostModal = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   
   useEffect(() => {
-    if (user.editPostOpen) {
+    if (isOpen) {
       setPostText(user.editPost.text);
       setSelectedCat(getCatId(user.editPost.category));
     }
-  }, [user.editPostOpen]);
+  }, [isOpen]);
   
-  if(!user.editPostOpen) {
+  if(!isOpen) {
     return null;
   }
 
@@ -107,7 +107,7 @@ const EditPostModal = () => {
           <div className="closeBtn"
             onClick={() => {
               setSelectedImage(null);
-              user.toggleEditPost();
+              toggle();
             }}
           >
           <img src="common/close.png" alt="Close"/></div>
@@ -171,7 +171,7 @@ const EditPostModal = () => {
                     }).then(result => {
                       if (result.data.state === "Success") {
                         user.setPostToRefresh(user.editPost.id);
-                        user.toggleEditPost();
+                        toggle();
                       } else {
                         user.setErrorMessage(result.data.message);
                         user.toggleError();
@@ -192,7 +192,7 @@ const EditPostModal = () => {
                       }).then(result => {
                         if (result.data.state === "Success") {
                           user.setPostToRefresh(user.editPost.id);
-                          user.toggleEditPost();
+                          toggle();
                         } else {
                           user.setErrorMessage(result.data.message);
                           user.toggleError();

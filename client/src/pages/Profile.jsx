@@ -30,7 +30,7 @@ const Profile = () => {
     axios.get(`http://localhost:8080/getProfile?userId=${profileId}`).then(res => {
       setProfileData(JSON.parse(res.data.data));
     });
-  }, [isSubscribed])
+  }, [isSubscribed]);
   
   if (profileData === undefined) {
     return <></>

@@ -4,7 +4,7 @@ import { useUser } from "../utilities/userContext";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/editUser.css";
 
-const EditUserModal = () => {
+const EditUserModal = ({ isOpen, toggle }) => {
   const user = useUser();
   const [profileData, setProfileData] = useState();
   const [name, setName] = useState();
@@ -24,10 +24,9 @@ const EditUserModal = () => {
       setInfoText(data.info)
       setProfileData(data);
     });
-  }, [user.editUserOpen]);
-  
+  }, [isOpen]);
 
-  if(!user.editUserOpen) {
+  if(!isOpen) {
     return null;
   }
 
@@ -145,7 +144,7 @@ const EditUserModal = () => {
           <button
             onClick={() => {
               clearData();
-              user.toggleInfoEditing();
+              toggle();
             }}
           >
             Отменить
@@ -167,7 +166,7 @@ const EditUserModal = () => {
                     } else {
                       clearData();
                       user.reloadUser();
-                      user.toggleInfoEditing();
+                      toggle();
                     }
                   });
                 };
@@ -180,7 +179,7 @@ const EditUserModal = () => {
                   } else {
                     clearData();
                     user.reloadUser();
-                    user.toggleInfoEditing();
+                    toggle();
                   }
                 });
               }

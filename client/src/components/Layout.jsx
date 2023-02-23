@@ -4,8 +4,6 @@ import axios from 'axios';
 import { useUser } from './utilities/userContext';
 import CommentModal from './modals/commentModal';
 import NotificationsModal from './modals/notificationsModal';
-import EditUserModal from './modals/editUserModal';
-import EditPostModal from './modals/postEditModal';
 import ErrorModal from './modals/errorModal';
 import "../styles/layout.css";
 
@@ -27,9 +25,7 @@ const Layout = () => {
   return (
     <>
       <NotificationsModal />
-      <EditUserModal />
       <CommentModal />
-      <EditPostModal />
       <ErrorModal />
       <div className="main">
         <div className='menu'>

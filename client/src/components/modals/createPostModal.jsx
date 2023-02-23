@@ -4,13 +4,13 @@ import { useUser } from "../utilities/userContext";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
-const CreatePostModal = ({ setNewPost, userName }) => {
+const CreatePostModal = ({ isOpen, toggle, setNewPost, userName }) => {
   const user = useUser();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCat, setSelectedCat] = useState(0);
   const [postText, setPostText] = useState("");
 
-  if(!user.createPostOpen) {
+  if(!isOpen) {
     return null;
   }
 
@@ -60,7 +60,7 @@ const CreatePostModal = ({ setNewPost, userName }) => {
           <div className="closeBtn"
             onClick={() => {
               clearData();
-              user.toggleCreatePost();
+              toggle();
             }}
           >
           <img src="common/close.png" alt="Close"/></div>
@@ -137,7 +137,7 @@ const CreatePostModal = ({ setNewPost, userName }) => {
                         time: resObject.postTime
                       });
                       clearData();
-                      user.toggleCreatePost();
+                      toggle();
                     } else {
                       user.setErrorMessage(result.data.message);
                       user.toggleError();
@@ -174,7 +174,7 @@ const CreatePostModal = ({ setNewPost, userName }) => {
                           time: resObject.postTime
                         });
                         clearData();
-                        user.toggleCreatePost();
+                        toggle();
                       } else {
                         user.setErrorMessage(result.data.message);
                         user.toggleError();

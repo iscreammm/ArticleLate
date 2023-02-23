@@ -1,14 +1,20 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import PostsList from "../components/PostsList";
 import { useUser } from "../components/utilities/userContext";
-import "../styles/profile.css";
 import CreatePostModal from "../components/modals/createPostModal";
+import EditPostModal from "../components/modals/postEditModal";
+import EditUserModal from "../components/modals/editUserModal";
+import "../styles/profile.css";
 
 const UserProfile = () => {
   const user = useUser();
   const [profileData, setProfileData] = useState();
   const [newPost, setNewPost] = useState();
+
+  const [createPostOpen, setCreatePostOpen] = useState(false);
+  const [editPostOpen, setEditPostOpen] = useState(false);
+  const [editUserOpen, setEditUserOpen] = useState(false);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
@@ -20,9 +26,33 @@ const UserProfile = () => {
     return <></>
   }
 
+  const toggleCreatePost = () => {
+    setCreatePostOpen(prev => !prev);
+  }
+
+  const toggleEditPost = () => {
+    setEditPostOpen(prev => !prev);
+  }
+
+  const toggleInfoEditing = () => {
+    console.log(profileData)
+    setEditUserOpen(prev => !prev);
+  }
+
   return (
     <>
-      <CreatePostModal setNewPost={setNewPost} userName={profileData.name} />
+      <CreatePostModal isOpen={createPostOpen}
+        toggle={toggleCreatePost}
+        setNewPost={setNewPost} 
+        userName={profileData.name} 
+      />
+      <EditPostModal isOpen={editPostOpen}
+        toggle={toggleEditPost}
+      />
+      <EditUserModal isOpen={editUserOpen}
+        toggle={toggleInfoEditing}
+      />
+      
       <div className="pageContainer profile">
         <div className="profileInfo">
           <div className="infoColumn">
@@ -35,7 +65,7 @@ const UserProfile = () => {
             <img className="userAvatar" src={`${profileData.imagePath}`} alt="Avatar2" />
             <img className="profileInfoButton" src="profile/change.png" alt="Change"
               onClick={() => {
-                user.toggleInfoEditing();
+                toggleInfoEditing();
               }}
             />
           </div>
@@ -52,12 +82,16 @@ const UserProfile = () => {
         <div style={{textAlign: "center"}}>
           <img className="createPostButton" src="profile/createpost.png" alt="CreatePost" 
             onClick={() => {
-              user.toggleCreatePost();
+              toggleCreatePost();
             }}
           />
         </div>
         <div style={{background: "#F0ADAD"}}>
-          <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${user.id}`} newPost={newPost} setNewPost={setNewPost} />
+          <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${user.id}`}
+            newPost={newPost}
+            setNewPost={setNewPost}
+            toggleEditPost={toggleEditPost}
+          />
         </div>
       </div>
     </>
