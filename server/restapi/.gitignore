@@ -1,5 +1,6 @@
 HELP.md
 .env
+.testEnv
 target/
 .mvn
 !.mvn/wrapper/maven-wrapper.jar

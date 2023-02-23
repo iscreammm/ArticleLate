@@ -20,7 +20,15 @@ import java.util.Locale;
 @RestController
 public class RestapiController {
 
-    static Dotenv dotenv = Dotenv.load();
+    private Dotenv dotenv;
+
+    public RestapiController() {
+        this.dotenv = Dotenv.load();
+    }
+
+    public RestapiController(Dotenv dotenv) {
+        this.dotenv = dotenv;
+    }
 
     @GetMapping("/verifyLogin")
     public String verifyLogin(@RequestParam String login) {
@@ -292,7 +300,7 @@ public class RestapiController {
                 }
             }
 
-            String sql = "SELECT posts.id, authorid, user_info.identificator, user_info.name, posttime, posttext,"
+            String sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator, user_info.name, posttime, posttext,"
                     + " categories.name AS category, postpicture, postlikes"
                     + " FROM posts"
                     + " JOIN categories ON postcategoryid = categories.id"
@@ -309,10 +317,11 @@ public class RestapiController {
 
             while (rs.next()) {
                 postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
             }
 
             data = gson.toJson(postList);
@@ -791,7 +800,7 @@ public class RestapiController {
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "SELECT posts.id, authorid, user_info.identificator, user_info.name, posttime, posttext,"
+            String sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator, user_info.name, posttime, posttext,"
                     + " categories.name AS category, postpicture, postlikes"
                     + " FROM posts"
                     + " JOIN categories ON postcategoryid = categories.id"
@@ -807,10 +816,11 @@ public class RestapiController {
                 return gson.toJson(new Message<>("Error", "Пост был удален", -1));
             } else {
                 data = gson.toJson(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
             }
 
         } catch (SQLException e) {
@@ -1078,14 +1088,14 @@ public class RestapiController {
 
             if (categoryId == 0) {
 
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
                         + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId
                         + " ORDER BY posttime DESC LIMIT 3";
             } else {
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
@@ -1102,10 +1112,11 @@ public class RestapiController {
 
             while (rs.next()) {
                 postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
             }
 
             data = gson.toJson(postList);
@@ -1156,7 +1167,7 @@ public class RestapiController {
 
             if (categoryId == 0) {
 
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
@@ -1164,7 +1175,7 @@ public class RestapiController {
                         + " WHERE  posttime < \'" + time + "\' AND authorid = relationships.subscribeid"
                         + " ORDER BY posttime DESC LIMIT 3";
             } else {
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
@@ -1182,10 +1193,11 @@ public class RestapiController {
 
             while (rs.next()) {
                 postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
             }
 
             data = gson.toJson(postList);
@@ -1394,7 +1406,7 @@ public class RestapiController {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
+            return gson.toJson(new Message<>("Error", "Не удалось получить количество уведомлений", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");

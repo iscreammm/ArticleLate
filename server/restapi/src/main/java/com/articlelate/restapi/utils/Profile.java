@@ -21,4 +21,16 @@ public class Profile {
     public String getIdentificator() {
         return identificator;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getFollows() {
+        return follows;
+    }
+
+    public int getFollowers() {
+        return followers;
+    }
 }

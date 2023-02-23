@@ -21,4 +21,8 @@ public class Comment {
         this.text = text;
         this.imagePath = imagePath;
     }
+
+    public int getId() {
+        return id;
+    }
 }
