@@ -15,8 +15,6 @@ export const UserProvider = ({ ident, children }) => {
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [selectedPost, setSelectedPost] = useState();
-  const [editPost, setEditPost] = useState();
-  const [postToRefresh, setPostToRefresh] = useState();
   const [identificator, setIdentificator] = useState();
 
   const signIn = (newUser, cb) => {
@@ -65,12 +63,10 @@ export const UserProvider = ({ ident, children }) => {
       commentsOpen: commentsOpen,
       notifOpen: notifOpen,
       selectedPost: selectedPost,
-      editPost: editPost,
-      postToRefresh: postToRefresh,
       errorOpen: errorOpen,
       errorMessage: errorMessage,
       toggleComments, toggleNotifications, toggleError,
-      setSelectedPost, setEditPost, setPostToRefresh, setErrorMessage, setAvatar,
+      setSelectedPost, setErrorMessage, setAvatar,
       signIn, signOut
     }}>
       { children }

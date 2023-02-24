@@ -5,9 +5,9 @@ import { useUser } from "./utilities/userContext";
 import { getDateFormat } from "../js/functions";
 import "../styles/feedPosts.css";
 
-const Post = ({ data, toggleEditPost }) => {
+const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
   const user = useUser();
-  const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
+  const [authorAvatar, setAuthorAvatar] = useState(data.authorImage);
   const [category, setCategory] = useState(data.category);
   const [text, setText] = useState(data.text);
   const [image, setImage] = useState(data.image);
@@ -16,25 +16,21 @@ const Post = ({ data, toggleEditPost }) => {
   const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
-      const resData = JSON.parse(result.data.data);
-      setAuthorAvatar(resData.imagePath);
-    });
-  }, []);
+    if ((data.authorId === user.id) && (data.authorImage !== user.avatar)) {
+      setAuthorAvatar(user.avatar);
+    }
+  }, [user.avatar]);
 
   useEffect(() => {
-    if (user.postToRefresh === data.id) {
-      axios.get(`http://localhost:8080/getPost?userId=${data.authorId}&postId=${data.id}`).then(result => {
-        const resData = JSON.parse(result.data.data);
-        setCategory(resData.category);
-        setText(resData.text);
-        setImage(resData.image);
-        data.category = resData.category;
-        data.text = resData.text;
-        data.image = resData.image;
-      });
+    if ((refreshedPost) && (refreshedPost.id === data.id)) {
+      setCategory(refreshedPost.category);
+      setText(refreshedPost.text);
+      setImage(refreshedPost.image);
+      data.category = refreshedPost.category;
+      data.text = refreshedPost.text;
+      data.image = refreshedPost.image;
     }
-  }, [user.postToRefresh]);
+  }, [refreshedPost]);
 
   if (deleted) {
     return <></>
@@ -66,7 +62,7 @@ const Post = ({ data, toggleEditPost }) => {
           {data.authorId !== user.id ? <></> :
             <div className="postButtons">
               <button onClick={() => {
-                user.setEditPost(data);
+                setPostToEdit(data);
                 toggleEditPost();
               }}>
                 <img src="common/edit.jpg" alt="Modify" />

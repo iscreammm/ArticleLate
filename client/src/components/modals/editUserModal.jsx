@@ -200,7 +200,7 @@ async function changeProfile(id, identifier, name, info, img) {
     info: info,
     imagePath: `${img}`
   }).then(result => {
-    return result
+    return result;
   });
 }
 

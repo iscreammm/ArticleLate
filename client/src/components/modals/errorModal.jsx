@@ -17,7 +17,7 @@ const ErrorModal = () => {
           e.stopPropagation();
         }}
         className='modalContainer notificationsModal'
-        style={{zIndex: "20"}}
+        style={{zIndex: "1000"}}
       >
         <p style={{fontSize: "1.6em", fontWeigth: "bold"}}>Ошибка</p>
         <p style={{fontSize: "1.3em", textAlign: "center"}}>{user.errorMessage}</p>

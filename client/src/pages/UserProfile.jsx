@@ -2,17 +2,19 @@ import React, { Suspense, useEffect, useState } from "react";
 import axios from "axios";
 import PostsList from "../components/PostsList";
 import { useUser } from "../components/utilities/userContext";
-import CreatePostModal from "../components/modals/createPostModal";
-import EditPostModal from "../components/modals/postEditModal";
 import "../styles/profile.css";
 
+const CreatePostModal = React.lazy(() => import("../components/modals/createPostModal"));
 const EditUserModal = React.lazy(() => import("../components/modals/editUserModal"));
+const EditPostModal = React.lazy(() => import("../components/modals/postEditModal"));
 
 const UserProfile = () => {
   const user = useUser();
   const [profileData, setProfileData] = useState();
   const [newPost, setNewPost] = useState();
-
+  const [postToEdit, setPostToEdit] = useState();
+  const [refreshedPost, setRefreshedPost] = useState();
+  
   const [createPostOpen, setCreatePostOpen] = useState(false);
   const [editPostOpen, setEditPostOpen] = useState(false);
   const [editUserOpen, setEditUserOpen] = useState(false);
@@ -41,15 +43,17 @@ const UserProfile = () => {
 
   return (
     <>
-      <CreatePostModal isOpen={createPostOpen}
-        toggle={toggleCreatePost}
-        setNewPost={setNewPost} 
-        userName={profileData.name} 
-      />
-      <EditPostModal isOpen={editPostOpen}
-        toggle={toggleEditPost}
-      />
       <Suspense>
+        <CreatePostModal isOpen={createPostOpen}
+          toggle={toggleCreatePost}
+          setNewPost={setNewPost} 
+          userName={profileData.name} 
+        />
+        <EditPostModal isOpen={editPostOpen}
+          toggle={toggleEditPost}
+          data={postToEdit}
+          setRefreshedPost={setRefreshedPost}
+        />
         <EditUserModal isOpen={editUserOpen}
           toggle={toggleInfoEditing}
           data={profileData}
@@ -95,6 +99,8 @@ const UserProfile = () => {
             newPost={newPost}
             setNewPost={setNewPost}
             toggleEditPost={toggleEditPost}
+            setPostToEdit={setPostToEdit}
+            refreshedPost={refreshedPost}
           />
         </div>
       </div>

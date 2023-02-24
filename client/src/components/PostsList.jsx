@@ -3,7 +3,7 @@ import axios from "axios";
 import Post from "./Post";
 import "../styles/feedPosts.css";
 
-const PostsList = ({ queryString, category, newPost, setNewPost, toggleEditPost }) => {
+const PostsList = ({ queryString, category, newPost, toggleEditPost, setPostToEdit, refreshedPost }) => {
   const [posts, setPosts] = useState();
 
   useEffect(() => {
@@ -16,7 +16,6 @@ const PostsList = ({ queryString, category, newPost, setNewPost, toggleEditPost 
   useEffect(() => {
     if (newPost) {
       setPosts(posts => [newPost, ...posts]);
-      setNewPost(undefined);
     }
   }, [newPost]);
 
@@ -31,7 +30,11 @@ const PostsList = ({ queryString, category, newPost, setNewPost, toggleEditPost 
   return (
     <div className="postsContainer">
       {posts.map(post => {
-        return <Post key={post.id} data={post} toggleEditPost={toggleEditPost} />
+        return <Post key={post.id} data={post}
+          toggleEditPost={toggleEditPost}
+          setPostToEdit={setPostToEdit}
+          refreshedPost={refreshedPost}
+        />
       })}
     </div>
   );
