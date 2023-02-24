@@ -19,7 +19,6 @@ const Post = ({ data, toggleEditPost }) => {
     axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
       const resData = JSON.parse(result.data.data);
       setAuthorAvatar(resData.imagePath);
-      console.log(isLiked)
     });
   }, []);
 

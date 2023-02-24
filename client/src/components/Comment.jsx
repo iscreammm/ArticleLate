@@ -33,7 +33,6 @@ const Comment = ({ data }) => {
         if(i === 0) {
           start = temp.indexOf(matches[i]);
           end = start + matches[i].length;
-          console.log(matches[i].slice(1))
           result.push(temp.slice(0, start));
           await axios.get(`http://localhost:8080/verifyIdentificator?identificator=${matches[i].slice(1)}&userId=${user.id}`).then(res => {
             if (res.data.state === "Success") {

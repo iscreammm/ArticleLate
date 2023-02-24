@@ -4,34 +4,25 @@ import { useUser } from "../utilities/userContext";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/editUser.css";
 
-const EditUserModal = ({ isOpen, toggle }) => {
+const EditUserModal = ({ isOpen, toggle, data, setProfileData }) => {
   const user = useUser();
-  const [profileData, setProfileData] = useState();
-  const [name, setName] = useState();
-  const [identifier, setIdentifier] = useState();
-  const [infoText, setInfoText] = useState();
-  const [avatar, setAvatar] = useState();
+  const [name, setName] = useState(data.name);
+  const [identifier, setIdentifier] = useState(data.identificator);
+  const [infoText, setInfoText] = useState(data.info);
+  const [avatar, setAvatar] = useState(data.imagePath);
   const [isDisabled, setIsDisabled] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [message, setMessage] = useState();
-  
+
   useEffect(() => {
-    axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
-      let data = JSON.parse(result.data.data);
-      setName(data.name);
-      setIdentifier(data.identificator);
-      setAvatar(data.imagePath);
-      setInfoText(data.info)
-      setProfileData(data);
-    });
+    setName(data.name);
+    setIdentifier(data.identificator);
+    setInfoText(data.info);
+    setAvatar(data.imagePath);
   }, [isOpen]);
 
   if(!isOpen) {
     return null;
-  }
-
-  if (profileData === undefined) {
-    return <></>
   }
 
   const handleName = (e) => {
@@ -51,17 +42,9 @@ const EditUserModal = ({ isOpen, toggle }) => {
     setDisabled(name, identifier, e.target.value);
   };
 
-  const clearData = () => {
-    setName(null);
-    setIdentifier(null);
-    setProfileData(null);
-    setSelectedImage(null);
-    setIsDisabled(true);
-  }
-
   const setDisabled = (name, identifier, info) => {
-    if ((profileData.name === name) && (profileData.identificator === identifier)
-        && (profileData.info === info) && (selectedImage === null)) {
+    if ((data.name === name) && (data.identificator === identifier)
+        && (data.info === info) && (selectedImage === null)) {
       setIsDisabled(true);
     } else {
       setIsDisabled(false);
@@ -81,7 +64,7 @@ const EditUserModal = ({ isOpen, toggle }) => {
                   let reader = new FileReader();
                   reader.readAsDataURL(event.target.files[0]);
                   reader.onload = function (e) {
-                    var image = new Image();
+                    let image = new Image();
                     image.src = e.target.result;
 
                     image.onload = function () {
@@ -121,7 +104,7 @@ const EditUserModal = ({ isOpen, toggle }) => {
               axios.get(`http://localhost:8080/verifyIdentificator?identificator=${identifier}&userId=${user.id}`).then(result => {
                 if (result.data.state === "Error") {
                   user.setErrorMessage(result.data.message);
-                  user.toggleError()
+                  user.toggleError();
                 } else {
                   if (result.data.data) {
                     setMessage("Идентификатор свободен");
@@ -143,7 +126,8 @@ const EditUserModal = ({ isOpen, toggle }) => {
         <div className="confirmUserChanges">
           <button
             onClick={() => {
-              clearData();
+              setSelectedImage(null);
+              setIsDisabled(true);
               toggle();
             }}
           >
@@ -164,21 +148,36 @@ const EditUserModal = ({ isOpen, toggle }) => {
                       user.setErrorMessage(result.data.message);
                       user.toggleError();
                     } else {
-                      clearData();
-                      user.reloadUser();
+                      setProfileData({
+                        ...data,
+                        name: name,
+                        identificator: identifier,
+                        info: infoText,
+                        imagePath: result.data.data
+                      });
+                      user.setAvatar(result.data.data);
+                      setSelectedImage(null);
+                      setIsDisabled(true);
                       toggle();
                     }
                   });
                 };
               } else {
-                image = profileData.imagePath;
+                image = data.imagePath;
                 await changeProfile(user.id, identifier, name, infoText, image).then(result => {
                   if (result.data.state === "Error") {
                     user.setErrorMessage(result.data.message);
                     user.toggleError();
                   } else {
-                    clearData();
-                    user.reloadUser();
+                    setProfileData({
+                      ...data,
+                      name: name,
+                      identificator: identifier,
+                      info: infoText,
+                      imagePath: image
+                    });
+                    setSelectedImage(null);
+                    setIsDisabled(true);
                     toggle();
                   }
                 });

@@ -10,27 +10,24 @@ import "../styles/layout.css";
 const Layout = () => {
   const user = useUser();
   const navigate = useNavigate();
-  const [avatar, setAvatar] = useState();
   const [notificationsCount, setNotificationsCount] = useState(0);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
-      setAvatar(JSON.parse(result.data.data).imagePath);
-    });
     axios.get(`http://localhost:8080/getNotificationsCount?userId=${user.id}`).then(result => {
       setNotificationsCount(result.data.data);
     });
-  }, [user.refreshUser]);
+  }, []);
 
   return (
     <>
       <NotificationsModal />
       <CommentModal />
       <ErrorModal />
+
       <div className="main">
         <div className='menu'>
           <Link className="avatar" to={`profile/${user.identificator}`}>
-            <img src={avatar} alt="Avatar" style={{display: avatar === undefined ? "none" : "block"}} />
+            <img src={user.avatar} alt="Avatar" style={{display: user.avatar === undefined ? "none" : "block"}} />
           </Link>
           <p className='notificationsContainer'> 
             <img className='notificationsIcon' src="layout/bell.PNG" alt="Bell" 

@@ -17,7 +17,6 @@ const Notification = ({ notifData }) => {
           user.setErrorMessage("Пост был удален");
           user.toggleError();
           axios.delete(`http://localhost:8080/deleteNotification?notificationId=${notifData.id}`).then(deletionResult => {
-            console.log(deletionResult)
             if (deletionResult.data.state === "Success") {
               setDeleted(true);
               user.toggleComments();

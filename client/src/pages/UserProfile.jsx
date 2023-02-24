@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import axios from "axios";
 import PostsList from "../components/PostsList";
 import { useUser } from "../components/utilities/userContext";
 import CreatePostModal from "../components/modals/createPostModal";
 import EditPostModal from "../components/modals/postEditModal";
-import EditUserModal from "../components/modals/editUserModal";
 import "../styles/profile.css";
+
+const EditUserModal = React.lazy(() => import("../components/modals/editUserModal"));
 
 const UserProfile = () => {
   const user = useUser();
@@ -20,7 +21,7 @@ const UserProfile = () => {
     axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
       setProfileData(JSON.parse(result.data.data));
     });
-  }, [user.refreshUser]);
+  }, []);
   
   if (profileData === undefined) {
     return <></>
@@ -35,7 +36,6 @@ const UserProfile = () => {
   }
 
   const toggleInfoEditing = () => {
-    console.log(profileData)
     setEditUserOpen(prev => !prev);
   }
 
@@ -49,10 +49,14 @@ const UserProfile = () => {
       <EditPostModal isOpen={editPostOpen}
         toggle={toggleEditPost}
       />
-      <EditUserModal isOpen={editUserOpen}
-        toggle={toggleInfoEditing}
-      />
-      
+      <Suspense>
+        <EditUserModal isOpen={editUserOpen}
+          toggle={toggleInfoEditing}
+          data={profileData}
+          setProfileData={setProfileData}
+        />
+      </Suspense>
+
       <div className="pageContainer profile">
         <div className="profileInfo">
           <div className="infoColumn">
