@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.checkerframework.checker.units.qual.C;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
@@ -1618,4 +1619,51 @@ class RestapiControllerTest {
         assertEquals(-1.0, message.getData());
     }
 
+    @DisplayName("Main class test")
+    @Order(79)
+    @Test
+    public void main(){
+        RestapiApplication.main(new String[]{});
+    }
+
+    @DisplayName("CommentData class test")
+    @Order(80)
+    @Test
+    public void commentDataTest(){
+        CommentData commentData = new CommentData(1,1,"text");
+        assertEquals(1, commentData.getUserId());
+        assertEquals(1, commentData.getPostId());
+        assertEquals("text", commentData.getCommentText());
+    }
+
+    @DisplayName("profileData class test")
+    @Order(81)
+    @Test
+    public void profileDataTest(){
+        ProfileData profileData = new ProfileData(1, "testUser", "testName", "info","");
+        assertEquals(1, profileData.getId());
+        assertEquals("testUser", profileData.getIdentificator());
+        assertEquals("testName", profileData.getName());
+        assertEquals("info", profileData.getInfo());
+        assertEquals("", profileData.getImagePath());
+    }
+
+    @DisplayName("relationshipsData class test")
+    @Order(82)
+    @Test
+    public void relationshipsDataTest(){
+        RelationshipsData relationshipsData = new RelationshipsData(1,2);
+        assertEquals(1, relationshipsData.getFollowerId());
+        assertEquals(2, relationshipsData.getUserId());
+    }
+
+    @DisplayName("userData class test")
+    @Order(83)
+    @Test
+    public void userDataTest(){
+        UserData userData = new UserData("testName","testLogin", "testPass");
+        assertEquals("testName", userData.getName());
+        assertEquals("testLogin", userData.getLogin());
+        assertEquals("testPass", userData.getPass());
+    }
 }
