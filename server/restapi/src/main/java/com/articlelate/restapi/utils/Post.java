@@ -37,4 +37,40 @@ public class Post {
     public Timestamp getTime() {
         return time;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getAuthorImage() {
+        return authorImage;
+    }
+
+    public String getIdentificator() {
+        return identificator;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
 }

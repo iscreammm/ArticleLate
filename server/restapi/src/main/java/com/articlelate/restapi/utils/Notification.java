@@ -18,4 +18,6 @@ public class Notification {
     public int getUserId() {
         return userId;
     }
+
+    public int getPostId() { return postId; }
 }

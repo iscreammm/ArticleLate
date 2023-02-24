@@ -56,7 +56,15 @@ public class RestapiController {
                 data = true;
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность логина", -1));
 
@@ -94,6 +102,13 @@ public class RestapiController {
                 return gson.toJson(new Message<>("Error", "Логин занят", -1));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "INSERT INTO auth_data"
                     + "(login, pass) "
                     + "VALUES"
@@ -104,6 +119,13 @@ public class RestapiController {
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             int loginId = 0;
 
@@ -116,6 +138,13 @@ public class RestapiController {
 
             while (rs.next()) {
                 loginId = rs.getInt("id");
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             sql = "INSERT INTO user_info"
@@ -132,6 +161,13 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT id FROM user_info WHERE loginid = " + loginId;
 
             dbConnection = db.getDBConnection();
@@ -143,7 +179,15 @@ public class RestapiController {
                 data = rs.getInt("id");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось зарегистрировать пользователя", -1));
 
@@ -179,6 +223,13 @@ public class RestapiController {
                 return gson.toJson(new Message<>("Error", "Неверный логин", -1));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT user_info.id FROM user_info"
                     + " JOIN auth_data ON user_info.loginid = auth_data.id"
                     + " WHERE auth_data.login = \'" + login + "\'"
@@ -195,7 +246,15 @@ public class RestapiController {
 
             data = rs.getInt("id");
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось выполнить вход", -1));
 
@@ -233,6 +292,13 @@ public class RestapiController {
                 follows = rs.getInt("follows_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT COUNT(*) AS followers_count FROM relationships WHERE subscribeid = " + userId;
 
             dbConnection = db.getDBConnection();
@@ -244,6 +310,13 @@ public class RestapiController {
 
             while (rs.next()) {
                 followers = rs.getInt("followers_count");
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             sql = "SELECT * FROM user_info WHERE id = " + userId;
@@ -258,7 +331,15 @@ public class RestapiController {
                         follows, followers, rs.getString("info"), rs.getString("profilepicture")));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить профиль пользователя", -1));
 
@@ -298,6 +379,13 @@ public class RestapiController {
                 while (rs.next()) {
                     time = rs.getTimestamp("posttime");
                 }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             String sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator, user_info.name, posttime, posttext,"
@@ -324,9 +412,17 @@ public class RestapiController {
                         isLiked(userId, rs.getInt("id"))));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты пользователя", -1));
 
@@ -363,7 +459,15 @@ public class RestapiController {
                 data = true;
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить подписку на пользователя", -1));
 
@@ -400,6 +504,13 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE subscribeid = " + relations.getUserId();
 
             dbConnection = db.getDBConnection();
@@ -411,7 +522,15 @@ public class RestapiController {
                 data = rs.getInt("follows_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось подписаться на пользователя", -1));
 
@@ -447,6 +566,13 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE subscribeid = " + relations.getUserId();;
 
             dbConnection = db.getDBConnection();
@@ -458,7 +584,15 @@ public class RestapiController {
                 data = rs.getInt("follows_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось отписаться от пользователя", -1));
 
@@ -501,6 +635,13 @@ public class RestapiController {
                 }
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT id FROM user_info WHERE identificator = \'" + profile.getIdentificator() + "\'"
                     + " AND id != " + profile.getId();
 
@@ -511,6 +652,13 @@ public class RestapiController {
 
             if (rs.next()) {
                 return gson.toJson(new Message<>("Error", "Данный идентификатор уже занят.", -1));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             if (profile.getImagePath().contains("profilePictures")) {
@@ -531,6 +679,13 @@ public class RestapiController {
                     picPath = rs.getString("profilepicture");
                 }
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 if (!picPath.contains("avatar")) {
                     deleteFile("../client/public/" + picPath);
                 }
@@ -545,7 +700,15 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить информацию профиля", -1));
 
@@ -561,6 +724,7 @@ public class RestapiController {
 
         return gson.toJson(new Message<>("Success", "", data));
     }
+
     @GetMapping("/verifyIdentificator")
     public String verifyIdentificator(@RequestParam String identificator,
                                       @RequestParam(required = false, defaultValue = "0") int userId) {
@@ -592,7 +756,15 @@ public class RestapiController {
                 data = true;
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность идентификатора", -1));
 
@@ -635,6 +807,13 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT id, posttime FROM posts WHERE postpicture = \'" + imagePath + "\'";
 
             dbConnection = db.getDBConnection();
@@ -650,6 +829,13 @@ public class RestapiController {
                 postTime = rs.getTimestamp("posttime");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             JsonObject json = new JsonObject();
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, hh:mm:ss aaa", Locale.ENGLISH);
@@ -660,17 +846,18 @@ public class RestapiController {
 
             data = json.toString();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
-
-        } catch (SQLException e) {
+        }  catch (SQLException e) {
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось создать пост", -1));
 
-        } catch (ClassNotFoundException e) {
+        }  catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
             e.printStackTrace();
+
+        }  catch (Throwable e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -701,11 +888,25 @@ public class RestapiController {
 
                 statement.execute(sql);
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 sql = "INSERT INTO likes (userid, postid) VALUES (" + userId +", "+ postId + ")";
 
                 dbConnection = db.getDBConnection();
                 statement = dbConnection.createStatement();
                 statement.execute(sql);
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             sql = "SELECT postlikes FROM posts WHERE id = " + postId;
@@ -719,7 +920,15 @@ public class RestapiController {
                 data = rs.getInt("postlikes");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось поставить лайк посту", -1));
 
@@ -756,12 +965,26 @@ public class RestapiController {
 
                 statement.execute(sql);
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 sql = "DELETE FROM likes WHERE userId = " + userId + "AND postId = " + postId;
 
                 dbConnection = db.getDBConnection();
                 statement = dbConnection.createStatement();
 
                 statement.execute(sql);
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             sql = "SELECT postlikes FROM posts WHERE id = " + postId;
@@ -775,7 +998,15 @@ public class RestapiController {
                 data = rs.getInt("postlikes");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось убрать лайк с поста", -1));
 
@@ -823,7 +1054,15 @@ public class RestapiController {
                         isLiked(userId, rs.getInt("id"))));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить пост", -1));
 
@@ -859,6 +1098,13 @@ public class RestapiController {
                 picPath = rs.getString("postpicture");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             deleteFile(picPath);
 
             sql = "DELETE FROM posts WHERE id = " + postId;
@@ -867,11 +1113,25 @@ public class RestapiController {
             statement = dbConnection.createStatement();
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "DELETE FROM likes WHERE postid = " + postId;
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             sql = "DELETE FROM commentaries WHERE postid = " + postId;
 
@@ -879,7 +1139,15 @@ public class RestapiController {
             statement = dbConnection.createStatement();
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить пост", -1));
 
@@ -924,6 +1192,13 @@ public class RestapiController {
                     picPath = rs.getString("postpicture");
                 }
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 if (!picPath.equals("")) {
                     deleteFile("../client/public/" + picPath);
                 }
@@ -939,17 +1214,25 @@ public class RestapiController {
 
             statement.execute(sql);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить содержимое поста", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
             e.printStackTrace();
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -982,6 +1265,13 @@ public class RestapiController {
                 while (rs.next()) {
                     time = rs.getTimestamp("commenttime");
                 }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             String sql = "SELECT commentaries.id, userid, user_info.identificator,"
@@ -1002,6 +1292,13 @@ public class RestapiController {
                         rs.getString("identificator"), rs.getString("name"),
                         rs.getTimestamp("commenttime"), rs.getString("commenttext"),
                         rs.getString("profilepicture")));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             data = gson.toJson(commentList);
@@ -1042,7 +1339,15 @@ public class RestapiController {
                 data = rs.getInt("id");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить идентификатор", -1));
 
@@ -1082,6 +1387,13 @@ public class RestapiController {
                 while (rs.next()) {
                     time = rs.getTimestamp("posttime");
                 }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             String sql = "";
@@ -1119,9 +1431,17 @@ public class RestapiController {
                         isLiked(userId, rs.getInt("id"))));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты новостной ленты", -1));
 
@@ -1160,6 +1480,13 @@ public class RestapiController {
 
                 while (rs.next()) {
                     time = rs.getTimestamp("posttime");
+                }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
                 }
             }
 
@@ -1200,9 +1527,17 @@ public class RestapiController {
                         isLiked(userId, rs.getInt("id"))));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты ленты подписок", -1));
 
@@ -1239,7 +1574,15 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось добавить комментарий", -1));
 
@@ -1274,6 +1617,13 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT postid FROM commentaries"
                     + " WHERE id = " + commentId;
 
@@ -1286,9 +1636,17 @@ public class RestapiController {
                 postId = (rs.getInt("postid"));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             handleTag(commentText, postId);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить комментарий", -1));
 
@@ -1319,7 +1677,15 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить комментарий", -1));
 
@@ -1347,9 +1713,6 @@ public class RestapiController {
 
             Timestamp time = new Timestamp(0);
 
-            dbConnection = db.getDBConnection();
-            statement = dbConnection.createStatement();
-
             String sql = "SELECT * FROM notifications"
                     + " WHERE userid = " + userId + " AND id > " + prevNotificationId
                     + " ORDER BY id ASC LIMIT 5";
@@ -1366,9 +1729,17 @@ public class RestapiController {
                         rs.getInt("postid")));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             data = gson.toJson(notificationsList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить уведомления", -1));
 
@@ -1404,7 +1775,15 @@ public class RestapiController {
                 data = rs.getInt("notifications_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось получить количество уведомлений", -1));
 
@@ -1435,7 +1814,15 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
 
@@ -1465,6 +1852,13 @@ public class RestapiController {
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -1521,12 +1915,17 @@ public class RestapiController {
         dbConnection = db.getDBConnection();
         statement = dbConnection.createStatement();
 
-        statement.execute(sql);
-
         ResultSet rs = statement.executeQuery(sql);
 
         if (rs.next()) {
             userId = rs.getInt("id");
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             sql = "INSERT INTO notifications(userId, postId)"
                     + " VALUES(" + userId + ", \'" + postId + "\'"
@@ -1536,6 +1935,13 @@ public class RestapiController {
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
         }
     }
 
@@ -1582,14 +1988,19 @@ public class RestapiController {
         dbConnection = db.getDBConnection();
         statement = dbConnection.createStatement();
 
-        statement.execute(sql);
-
         boolean isLiked = false;
 
         ResultSet rs = statement.executeQuery(sql);
 
         if (rs.next()) {
             isLiked = true;
+        }
+
+        if (statement != null) {
+            statement.close();
+        }
+        if (dbConnection != null) {
+            dbConnection.close();
         }
 
         return isLiked;
