@@ -120,7 +120,6 @@ const CreatePostModal = ({ isOpen, toggle, setNewPost, userName }) => {
                     image: ""
                   }).then(result => {
                     if (result.data.state === "Success") {
-                      console.log(result)
                       const resObject = JSON.parse(result.data.data);
                       let e = document.getElementById("CategoriesID");
                       let catText = e.options[e.selectedIndex].text;

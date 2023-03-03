@@ -9,14 +9,12 @@ export const useUser = () => {
 
 export const UserProvider = ({ ident, children }) => {
   const [id, setId] = useState(ident);
+  const [avatar, setAvatar] = useState();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
-  const [refreshUser, setRefreshUser] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [selectedPost, setSelectedPost] = useState();
-  const [editPost, setEditPost] = useState();
-  const [postToRefresh, setPostToRefresh] = useState();
   const [identificator, setIdentificator] = useState();
 
   const signIn = (newUser, cb) => {
@@ -34,10 +32,12 @@ export const UserProvider = ({ ident, children }) => {
   useEffect(() => {
     if (id) {
       axios.get(`http://localhost:8080/getProfile?userId=${id}`).then(result => {
-        setIdentificator(JSON.parse(result.data.data).identificator);
+        const data = JSON.parse(result.data.data)
+        setIdentificator(data.identificator);
+        setAvatar(data.imagePath);
       });
     }
-  }, [refreshUser, id]);
+  }, [id]);
 
   if ((!identificator) && (id)) {
     return <></>
@@ -55,27 +55,21 @@ export const UserProvider = ({ ident, children }) => {
     setErrorOpen(prev => !prev);
   }
 
-  const reloadUser = () => {
-    setRefreshUser(prev => !prev);
-  }
-
   return (
     <UserContext.Provider value={{
       id: id,
+      avatar: avatar,
       identificator: identificator,
       commentsOpen: commentsOpen,
       notifOpen: notifOpen,
-      refreshUser: refreshUser,
       selectedPost: selectedPost,
-      editPost: editPost,
-      postToRefresh: postToRefresh,
       errorOpen: errorOpen,
       errorMessage: errorMessage,
       toggleComments, toggleNotifications, toggleError,
-      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setErrorMessage,
+      setSelectedPost, setErrorMessage, setAvatar,
       signIn, signOut
     }}>
       { children }
     </UserContext.Provider>
-  )
+  );
 }
