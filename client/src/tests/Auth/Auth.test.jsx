@@ -1,11 +1,23 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom"
+import "@testing-library/jest-dom";
+import axios from "axios";
 import Auth from "../../components/Auth";
+import * as user from "../../components/utilities/userContext";
 
 const inputString = "naso@()*&137nasonasoaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
+function mockCall(data) {
+  axios.get.mockResolvedValue({
+    data: data
+  });
+}
+
 describe('Authorization form tests', () => {
+  afterEach(() => {
+    axios.get.mockClear();
+  });
+
   test('Check render Sign-in button', () => {
     render(<Auth />);
     expect(screen.getByText("Войти")).toBeInTheDocument();
@@ -53,7 +65,6 @@ describe('Authorization form tests', () => {
     userEvent.click(screen.getByAltText("Eye"));
 
     expect(input.type).toBe('text');
-    //expect(screen.getByText("naso@()*&137naso")).toBeInTheDocument();
   });
 
   test('Check button on disability', () => {
@@ -72,4 +83,69 @@ describe('Authorization form tests', () => {
     
     expect(button.disabled).toBe(false);
   });
+
+  test('Check login button work', async () => {
+    const data = {
+      state: "Error",
+      message: "Не удалось войти",
+      data: -1
+    }
+    mockCall(data);
+
+    render(<Auth />);
+    
+    const inputLogin = screen.getByPlaceholderText('Введите логин');
+    const inputPassword = screen.getByPlaceholderText('Введите пароль');
+    const loginButton = screen.getByRole('button', { name: 'Войти'});
+    userEvent.type(inputLogin, inputString);
+    userEvent.type(inputPassword, inputString);
+
+    await waitFor(() => {
+      userEvent.click(loginButton);
+    });
+
+    setTimeout(() => {
+      expect(screen.getByText('Не удалось войти')).toBeInTheDocument();
+    }, 500);
+  });
+
+  test('Check user signing in', async () => {
+    const data = {
+      state: "Success",
+      message: "Успешный вход",
+      data: 1
+    }
+    
+    const signIn = jest.fn();
+
+    jest.spyOn(user, 'useUser').mockImplementation(() => {
+      return {signIn: signIn}
+    });
+
+    mockCall(data);
+
+    render(<Auth />);
+    
+    const inputLogin = screen.getByPlaceholderText('Введите логин');
+    const inputPassword = screen.getByPlaceholderText('Введите пароль');
+    const loginButton = screen.getByRole('button', { name: 'Войти'});
+    userEvent.type(inputLogin, inputString);
+    userEvent.type(inputPassword, inputString);
+
+    await waitFor(() => userEvent.click(loginButton));
+
+    expect(signIn).toHaveBeenCalledTimes(1);
+  });
+
+  test('Navigation to registration', () => {
+    const navigate = jest.fn();
+
+    render(<Auth navigate={navigate} />);
+    const button = screen.getByRole('button', { name: 'Регистрация'});
+
+    userEvent.click(button);
+    
+    expect(navigate).toHaveBeenCalledTimes(1);
+  });
+
 });

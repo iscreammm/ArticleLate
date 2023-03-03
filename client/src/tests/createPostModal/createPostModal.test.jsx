@@ -121,5 +121,4 @@ describe('CreatePostModal form tests', () => {
 
     expect(postText.value).toBe(currentString);
   });
-
 });
