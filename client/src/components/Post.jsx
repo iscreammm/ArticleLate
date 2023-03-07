@@ -26,9 +26,6 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
       setCategory(refreshedPost.category);
       setText(refreshedPost.text);
       setImage(refreshedPost.image);
-      data.category = refreshedPost.category;
-      data.text = refreshedPost.text;
-      data.image = refreshedPost.image;
     }
   }, [refreshedPost]);
 
@@ -36,13 +33,27 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
     return <></>
   }
 
-  const refreshLikes = () => {
-    axios.get(`http://localhost:8080/getPost?userId=${data.authorId}&postId=${data.id}`).then(result => {
-      const resData = JSON.parse(result.data.data);
-      setIsLiked(resData.isLiked);
-      setLikes(resData.likesCount);
-      data.isLiked = resData.isLiked;
-      data.likesCount = resData.likesCount;
+  const increaseLikes = async () => {
+    await axios.put(`http://localhost:8080/incLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
+      if (result.data.state === "Success") {
+        setIsLiked(true);
+        setLikes(prev => prev + 1);
+      } else {
+        user.setErrorMessage(result.data.message);
+        user.toggleError();
+      }
+    });
+  }
+
+  const decreaseLikes = async () => {
+    await axios.put(`http://localhost:8080/decLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
+      if (result.data.state === "Success") {
+        setIsLiked(false);
+        setLikes(prev => prev - 1);
+      } else {
+        user.setErrorMessage(result.data.message);
+        user.toggleError();
+      }
     });
   }
 
@@ -62,7 +73,12 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
           {data.authorId !== user.id ? <></> :
             <div className="postButtons">
               <button onClick={() => {
-                setPostToEdit(data);
+                setPostToEdit({
+                  ...data,
+                  category: category,
+                  text: text,
+                  image: image
+                });
                 toggleEditPost();
               }}>
                 <img src="common/edit.jpg" alt="Modify" />
@@ -89,32 +105,18 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
         </div>
         <div className="postMainContent">
           <p dangerouslySetInnerHTML={{__html: text}}></p>
-          <img src={image} alt="ImagePost"
+          <img src={image} alt="Post Image"
             style={{display: image === "" ? "none" : "block"}}
           />
         </div>
         <div className="postBottom">
           <div className="likeContainer">
-            <img src={isLiked ? "post/redlike.png" : "post/whitelike.png"} alt="WhiteLike"
+            <img src={isLiked ? "post/redlike.png" : "post/whitelike.png"} alt="Like"
               onClick={async () => {
                 if (!isLiked) {
-                  await axios.put(`http://localhost:8080/incLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
-                    if (result.data.state === "Success") {
-                      refreshLikes();
-                    } else {
-                      user.setErrorMessage(result.data.message);
-                      user.toggleError();
-                    }
-                  });
+                  await increaseLikes();
                 } else {
-                  await axios.put(`http://localhost:8080/decLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
-                    if (result.data.state === "Success") {
-                      refreshLikes();
-                    } else {
-                      user.setErrorMessage(result.data.message);
-                      user.toggleError();
-                    }
-                  });
+                  await decreaseLikes();
                 }
               }}
             />
@@ -122,7 +124,17 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
           </div>
           <button
             onClick={() => {
-              user.setSelectedPost({data, authorAvatar, refreshLikes});
+              user.setSelectedPost({
+                ...data,
+                isLiked: isLiked,
+                likesCount: likes,
+                authorImage: authorAvatar,
+                category: category,
+                text: text,
+                image: image,
+                decreaseLikes,
+                increaseLikes
+              });
               user.toggleComments();
             }}
           >

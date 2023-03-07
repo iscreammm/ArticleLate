@@ -5,10 +5,11 @@ import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
 const CreatePostModal = ({ isOpen, toggle, setNewPost, userName }) => {
-  const user = useUser();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCat, setSelectedCat] = useState(0);
   const [postText, setPostText] = useState("");
+  
+  const user = useUser();
 
   if(!isOpen) {
     return null;
@@ -82,24 +83,27 @@ const CreatePostModal = ({ isOpen, toggle, setNewPost, userName }) => {
             <input id="#loadPostImage" type="file"
               accept="image/png, image/jpg, image/jpeg"
               onChange={(event) => {
-                let reader = new FileReader();
-                  reader.readAsDataURL(event.target.files[0]);
-                  reader.onload = function (e) {
-                    var image = new Image();
-                    image.src = e.target.result;
+                if (event.target.files[0].size > (1024 * 1024 * 10)) {
+                  user.setErrorMessage("Размер файла слишком большой");
+                  user.toggleError();
+                  return;
+                }
 
-                    image.onload = function () {
-                      if (event.target.files[0].size > (1024 * 1024 * 10)) {
-                        user.setErrorMessage("Размер файла слишком большой");
-                        user.toggleError();
-                      } else if (((this.height < 400) && (this.width < 400)) || ((this.height > 1920) && (this.width > 1920))) {
-                        user.setErrorMessage("Изображение должно быть меньше 1920x1920 и больше 400x400");
-                        user.toggleError();
-                      } else {
-                        setSelectedImage(event.target.files[0]);
-                      }
-                    };
+                let reader = new FileReader();
+                reader.readAsDataURL(event.target.files[0]);
+                reader.onload = function (e) {
+                  let image = new Image();
+                  image.src = e.target.result;
+                  
+                  image.onload = function () {
+                    if (((this.height < 400) && (this.width < 400)) || ((this.height > 1920) && (this.width > 1920))) {
+                      user.setErrorMessage("Изображение должно быть меньше 1920x1920 и больше 400x400");
+                      user.toggleError();
+                    } else {
+                      setSelectedImage(event.target.files[0]);
+                    }
                   };
+                };
               }}
               style={{display: "none"}}
             />

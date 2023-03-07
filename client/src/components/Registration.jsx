@@ -151,7 +151,7 @@ const Registration = ({ navigate }) => {
             value={repRegPass}
             onChange={handleRepRegPass}
           />
-          <img className="passwordIcon" src="login/eye.jpg" alt="Eye"
+          <img className="passwordIcon" src="login/eye.jpg" alt="Eye1"
             onClick={() => {
               togglePass('#regPassRepeat');
             }}

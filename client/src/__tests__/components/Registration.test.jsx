@@ -6,8 +6,6 @@ import Registration from "../../components/Registration";
 
 const inputString = "naso@()*&137nasonasoaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
-axios.post = jest.fn();
-
 function mockCall(data) {
   axios.post.mockResolvedValue({
     data: data

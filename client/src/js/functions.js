@@ -2,14 +2,15 @@ export function getDateFormat(date) {
   const dateParsed = date.slice(0, date.length - 3);
   const time = new Date(dateParsed);
 
-  let today = dateParsed.slice(4, 6).replace(/\s/g, '');
-  today = today.length === 1 ? ('0' + today) : today;
+  let today = dateParsed.slice(4, 6).replace(/[\s.,%]/g, '');
   
   let hours = time.getHours();
   if (date.includes("PM")) {
     hours = hours + 12;
   } else {
-    hours = '0' + hours;
+    if (parseInt(hours) < 10) {
+      hours = '0' + hours;
+    }
   }
 
   let minutes = time.getMinutes();
@@ -55,7 +56,7 @@ export function getDateFormat(date) {
       month = "Декабря";
       break;
     default:
-      month = "Месяц"
+      return "";
   }
 
   return (today + " " + month + " " + time.getFullYear() + " "

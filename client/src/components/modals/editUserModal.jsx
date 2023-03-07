@@ -86,12 +86,12 @@ const EditUserModal = ({ isOpen, toggle, data, setProfileData }) => {
           </div>
           <div className="editUserInformation">
             <img src="profile/editprofile.png" alt="EditProfile" />
-            <input type="text" 
+            <input type="text" placeholder="Введите имя"
               value={name}
               onChange={handleName}
               maxLength={30}
             />
-            <input type="text" 
+            <input type="text" placeholder="Введите идентификатор"
               value={identifier}
               onChange={handleIdentifier}
               maxLength={30}

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const UserContext = React.createContext()
+export const UserContext = React.createContext();
 
 export const useUser = () => {
   return useContext(UserContext);

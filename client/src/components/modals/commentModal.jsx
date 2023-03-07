@@ -11,8 +11,6 @@ const CommentModal = () => {
   const user = useUser();
   const [isInsert, setIsInsert] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [isLiked, setIsLiked] = useState();
-  const [likes, setLikes] = useState();
 
   if(!user.commentsOpen) {
     return null;
@@ -21,14 +19,6 @@ const CommentModal = () => {
   const handleComment = (e) => {
     setCommentText(e.target.value);
   };
-
-  const refreshLikes = () => {
-    axios.get(`http://localhost:8080/getPost?userId=${user.selectedPost.data.authorId}&postId=${user.selectedPost.data.id}`).then(result => {
-      const resData = JSON.parse(result.data.data);
-      setIsLiked(resData.isLiked);
-      setLikes(resData.likesCount);
-    });
-  }
 
   return (
     <div className="overlay"
@@ -46,64 +36,60 @@ const CommentModal = () => {
         <div className="postContent" style={{margin: "0 auto"}}>
           <div className="postInfo">
             <div className="postUserInfo">
-              <Link to={`/profile/${user.selectedPost.data.identificator}`}
+              <Link to={`/profile/${user.selectedPost.identificator}`}
                 onClick={() => {
                   user.toggleComments();
                 }}
               >
-                <img src={user.selectedPost.authorAvatar} alt="AvatarCircle" />
+                <img src={user.selectedPost.authorImage} alt="AvatarCircle" />
               </Link>
               <div style={{marginTop: "0.15vw", textAlign: "center"}}>
-                <p style={{fontSize: '1.2em'}}>{user.selectedPost.data.name}</p>
-                <p>@{user.selectedPost.data.identificator}</p>
+                <p style={{fontSize: '1.2em'}}>{user.selectedPost.name}</p>
+                <p>@{user.selectedPost.identificator}</p>
               </div>
             </div>
             <div className="postDate">
-              <p>{getDateFormat(user.selectedPost.data.time)}</p>
-              <p>{user.selectedPost.data.category}</p>
+              <p>{getDateFormat(user.selectedPost.time)}</p>
+              <p>{user.selectedPost.category}</p>
             </div>
           </div>
           <div className="postMainContent">
-            <p dangerouslySetInnerHTML={{__html: user.selectedPost.data.text}} style={{textAlign: "left"}} ></p>
-            <img src={user.selectedPost.data.image} alt="ImagePost"
-              style={{display: user.selectedPost.data.image ? "block" : "none"}}
+            <p dangerouslySetInnerHTML={{__html: user.selectedPost.text}} style={{textAlign: "left"}} ></p>
+            <img src={user.selectedPost.image} alt="ImagePost"
+              style={{display: user.selectedPost.image ? "block" : "none"}}
             />
           </div>
           <div className="postBottom">
             <div className="likeContainer">
               <img
-                src={isLiked === undefined ?
-                  (user.selectedPost.data.isLiked ? "post/redlike.png" : "post/whitelike.png")
-                    : (isLiked ? "post/redlike.png" : "post/whitelike.png")}
+                src={user.selectedPost.isLiked ? "post/redlike.png" : "post/whitelike.png"}
                 alt="WhiteLike"
                 onClick={async () => {
-                  const liked = isLiked === undefined ? user.selectedPost.data.isLiked : isLiked;
-                  
-                  if (!liked) {
-                    await axios.put(`http://localhost:8080/incLikesOnPost?userId=${user.id}&postId=${user.selectedPost.data.id}`).then(result => {
-                      if (result.data.state === "Success") {
-                        refreshLikes();
-                        user.selectedPost.refreshLikes();
-                      } else {
-                        user.setErrorMessage(result.data.message);
-                        user.toggleError();
+                  if (!user.selectedPost.isLiked) {
+                    await user.selectedPost.increaseLikes();
+                    user.setSelectedPost(prev => {
+                        return {
+                          ...prev,
+                          likesCount: prev.likesCount + 1,
+                          isLiked: true
+                        }
                       }
-                    });
+                    );
                   } else {
-                    await axios.put(`http://localhost:8080/decLikesOnPost?userId=${user.id}&postId=${user.selectedPost.data.id}`).then(result => {
-                      if (result.data.state === "Success") {
-                        refreshLikes();
-                        user.selectedPost.refreshLikes();
-                      } else {
-                        user.setErrorMessage(result.data.message);
-                        user.toggleError();
+                    await user.selectedPost.decreaseLikes();
+                    user.setSelectedPost(prev => {
+                        return {
+                          ...prev,
+                          likesCount: prev.likesCount - 1,
+                          isLiked: false
+                        }
                       }
-                    });
+                    );
                   }
                 }}
               />
               <p>
-                {likes === undefined ? user.selectedPost.data.likesCount : likes}
+                {user.selectedPost.likesCount}
               </p>
             </div>
             <button
@@ -128,7 +114,7 @@ const CommentModal = () => {
                 onClick={() => {
                   axios.post("http://localhost:8080/addComment", {
                     userId: user.id,
-                    postId: user.selectedPost.data.id,
+                    postId: user.selectedPost.id,
                     commentText: commentText
                   }).then(result => {
                     if (result.data.state === "Success") {
@@ -145,7 +131,7 @@ const CommentModal = () => {
               </button>
             </div>
           }
-          <CommentsList postId={user.selectedPost.data.id} />
+          <CommentsList postId={user.selectedPost.id} />
         </div>
       </div>
     </div>
