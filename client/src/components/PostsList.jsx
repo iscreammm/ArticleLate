@@ -14,7 +14,7 @@ const PostsList = ({ queryString, category, newPost, toggleEditPost, setPostToEd
   }, [category]);
 
   useEffect(() => {
-    if (newPost) {
+    if (newPost && (posts !== undefined)) {
       setPosts(posts => [newPost, ...posts]);
     }
   }, [newPost]);
