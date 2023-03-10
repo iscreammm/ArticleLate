@@ -30,23 +30,11 @@ public class Comment {
         return authorId;
     }
 
-    public String getIdentificator() {
-        return identificator;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public Timestamp getTime() {
         return time;
     }
 
     public String getText() {
         return text;
-    }
-
-    public String getImagePath() {
-        return imagePath;
     }
 }

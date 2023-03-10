@@ -42,18 +42,6 @@ public class Post {
         return id;
     }
 
-    public String getAuthorImage() {
-        return authorImage;
-    }
-
-    public String getIdentificator() {
-        return identificator;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public String getText() {
         return text;
     }

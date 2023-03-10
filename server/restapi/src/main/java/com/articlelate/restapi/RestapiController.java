@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -21,9 +22,22 @@ import java.util.Locale;
 public class RestapiController {
 
     private Dotenv dotenv;
+    private DataBase db;
 
     public RestapiController() {
         this.dotenv = Dotenv.load();
+        try {
+            this.db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public RestapiController(DataBase db){
+        this.dotenv = Dotenv.load();
+        this.db = db;
     }
 
     public RestapiController(Dotenv dotenv) {
@@ -38,8 +52,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
-
+            db.initialSetUp();
             Connection dbConnection = null;
             Statement statement = null;
 
@@ -86,7 +99,7 @@ public class RestapiController {
         UserData user = gson.fromJson(dataJson, UserData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -207,7 +220,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -272,9 +285,8 @@ public class RestapiController {
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -360,7 +372,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -442,7 +454,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -489,7 +501,7 @@ public class RestapiController {
         RelationshipsData relations = gson.fromJson(dataJson, RelationshipsData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -552,7 +564,7 @@ public class RestapiController {
         RelationshipsData relations = gson.fromJson(dataJson, RelationshipsData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -614,7 +626,7 @@ public class RestapiController {
         ProfileData profile = gson.fromJson(dataJson, ProfileData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -734,7 +746,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -792,7 +804,7 @@ public class RestapiController {
                 imagePath = loadImage(post.getImage(), "postPictures");
             }
 
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -871,7 +883,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             boolean isLiked = isLiked(userId, postId);
 
@@ -920,6 +932,8 @@ public class RestapiController {
                 data = rs.getInt("postlikes");
             }
 
+            System.out.println(data);
+
             if (statement != null) {
                 statement.close();
             }
@@ -948,7 +962,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             boolean isLiked = isLiked(userId, postId);
 
@@ -1026,7 +1040,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1080,7 +1094,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1169,7 +1183,7 @@ public class RestapiController {
         PostData post = gson.fromJson(dataJson, PostData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1247,7 +1261,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1323,7 +1337,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1369,7 +1383,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1463,7 +1477,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1557,7 +1571,7 @@ public class RestapiController {
         CommentData commentData = gson.fromJson(dataJson, CommentData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1604,7 +1618,7 @@ public class RestapiController {
         int postId = 0;
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1664,7 +1678,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1706,7 +1720,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1759,7 +1773,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1801,7 +1815,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1840,7 +1854,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1903,7 +1917,7 @@ public class RestapiController {
     }
 
     private void createNotification(String tag, int postId) throws SQLException, ClassNotFoundException {
-        DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        db.initialSetUp();
 
         int userId = -1;
 
@@ -1978,7 +1992,7 @@ public class RestapiController {
     }
 
     private boolean isLiked (int userId, int postId) throws SQLException, ClassNotFoundException {
-        DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        db.initialSetUp();
 
         Connection dbConnection = null;
         Statement statement = null;

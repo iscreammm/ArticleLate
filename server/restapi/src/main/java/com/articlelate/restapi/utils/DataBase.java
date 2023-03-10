@@ -14,10 +14,10 @@ public class DataBase {
         this.USER = USER;
         this.PASS = PASS;
 
-        initialSetUp();
+        //initialSetUp();
     }
 
-    private void initialSetUp() throws SQLException, ClassNotFoundException{
+    public String initialSetUp() throws SQLException, ClassNotFoundException{
         Connection dbConnection = null;
         Statement statement = null;
 
@@ -90,6 +90,7 @@ public class DataBase {
         if (dbConnection != null) {
             dbConnection.close();
         }
+        return "Ok";
     }
 
     public Connection getDBConnection() throws ClassNotFoundException, SQLException {
@@ -111,4 +112,3 @@ public class DataBase {
         return dbConnection;
     }
 }
-
