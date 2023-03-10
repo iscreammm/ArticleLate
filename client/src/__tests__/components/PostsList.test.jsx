@@ -2,8 +2,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import axios from "axios";
 import PostsList from "../../components/PostsList";
-import { act } from 'react-dom/test-utils';
-import Post from "../../components/Post";
 
 const postData = {
   authorId: 1,
@@ -53,9 +51,11 @@ describe('PostList tests', () => {
   test('PostList Render', async () => {
     mockCallGet(JSON.stringify([postData]));
 
-    await act( async () => render(<PostsList queryString={""} category={"It"} />));
+    render(<PostsList queryString={""} category={"It"} />);
 
-    expect(screen.getByText("naso337")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText("naso337")).toBeVisible();
+    });
   });
 
   test('PostList Render with newPost', async () => {

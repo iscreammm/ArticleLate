@@ -7,7 +7,7 @@ const CommentsList = ({ postId }) => {
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getComments?postId=${postId}`).then(result => {
-      setComments(JSON.parse(result.data.data))
+      setComments(JSON.parse(result.data.data));
     });
   }, []);
 

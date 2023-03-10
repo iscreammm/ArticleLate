@@ -37,7 +37,11 @@ const Comment = ({ data }) => {
           await axios.get(`http://localhost:8080/verifyIdentificator?identificator=${matches[i].slice(1)}&userId=${user.id}`).then(res => {
             if (res.data.state === "Success") {
               if (res.data.data) {
-                result.push(<Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}>{matches[i]}</Link>);
+                result.push(<Link key={matches[i]} to={`/profile/${matches[i].slice(1)}`}
+                  onClick={() => user.toggleComments()}
+                >
+                  {matches[i]}
+                </Link>);
               } else {
                 result.push(matches[i]);
               }
@@ -112,7 +116,7 @@ const Comment = ({ data }) => {
           >
             <img src="common/delete.jpg" alt="Delete" />
           </button>
-        </div>  
+        </div>
       }
       {!modifying ? <></> :
         <button className="saveComment"
