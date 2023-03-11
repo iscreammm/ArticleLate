@@ -20,6 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --env=jsdom --watchAll=false --coverage",
+    "test:start": "react-scripts test --env=jsdom --watchAll=false --coverage && react-scripts start",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
