@@ -18,7 +18,7 @@ const postData = {
   name: "naso337",
   text: "Some post text",
   time: "Mar 6, 2023, 09:58:32 PM"
-};
+}
 
 const whiteLikeSrc = "post/whitelike.png";
 const redLikeSrc = "post/redlike.png";

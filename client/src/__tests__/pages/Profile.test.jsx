@@ -1,4 +1,4 @@
-import { getByAltText, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
@@ -55,12 +55,6 @@ function mockCallPost(mockData) {
 
 function mockCallDelete(mockData) {
   axios.delete.mockResolvedValue({
-    data: mockData
-  });
-}
-
-function mockCallGetOnce(mockData) {
-  axios.get.mockResolvedValue({
     data: mockData
   });
 }

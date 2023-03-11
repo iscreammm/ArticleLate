@@ -1,4 +1,4 @@
-import { getDateFormat } from "../js/functions";
+import { getDateFormat, getCatId, getCatText } from "../js/functions";
 
 test("getDateFormat work", () => {
   expect(getDateFormat("Jan 7, 2023, 07:05:32 PM")).toBe("7 Января 2023 19:05");
@@ -14,4 +14,28 @@ test("getDateFormat work", () => {
   expect(getDateFormat("Nov 23, 2023, 09:58:32 AM")).toBe("23 Ноября 2023 09:58");
   expect(getDateFormat("Dec 20, 2023, 09:58:32 AM")).toBe("20 Декабря 2023 09:58");
   expect(getDateFormat("Abc 20, 2023, 09:58:32 AM")).toBe("");
+});
+
+test("getCatId work", () => {
+  expect(getCatId("It")).toBe(1);
+  expect(getCatId("Игры")).toBe(2);
+  expect(getCatId("Кино")).toBe(3);
+  expect(getCatId("Арты")).toBe(4);
+  expect(getCatId("Юмор")).toBe(5);
+  expect(getCatId("Наука")).toBe(6);
+  expect(getCatId("Музыка")).toBe(7);
+  expect(getCatId("Новости")).toBe(8);
+  expect(getCatId("Unknown")).toBe(0);
+});
+
+test("getCatText work", () => {
+  expect(getCatText(1)).toBe("It");
+  expect(getCatText(2)).toBe("Игры");
+  expect(getCatText(3)).toBe("Кино");
+  expect(getCatText(4)).toBe("Арты");
+  expect(getCatText(5)).toBe("Юмор");
+  expect(getCatText(6)).toBe("Наука");
+  expect(getCatText(7)).toBe("Музыка");
+  expect(getCatText(8)).toBe("Новости");
+  expect(getCatText(0)).toBe("Категории");
 });

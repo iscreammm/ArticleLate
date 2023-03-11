@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useUser } from "./utilities/userContext";
 
-const Notification = ({ notifData }) => {
+const Notification = ({ data }) => {
   const user = useUser();
   const [deleted, setDeleted] = useState(false);
 
@@ -12,27 +12,22 @@ const Notification = ({ notifData }) => {
 
   return (
     <div onClick={() => {
-      axios.get(`http://localhost:8080/getPost?userId=${user.id}&postId=${notifData.postId}`).then(result => {
+      axios.get(`http://localhost:8080/getPost?userId=${user.id}&postId=${data.postId}`).then(result => {
         if (result.data.message === "Пост был удален") {
-          user.setErrorMessage("Пост был удален");
+          user.setErrorMessage(result.data.message);
           user.toggleError();
-          axios.delete(`http://localhost:8080/deleteNotification?notificationId=${notifData.id}`).then(deletionResult => {
+          axios.delete(`http://localhost:8080/deleteNotification?notificationId=${data.id}`).then(deletionResult => {
             if (deletionResult.data.state === "Success") {
               setDeleted(true);
-              user.toggleComments();
-              user.toggleNotifications();
             } else {
-              user.setErrorMessage(deletionResult.data.message);
-              user.toggleError();
+              user.setErrorMessage(result.data.message + deletionResult.data.message);
             }
           });
         } else {
           let data = JSON.parse(result.data.data);
 
-          axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(res => {
-          let authorAvatar = JSON.parse(res.data.data).imagePath;
-          user.setSelectedPost({data, authorAvatar});
-          axios.delete(`http://localhost:8080/deleteNotification?notificationId=${notifData.id}`).then(deletionResult => {
+          user.setSelectedPost(data);
+          axios.delete(`http://localhost:8080/deleteNotification?notificationId=${data.id}`).then(deletionResult => {
             if (deletionResult.data.state === "Success") {
               setDeleted(true);
               user.toggleComments();
@@ -42,7 +37,6 @@ const Notification = ({ notifData }) => {
               user.toggleError();
             }
           });
-        });
         }
       });
     }}>

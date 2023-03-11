@@ -63,7 +63,7 @@ const CommentModal = () => {
             <div className="likeContainer">
               <img
                 src={user.selectedPost.isLiked ? "post/redlike.png" : "post/whitelike.png"}
-                alt="WhiteLike"
+                alt="Like"
                 onClick={async () => {
                   if (!user.selectedPost.isLiked) {
                     await user.selectedPost.increaseLikes();

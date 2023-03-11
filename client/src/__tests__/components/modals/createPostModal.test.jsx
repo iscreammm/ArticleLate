@@ -128,7 +128,7 @@ describe('CreatePostModal form tests', () => {
     });
   });*/
 
-  test('Formatting ', () => {
+  test('Formatting', () => {
     render(<CreatePostModal isOpen={true} />);
 
     const postText = screen.getByPlaceholderText('Введите текст');

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../utilities/userContext";
+import { getCatText, getCatId } from "../../js/functions";
 import "../../styles/modals/modal.css";
 import "../../styles/modals/createPost.css";
 
@@ -20,76 +21,6 @@ const EditPostModal = ({ isOpen, toggle, data, setRefreshedPost }) => {
   
   if(!isOpen) {
     return null;
-  }
-
-  const getCatId = (category) => {
-    let catId;
-
-    switch(category) {
-      case "It":
-        catId = 1;
-        break;
-      case "Игры":
-        catId = 2;
-        break;
-      case "Кино":
-        catId = 3;
-        break;
-      case "Арты":
-        catId = 4;
-        break;
-      case "Юмор":
-        catId = 5;
-        break;
-      case "Наука":
-        catId = 6;
-        break;
-      case "Музыка":
-        catId = 7;
-        break;
-      case "Новости":
-        catId = 8;
-        break;
-      default:
-        console.log("Unknown category");
-    }
-
-    return catId;
-  }
-
-  const getCatText = (category) => {
-    let catText;
-
-    switch(category) {
-      case 1:
-        catText = "It";
-        break;
-      case 2:
-        catText = "Игры";
-        break;
-      case 3:
-        catText = "Кино";
-        break;
-      case 4:
-        catText = "Арты";
-        break;
-      case 5:
-        catText = "Юмор";
-        break;
-      case 6:
-        catText = "Наука";
-        break;
-      case 7:
-        catText = "Музыка";
-        break;
-      case 8:
-        catText = "Новости";
-        break;
-      default:
-        console.log("Unknown category");
-    }
-
-    return catText;
   }
 
   const handleTextChange = (e) => {
@@ -222,6 +153,12 @@ const EditPostModal = ({ isOpen, toggle, data, setRefreshedPost }) => {
               <input id="#loadPostImage" type="file"
                 accept="image/png, image/jpg, image/jpeg"
                 onChange={(event) => {
+                  if (event.target.files[0].size > (1024 * 1024 * 10)) {
+                    user.setErrorMessage("Размер файла слишком большой");
+                    user.toggleError();
+                    return;
+                  }
+                  
                   let reader = new FileReader();
                     reader.readAsDataURL(event.target.files[0]);
                     reader.onload = function (e) {
@@ -229,10 +166,7 @@ const EditPostModal = ({ isOpen, toggle, data, setRefreshedPost }) => {
                       image.src = e.target.result;
 
                       image.onload = function () {
-                        if (event.target.files[0].size > (1024 * 1024 * 10)) {
-                          user.setErrorMessage("Размер файла слишком большой");
-                          user.toggleError();
-                        } else if (((this.height < 400) && (this.width < 400)) || ((this.height > 1920) && (this.width > 1920))) {
+                        if (((this.height < 400) && (this.width < 400)) || ((this.height > 1920) && (this.width > 1920))) {
                           user.setErrorMessage("Изображение должно быть меньше 1920x1920 и больше 400x400");
                           user.toggleError();
                         } else {
