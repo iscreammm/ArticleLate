@@ -251,11 +251,19 @@ class RestapiControllerTest {
 
         String filePath = path.toAbsolutePath().toString();
 
-        filePath = filePath.substring(0, filePath.indexOf("\\server"));
+        char delimitter;
 
-        File img = new File(filePath + "\\client\\public\\"
+        if(filePath.charAt(0)=='/'){
+            delimitter = '/';
+        } else {
+            delimitter = '\\';
+        }
+
+        filePath = filePath.substring(0, filePath.indexOf(delimitter+"server"));
+
+        File img = new File(filePath +delimitter+"client"+delimitter+"public"+delimitter
                 + way.substring(0, way.indexOf("/"))
-                + "\\" + way.substring(way.indexOf("/")));
+                + delimitter + way.substring(way.indexOf("/")));
 
         assertTrue(img.exists());
         assertEquals(1, id);
@@ -387,11 +395,19 @@ class RestapiControllerTest {
 
         String filePath = path.toAbsolutePath().toString();
 
-        filePath = filePath.substring(0, filePath.indexOf("\\server"));
+        char delimitter;
 
-        File img = new File(filePath + "\\client\\public\\"
+        if(filePath.charAt(0)=='/'){
+            delimitter = '/';
+        } else {
+            delimitter = '\\';
+        }
+
+        filePath = filePath.substring(0, filePath.indexOf(delimitter+"server"));
+
+        File img = new File(filePath + delimitter+"client"+delimitter+"public"+delimitter
                 + message.getData().substring(0, message.getData().indexOf("/"))
-                + "\\" + message.getData().substring(message.getData().indexOf("/")));
+                + delimitter + message.getData().substring(message.getData().indexOf("/")));
 
         assertTrue(img.exists());
     }
@@ -679,11 +695,19 @@ class RestapiControllerTest {
 
         String filePath = path.toAbsolutePath().toString();
 
-        filePath = filePath.substring(0, filePath.indexOf("\\server"));
+        char delimitter;
 
-        File img = new File(filePath + "\\client\\public\\"
+        if(filePath.charAt(0)=='/'){
+            delimitter = '/';
+        } else {
+            delimitter = '\\';
+        }
+
+        filePath = filePath.substring(0, filePath.indexOf(delimitter+"server"));
+
+        File img = new File(filePath +delimitter+"client"+delimitter+"public"+delimitter
                 + message.getData().substring(0, message.getData().indexOf("/"))
-                + "\\" + message.getData().substring(message.getData().indexOf("/")));
+                + delimitter + message.getData().substring(message.getData().indexOf("/")));
 
         assertTrue(img.exists());
     }

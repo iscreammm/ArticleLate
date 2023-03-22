@@ -1969,10 +1969,18 @@ public class RestapiController {
         Path path = Paths.get("");
 
         String filePath = path.toAbsolutePath().toString();
+        
+        char delimitter;
+        
+        if(filePath.charAt(0)=='/'){
+            delimitter = '/';
+        } else {
+            delimitter = '\\';
+        }
+        
+        filePath = filePath.substring(0, filePath.indexOf(delimitter + "server"));
 
-        filePath = filePath.substring(0, filePath.indexOf("\\server"));
-
-        File folder = new File(filePath + "\\client\\public\\" + foldername);
+        File folder = new File(filePath + delimitter + "client" + delimitter + "public"+delimitter + foldername);
 
         if (!folder.exists()) {
             folder.mkdir();
@@ -1981,7 +1989,7 @@ public class RestapiController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         String filename = sdf.format(System.currentTimeMillis()) + ".jpg";
-        File imgFile = new File(filePath + "\\client\\public\\" + foldername, filename);
+        File imgFile = new File(filePath + delimitter+ "client" + delimitter+ "public" + delimitter + foldername, filename);
 
         byte[] imgData = Base64.getDecoder().decode(url);
 

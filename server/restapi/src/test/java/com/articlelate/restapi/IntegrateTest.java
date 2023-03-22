@@ -205,11 +205,19 @@ class IntegrateTest {
 
         String filePath = path.toAbsolutePath().toString();
 
-        filePath = filePath.substring(0, filePath.indexOf("\\server"));
+        char delimitter;
 
-        File img = new File(filePath + "\\client\\public\\"
+        if(filePath.charAt(0)=='/'){
+            delimitter = '/';
+        } else {
+            delimitter = '\\';
+        }
+
+        filePath = filePath.substring(0, filePath.indexOf(delimitter+"server"));
+
+        File img = new File(filePath + delimitter+"client"+delimitter+"public"+delimitter
                 + way.substring(0, way.indexOf("/"))
-                + "\\" + way.substring(way.indexOf("/")));
+                + delimitter + way.substring(way.indexOf("/")));
 
         assertEquals("Success", message.getState());
         assertEquals(1, postId);
@@ -507,17 +515,25 @@ class IntegrateTest {
 
         String filePath = path.toAbsolutePath().toString();
 
-        filePath = filePath.substring(0, filePath.indexOf("\\server"));
+        char delimitter;
 
-        File img = new File(filePath + "\\client\\public\\"
+        if(filePath.charAt(0)=='/'){
+            delimitter = '/';
+        } else {
+            delimitter = '\\';
+        }
+
+        filePath = filePath.substring(0, filePath.indexOf(delimitter+"server"));
+
+        File img = new File(filePath +delimitter+"client"+delimitter+"public"+delimitter
                 + message.getData().substring(0, message.getData().indexOf("/"))
-                + "\\" + message.getData().substring(message.getData().indexOf("/")));
+                + delimitter + message.getData().substring(message.getData().indexOf("/")));
 
         String path2 = message.getData().substring(0, message.getData().indexOf("/"))
-                + "\\" + message.getData().substring(message.getData().indexOf("/"));
+                +delimitter + message.getData().substring(message.getData().indexOf("/"));
 
-        path2 = path2.replaceAll("\\\\", "");
-
+        path2 = path2.replaceAll(""+ delimitter + delimitter, "");
+        
         assertTrue(img.exists());
 
         message = gson.fromJson(rest.getProfile(1), Message.class);
