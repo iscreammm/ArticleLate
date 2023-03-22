@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   backend-test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     services:
       postgres:
@@ -32,8 +32,8 @@ jobs:
       uses: actions/checkout@v3
       
     - name: Create .env file
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env
+      run:  cd server/restapi & {echo DB_URL=jdbc:postgresql://localhost:5432/articlelate & echo USER=runner & echo PASS=postgres} > .env
       
     - name: Build and test project
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
+      run:  cd server/restapi & mvn package
       
