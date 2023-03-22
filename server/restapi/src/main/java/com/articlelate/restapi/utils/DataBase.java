@@ -58,7 +58,7 @@ public class DataBase {
                 "CREATE TABLE IF NOT EXISTS commentaries (\n" +
                 "    id serial PRIMARY KEY,\n" +
                 "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
-                "    postid integer REFERENCES posts(id) NOT NULL,\n" +
+                "    postid integer REFERENCES posts(id) ON DELETE CASCADE,\n" +
                 "    commenttime timestamp without time zone NOT NULL,\n" +
                 "    commenttext character varying(3000) NOT NULL\n" +
                 ");"+

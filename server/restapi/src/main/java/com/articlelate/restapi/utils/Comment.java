@@ -37,4 +37,16 @@ public class Comment {
     public String getText() {
         return text;
     }
+
+    public String getIdentificator() {
+        return identificator;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
 }

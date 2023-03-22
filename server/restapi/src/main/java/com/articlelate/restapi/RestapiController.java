@@ -42,6 +42,13 @@ public class RestapiController {
 
     public RestapiController(Dotenv dotenv) {
         this.dotenv = dotenv;
+        try {
+            this.db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @GetMapping("/verifyLogin")
@@ -77,7 +84,6 @@ public class RestapiController {
             }
 
         } catch (SQLException e) {
-
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность логина", -1));
 

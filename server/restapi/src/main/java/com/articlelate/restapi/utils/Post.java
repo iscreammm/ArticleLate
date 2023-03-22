@@ -61,4 +61,16 @@ public class Post {
     public boolean isLiked() {
         return isLiked;
     }
+
+    public String getAuthorImage() {
+        return authorImage;
+    }
+
+    public String getIdentificator() {
+        return identificator;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

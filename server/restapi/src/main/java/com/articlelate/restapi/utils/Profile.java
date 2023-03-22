@@ -33,4 +33,12 @@ public class Profile {
     public int getFollowers() {
         return followers;
     }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
 }
