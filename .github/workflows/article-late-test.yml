@@ -33,5 +33,5 @@ jobs:
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=postgres\nPASS=postgres"
       
     - name: Build and test project
-      run:  mvn package
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
       
