@@ -526,14 +526,10 @@ class IntegrateTest {
         filePath = filePath.substring(0, filePath.indexOf(delimitter+"server"));
 
         File img = new File(filePath +delimitter+"client"+delimitter+"public"+delimitter
-                + message.getData().substring(0, message.getData().indexOf("/"))
-                + delimitter + message.getData().substring(message.getData().indexOf("/")));
-
-        String path2 = message.getData().substring(0, message.getData().indexOf("/"))
-                +delimitter + message.getData().substring(message.getData().indexOf("/"));
-
-        path2 = path2.replaceAll(""+ delimitter + delimitter, "");
+                + message.getData());
         
+        String path2 = message.getData();
+
         assertTrue(img.exists());
 
         message = gson.fromJson(rest.getProfile(1), Message.class);
