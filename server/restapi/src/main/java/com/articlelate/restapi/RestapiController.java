@@ -705,7 +705,21 @@ public class RestapiController {
                 }
 
                 if (!picPath.contains("avatar")) {
-                    deleteFile("../client/public/" + picPath);
+                    Path path = Paths.get("");
+
+                    String filepath = path.toAbsolutePath().toString();
+
+                    char delimitter;
+
+                    if (filepath.charAt(0) == '/') {
+                        delimitter = '/';
+                    } else {
+                        delimitter = '\\';
+                    }
+
+                    filepath = filepath.substring(0, filepath.indexOf(delimitter + "server"));
+
+                    deleteFile(filepath + delimitter + "client" + delimitter + "public" + delimitter + picPath);
                 }
             }
 
@@ -1125,7 +1139,21 @@ public class RestapiController {
                 dbConnection.close();
             }
 
-            deleteFile(picPath);
+            Path path = Paths.get("");
+
+            String filepath = path.toAbsolutePath().toString();
+
+            char delimitter;
+
+            if (filepath.charAt(0) == '/') {
+                delimitter = '/';
+            } else {
+                delimitter = '\\';
+            }
+
+            filepath = filepath.substring(0, filepath.indexOf(delimitter + "server"));
+
+            deleteFile(filepath + delimitter + "client" + delimitter + "public" + delimitter + picPath);
 
             sql = "DELETE FROM posts WHERE id = " + postId;
 
@@ -1220,7 +1248,21 @@ public class RestapiController {
                 }
 
                 if (!picPath.equals("")) {
-                    deleteFile("../client/public/" + picPath);
+                    Path path = Paths.get("");
+
+                    String filepath = path.toAbsolutePath().toString();
+
+                    char delimitter;
+
+                    if (filepath.charAt(0) == '/') {
+                        delimitter = '/';
+                    } else {
+                        delimitter = '\\';
+                    }
+
+                    filepath = filepath.substring(0, filepath.indexOf(delimitter + "server"));
+
+                    deleteFile(filepath + delimitter + "client" + delimitter + "public" + delimitter + picPath);
                 }
             }
 
@@ -1431,7 +1473,7 @@ public class RestapiController {
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
-                        + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId + "AND categories.id = " + categoryId
+                        + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId + " AND categories.id = " + categoryId
                         + " ORDER BY posttime DESC LIMIT 3";
             }
 
@@ -1574,6 +1616,8 @@ public class RestapiController {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
 
+        String data = "";
+
         CommentData commentData = gson.fromJson(dataJson, CommentData.class);
 
         try {
@@ -1584,15 +1628,48 @@ public class RestapiController {
 
             handleTag(commentData.getCommentText(), commentData.getPostId());
 
+            Timestamp commentTime = new Timestamp(System.currentTimeMillis());
+
             String sql = "INSERT INTO commentaries(userid, postid, commenttime, commenttext)"
                     + " VALUES(" + commentData.getUserId() + ", "+ commentData.getPostId()
-                    +", \'" + new Timestamp(System.currentTimeMillis())
+                    +", \'" + commentTime
                     +"\', \'" + commentData.getCommentText() + "\')";
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
+            sql = "SELECT commentaries.id, user_info.name FROM commentaries"
+                    + " JOIN user_info ON userid = user_info.id"
+                    + " WHERE commentaries.userid = " + commentData.getUserId()
+                    + " AND commentaries.postid = " + commentData.getPostId()
+                    + " AND commentaries.commenttime = \'" + commentTime + "\'"
+                    + " AND commentaries.commenttext = \'" + commentData.getCommentText() + "\'";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                JsonObject json = new JsonObject();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, hh:mm:ss aaa", Locale.ENGLISH);
+
+                json.addProperty("commentId", rs.getInt("id"));
+                json.addProperty("name", rs.getString("name"));
+                json.addProperty("commentTime", dateFormat.format(commentTime));
+
+                data = json.toString();
+            }
 
             if (statement != null) {
                 statement.close();
@@ -1611,7 +1688,7 @@ public class RestapiController {
             e.printStackTrace();
         }
 
-        return gson.toJson(new Message<>("Success", "", 1));
+        return gson.toJson(new Message<>("Success", "", data));
     }
 
     @PutMapping("/changeComment")
@@ -1895,6 +1972,8 @@ public class RestapiController {
     private void deleteFile(String filePath) {
         File file = new File(filePath);
 
+        System.out.println(filePath);
+
         if (file.delete()) {
             System.out.println("File was deleted");
         } else {
@@ -1980,7 +2059,7 @@ public class RestapiController {
         
         filePath = filePath.substring(0, filePath.indexOf(delimitter + "server"));
 
-        File folder = new File(filePath + delimitter + "client" + delimitter + "public"+delimitter + foldername);
+        File folder = new File(filePath + delimitter + "client" + delimitter + "public" + delimitter + foldername);
 
         if (!folder.exists()) {
             folder.mkdir();
@@ -1989,7 +2068,7 @@ public class RestapiController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         String filename = sdf.format(System.currentTimeMillis()) + ".jpg";
-        File imgFile = new File(filePath + delimitter+ "client" + delimitter+ "public" + delimitter + foldername, filename);
+        File imgFile = new File(filePath + delimitter + "client" + delimitter + "public" + delimitter + foldername, filename);
 
         byte[] imgData = Base64.getDecoder().decode(url);
 

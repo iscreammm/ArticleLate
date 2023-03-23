@@ -12,10 +12,7 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Locale;
@@ -449,7 +446,7 @@ class IntegrateTest {
 
     @DisplayName("Notification create when tag in comment")
     @Test
-    void addCommentWithTag(){
+    void addCommentWithTag() throws JSONException {
         JsonObject json0 = new JsonObject();
         JsonObject json1 = new JsonObject();
 
@@ -467,22 +464,31 @@ class IntegrateTest {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
 
-        Message<Double> message = gson.fromJson(rest.addComment(json1.toString()), Message.class);
+        Message<String> message = gson.fromJson(rest.addComment(json1.toString()), Message.class);
+
+        org.json.JSONObject obj = new JSONObject(message.getData());
+        int commentId = obj.getInt("commentId");
+        String name = obj.getString("name");
+        String commentTime = obj.getString("commentTime");
 
         assertEquals("Success", message.getState());
-        assertEquals(1.0, message.getData());
+        assertEquals(1, commentId);
+        assertEquals("testUser1", name);
 
         Message<String> message2 = gson.fromJson(rest.getComments(1, 0), Message.class);
 
         Comment[] comments = gson.fromJson(message2.getData(), Comment[].class);
 
-        assertEquals("Success", message2.getState()); // дополнить
-        assertEquals(1, comments[0].getId());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, hh:mm:ss aaa", Locale.ENGLISH);
+
+        assertEquals("Success", message2.getState());
+        assertEquals(commentId, comments[0].getId());
         assertEquals(1, comments[0].getAuthorId());
         assertEquals("user1", comments[0].getIdentificator());
-        assertEquals("testUser1", comments[0].getName());
+        assertEquals(name, comments[0].getName());
         assertEquals("someText @user2", comments[0].getText());
-        assertEquals(comments[0].getImagePath(), "profilePictures/avatar.jpg");
+        assertEquals("profilePictures/avatar.jpg", comments[0].getImagePath());
+        assertEquals(commentTime, dateFormat.format(comments[0].getTime()));
 
         message2 = gson.fromJson(rest.getNotifications(2,0), Message.class);
 
@@ -525,8 +531,8 @@ class IntegrateTest {
 
         filePath = filePath.substring(0, filePath.indexOf(delimitter+"server"));
 
-        File img = new File(filePath +delimitter+"client"+delimitter+"public"+delimitter
-                + message.getData());
+        File img = new File(filePath + delimitter + "client" + delimitter
+                + "public" + delimitter + message.getData());
         
         String path2 = message.getData();
 
@@ -608,7 +614,7 @@ class IntegrateTest {
         json0.addProperty("authorId", 1);
         json0.addProperty("categoryId", 2);
         json0.addProperty("text", "text");
-        json0.addProperty("image", "iVBORw0KGgoAAAANSUhEUgAAAPQAAADPCAMAAAD1TAyiAAAA+VBMVEX39/f6AAAncyz6ooJieBkFAwMAAwP/AAD+/P7/pIYjcy1leBfsnnlUdQkAaAze5d6fh0dcdxP6p4b3//9JdiMbbyH6UEF9oX/6knX6blgAZgAUbRuiuqPSAQFddxzQlWiAfzE+dSZSdiBOhVH4z88eAwPD0cP5Z2cydCr38vKTAgLIzbpbcgD42Nj5XFz6HR36Pz/wAQE/fkOyjFSwuZtoAwOqAgL5iYmLAgL4qKj5e3v6QzYtAwOQgz3R29J8AwMAWwBGbwD34ODArJBwfTJdAwP6UFDhAQH4srL6LiX6clsUAwM7AwNPaQBbeS3o7OgvbQpqlmxyj1iAOB7VAAADtUlEQVR4nO3daVPaUBSAYTbFAAlCRCruihsVLW5dsdrNWlu1/f8/pn7jnMzkGjAhJLzvV2ZMHm+YyWG7mQwRERERUdDmdHGfTlRVX6t2VSlVz539ORRdL4uck9SiDwuirVJOtA06PYEGDTpdgQYNOl1NK7o2KL3oL13Z1w1R/9u+bLsqu4z7xF+Qe5SVLdUt0XqtLKo5sqsEr7u750HnB1nrtnyGr6mLvQU6WYEGDRo06CQGGjToaULX0oJ2s4YUOm+p8racucot2VU1bpY59zgwWldRF3tZrbsDevICDRo0aNCgQU9uoFOMdlUaXVQt1VUJRh9kj2XafD6zM2j2ItsblF2sJxntX/F8VnZRlA+mGD0zCDRo0KBBT06gQYMGnUS0GqsyJvT31Nx7d38cyQzo7M2qrKceSxa6bWJ611qmH0ov2hBo0KBBgwYNGjRo0M+k5qquiVI03G0nC91+K/tgMnfeyW6Si3bfm1ZMo2fUBL1qWOsUoXfUayWgQYMGDRo0aNCgQQ8HlU3JvXf7/U+Raa7yoDuyZE1ZbnCmV53ceXp0dPBAgwYNGjRo0KBBgx4KHfz+etLRbVl3z3C2PfUxQNP06On2o2wpfrR7G/TUi6tqZJ4Njv41ad/Ac98MgZYvjuwER0/cdy1BgwYNGjRo0KBBJwotuwsFbZnQrRDRB7KMRvdUHvTdJ9HvkdEV0dNKr4kKJ7JceGjTbyAWP6vV7ChYcdR52vNrkte2rCRrRbVV3DNo+bztjPxKgQkdx++GggYNGjRo0KBBgwY9HrS+jTej/QeO0dGW/35ZhajQVbUVsm3V/VscdZLK+/9N69QW28HVttRclctFhVYb79lW3rf64qir6f8389ap2ppgywMFDRo0aNCgQYMGDTpNaLUPsGfDqijQ+hCnaq7yoKPalbjaUls+b6gq6mxfjZo2z6tD3KvD7yvz9oPagDo0c6bqyMOUCupi1+hwsvrqgl4wXNCR7TTuQZfHjC6DBg0aNGjQoEGDnk701bJMbQNsV6wI6hfkMTS6Ic/FOYkK/bCretyU9ecj6F4dQs1Vjb/6bCIye9+1bKmLvRZF+/4XdKMZ0Schzf8BjV4rhF950/9J/IQeExQ0aNCgQYMGDRr0RKH1zGXLD9apN71e0OOyb0486BXVmerfQig1V/zbjQPtmbl0zUYphJxL0zHiMJt6Qvs/G4PnXMYNGSbQoEGDBg06IYEGnWq00wihVrLQK81QmoDN64bINB0NUdwMIiIiIhpL/wGJY9+ssJDbRQAAAABJRU5ErkJggg==");
+        json0.addProperty("image", "");
 
         rest.createPost(json0.toString());
 

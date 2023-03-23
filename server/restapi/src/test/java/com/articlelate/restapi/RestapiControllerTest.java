@@ -823,7 +823,6 @@ class RestapiControllerTest {
         when(resultSet.next()).thenReturn(true).thenReturn(false);
         when(resultSet.getInt(any(String.class))).thenReturn(0);
 
-
         Message<Double> message = gson.fromJson(rest.unfollowUser(json.toString()), Message.class);
 
         assertEquals("Success", message.getState());
@@ -860,7 +859,7 @@ class RestapiControllerTest {
 
     @DisplayName("Comment success with tag test")
     @Test
-    void addCommentWithTag() throws SQLException {
+    void addCommentWithTag() throws SQLException, JSONException {
         JsonObject json = new JsonObject();
 
         json.addProperty("userId", 1);
@@ -872,11 +871,17 @@ class RestapiControllerTest {
 
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt(any(String.class))).thenReturn(1);
+        when(resultSet.getString(any(String.class))).thenReturn("testName");
 
-        Message<Double> message = gson.fromJson(rest.addComment(json.toString()), Message.class);
+        Message<String> message = gson.fromJson(rest.addComment(json.toString()), Message.class);
+
+        org.json.JSONObject obj = new JSONObject(message.getData());
+        int commentId = obj.getInt("commentId");
+        String name = obj.getString("name");
 
         assertEquals("Success", message.getState());
-        assertEquals(1.0, message.getData());
+        assertEquals(1, commentId);
+        assertEquals("testName", name);
     }
 
     @DisplayName("Comment with Only userId test") //Граничные условия
