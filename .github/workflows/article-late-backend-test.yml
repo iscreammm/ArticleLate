@@ -1,6 +1,10 @@
-name: article-late-test
+name: article-late-backend-test
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - backDev
 
 jobs:
   backend-test:
@@ -22,18 +26,17 @@ jobs:
           - 5432:5432
     
     steps:
+    - name: Load project code
+      uses: actions/checkout@v3
+    
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
           java-version: '19'
           distribution: 'temurin'
-          
-    - name: Load project code
-      uses: actions/checkout@v3
       
     - name: Create .env file
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/invDB\nUSER=runner\nPASS=postgres" > .testEnv
       
     - name: Build and test project
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
-      
