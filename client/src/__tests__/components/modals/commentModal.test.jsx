@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import axios from "axios";
 import { MemoryRouter } from 'react-router';
-import CommentModal from "../../../components/modals/CommentModal";
+import CommentModal from "../../../components/modals/commentModal";
 import * as user from "../../../components/utilities/userContext";
 
 const inputString = "naso@()*&137nasonasoaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
