@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../components/utilities/userContext";
 import PostsList from "../components/PostsList";
@@ -12,25 +12,19 @@ const Profile = () => {
   const [profileData, setProfileData] = useState();
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  useEffect(async () => {
-    await axios.get(`http://localhost:8080/getIdByIdentificator?identificator=${identifier}`).then(result => {
+  useEffect(() => {
+    axios.get(`http://localhost:8080/getIdByIdentificator?identificator=${identifier}`).then(result => {
       setProfileId(result.data.data);
       axios.get(`http://localhost:8080/getProfile?userId=${result.data.data}`).then(res => {
         setProfileData(JSON.parse(res.data.data));
-      });
-      axios.get(`http://localhost:8080/getIsSubscribe?followerId=${user.id}&userId=${result.data.data}`).then(res => {
-        if (res.data.data) {
-          setIsSubscribed(true);
-        }
+        axios.get(`http://localhost:8080/getIsSubscribe?followerId=${user.id}&userId=${result.data.data}`).then(ress => {
+          if (ress.data.data) {
+            setIsSubscribed(true);
+          }
+        });
       });
     });
-  }, [identifier]);
-
-  useEffect(() => {
-    axios.get(`http://localhost:8080/getProfile?userId=${profileId}`).then(res => {
-      setProfileData(JSON.parse(res.data.data));
-    });
-  }, [isSubscribed])
+  }, [identifier, user.id]);
   
   if (profileData === undefined) {
     return <></>
@@ -49,7 +43,7 @@ const Profile = () => {
           <img className="userAvatar" src={`${profileData.imagePath}`} alt="Avatar2" />
           <img className="profileInfoButton"
             src={isSubscribed ? "profile/unsubscribe.png" : "profile/subscribe.png"}
-            alt="Change"
+            alt="Subscribe"
             onClick={() => {
               if (isSubscribed) {
                 axios.delete("http://localhost:8080/unfollowUser", {
@@ -59,6 +53,12 @@ const Profile = () => {
                   }
                 }).then(result => {
                   if (result.data.state === "Success") {
+                    setProfileData(prev => {
+                      return {
+                        ...prev,
+                        followers: prev.followers - 1
+                      }
+                    });
                     setIsSubscribed(false);
                   } else {
                     user.setErrorMessage(result.data.message);
@@ -71,6 +71,12 @@ const Profile = () => {
                   userId: profileId
                 }).then(result => {
                   if (result.data.state === "Success") {
+                    setProfileData(prev => {
+                      return {
+                        ...prev,
+                        followers: prev.followers + 1
+                      }
+                    });
                     setIsSubscribed(true);
                   } else {
                     user.setErrorMessage(result.data.message);
@@ -92,7 +98,7 @@ const Profile = () => {
         {profileData.info === "" ? "Информация не указана" : profileData.info}
       </p>
       <div style={{background: "#F0ADAD"}}>
-      <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${profileId}`} />
+        <PostsList queryString={`http://localhost:8080/getUserPosts?userId=${profileId}`} />
       </div>
     </div>
   );

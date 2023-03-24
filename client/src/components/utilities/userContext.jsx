@@ -1,34 +1,45 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const UserContext = React.createContext()
+export const UserContext = React.createContext();
 
 export const useUser = () => {
   return useContext(UserContext);
 }
 
-export const UserProvider = ({ id, children }) => {
+export const UserProvider = ({ ident, children }) => {
+  const [id, setId] = useState(ident);
+  const [avatar, setAvatar] = useState();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [createPostOpen, setCreatePostOpen] = useState(false);
-  const [editPostOpen, setEditPostOpen] = useState(false);
-  const [editUserOpen, setEditUserModal] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
-  const [refreshUser, setRefreshUser] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [selectedPost, setSelectedPost] = useState();
-  const [editPost, setEditPost] = useState();
-  const [postToRefresh, setPostToRefresh] = useState();
-  const [loadPost, setLoadPost] = useState();
   const [identificator, setIdentificator] = useState();
 
-  useEffect(() => {
-    axios.get(`http://localhost:8080/getProfile?userId=${id}`).then(result => {
-      setIdentificator(JSON.parse(result.data.data).identificator);
-    });
-  }, [refreshUser])
+  const signIn = (newUser, cb) => {
+    setId(newUser);
+    localStorage.setItem('userId', newUser);
+    cb();
+  }
 
-  if (!identificator) {
+  const signOut = (cb) => {
+    setId(null);
+    localStorage.removeItem('userId');
+    cb();
+  }
+
+  useEffect(() => {
+    if (id) {
+      axios.get(`http://localhost:8080/getProfile?userId=${id}`).then(result => {
+        const data = JSON.parse(result.data.data)
+        setIdentificator(data.identificator);
+        setAvatar(data.imagePath);
+      });
+    }
+  }, [id]);
+
+  if ((!identificator) && (id)) {
     return <></>
   }
 
@@ -44,42 +55,21 @@ export const UserProvider = ({ id, children }) => {
     setErrorOpen(prev => !prev);
   }
 
-  const toggleCreatePost = () => {
-    setCreatePostOpen(prev => !prev);
-  }
-
-  const toggleEditPost = () => {
-    setEditPostOpen(prev => !prev);
-  }
-
-  const toggleInfoEditing = () => {
-    setEditUserModal(prev => !prev);
-  }
-
-  const reloadUser = () => {
-    setRefreshUser(prev => !prev);
-  }
-
   return (
     <UserContext.Provider value={{
       id: id,
+      avatar: avatar,
       identificator: identificator,
       commentsOpen: commentsOpen,
       notifOpen: notifOpen,
-      createPostOpen: createPostOpen,
-      editPostOpen: editPostOpen,
-      editUserOpen: editUserOpen,
-      refreshUser: refreshUser,
       selectedPost: selectedPost,
-      editPost: editPost,
-      postToRefresh: postToRefresh,
-      loadPost: loadPost,
       errorOpen: errorOpen,
       errorMessage: errorMessage,
-      toggleComments, toggleCreatePost, toggleNotifications, toggleInfoEditing, toggleEditPost, toggleError,
-      reloadUser, setSelectedPost, setEditPost, setPostToRefresh, setLoadPost, setErrorMessage
+      toggleComments, toggleNotifications, toggleError,
+      setSelectedPost, setErrorMessage, setAvatar,
+      signIn, signOut
     }}>
       { children }
     </UserContext.Provider>
-  )
+  );
 }

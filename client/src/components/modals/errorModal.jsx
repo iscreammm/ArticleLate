@@ -11,16 +11,18 @@ const ErrorModal = () => {
   return (
     <div className='overlay'
       onClick={user.toggleError}
+      style={{zIndex: "100"}}
     >
-      <div
+      <div className='modalContainer notificationsModal errorModal'
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className='modalContainer notificationsModal'
-        style={{zIndex: "20"}}
       >
-        <p style={{fontSize: "1.6em", fontWeigth: "bold"}}>Ошибка</p>
-        <p style={{fontSize: "1.3em", textAlign: "center"}}>{user.errorMessage}</p>
+        <div className="errorContent">
+          <p className="errorTitle">Ошибка</p>
+          <p className="errorMessage">{user.errorMessage}</p>
+          <button className="okBtn" onClick={user.toggleError}>OK</button>
+        </div>
       </div>
     </div>
   );

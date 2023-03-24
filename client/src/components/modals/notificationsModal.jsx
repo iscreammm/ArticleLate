@@ -25,9 +25,7 @@ const NotificationsModal = () => {
   }
 
   return (
-    <div className='overlay'
-      onClick={user.toggleNotifications}
-    >
+    <div className='overlay' onClick={user.toggleNotifications}>
       <div
         onClick={(e) => {
           e.stopPropagation();
@@ -39,7 +37,7 @@ const NotificationsModal = () => {
           onClick={() => {
             axios.delete(`http://localhost:8080/deleteAllNotification?userId=${user.id}`).then(deletionResult => {
               if (deletionResult.data.state === "Success") {
-                setNotifications(undefined);
+                setNotifications([]);
               } else {
                 user.setErrorMessage(deletionResult.data.message);
                 user.toggleError();
@@ -51,7 +49,7 @@ const NotificationsModal = () => {
         </button>
         <div className="notifications">
           {notifications.map(notification => {
-            return <Notification key={notification.id} notifData={notification} />
+            return <Notification key={notification.id} data={notification} />
           })}
           {notifications.length === 0 ? <p className="noNotifications">Нет уведомлений</p> : <></>}
         </div>

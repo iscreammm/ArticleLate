@@ -5,10 +5,9 @@ import { useUser } from "./utilities/userContext";
 import { getDateFormat } from "../js/functions";
 import "../styles/feedPosts.css";
 
-const Post = ({ data }) => {
+const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
   const user = useUser();
-  const [authorAvatar, setAuthorAvatar] = useState("profilePictures/avatar.jpg");
-  const [author, setAuthor] = useState();
+  const [authorAvatar, setAuthorAvatar] = useState(data.authorImage);
   const [category, setCategory] = useState(data.category);
   const [text, setText] = useState(data.text);
   const [image, setImage] = useState(data.image);
@@ -17,38 +16,44 @@ const Post = ({ data }) => {
   const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/getProfile?userId=${data.authorId}`).then(result => {
-      const resData = JSON.parse(result.data.data);
-      setAuthorAvatar(resData.imagePath);
-      setAuthor(resData.identificator);
-    });
-  }, []);
+    if ((data.authorId === user.id) && (data.authorImage !== user.avatar)) {
+      setAuthorAvatar(user.avatar);
+    }
+  }, [user.avatar]);
 
   useEffect(() => {
-    if (user.postToRefresh === data.id) {
-      axios.get(`http://localhost:8080/getPost?userId=${data.authorId}&postId=${data.id}`).then(result => {
-        const resData = JSON.parse(result.data.data);
-        setCategory(resData.category);
-        setText(resData.text);
-        setImage(resData.image);
-        data.category = resData.category;
-        data.text = resData.text;
-        data.image = resData.image;
-      });
+    if ((refreshedPost) && (refreshedPost.id === data.id)) {
+      setCategory(refreshedPost.category);
+      setText(refreshedPost.text);
+      setImage(refreshedPost.image);
     }
-  }, [user.postToRefresh]);
+  }, [refreshedPost]);
 
   if (deleted) {
     return <></>
   }
 
-  const refreshLikes = () => {
-    axios.get(`http://localhost:8080/getPost?userId=${data.authorId}&postId=${data.id}`).then(result => {
-      const resData = JSON.parse(result.data.data);
-      setIsLiked(resData.isLiked);
-      setLikes(resData.likesCount);
-      data.isLiked = resData.isLiked;
-      data.likesCount = resData.likesCount;
+  const increaseLikes = async () => {
+    await axios.put(`http://localhost:8080/incLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
+      if (result.data.state === "Success") {
+        setIsLiked(true);
+        setLikes(prev => prev + 1);
+      } else {
+        user.setErrorMessage(result.data.message);
+        user.toggleError();
+      }
+    });
+  }
+
+  const decreaseLikes = async () => {
+    await axios.put(`http://localhost:8080/decLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
+      if (result.data.state === "Success") {
+        setIsLiked(false);
+        setLikes(prev => prev - 1);
+      } else {
+        user.setErrorMessage(result.data.message);
+        user.toggleError();
+      }
     });
   }
 
@@ -68,8 +73,13 @@ const Post = ({ data }) => {
           {data.authorId !== user.id ? <></> :
             <div className="postButtons">
               <button onClick={() => {
-                user.setEditPost(data);
-                user.toggleEditPost();
+                setPostToEdit({
+                  ...data,
+                  category: category,
+                  text: text,
+                  image: image
+                });
+                toggleEditPost();
               }}>
                 <img src="common/edit.jpg" alt="Modify" />
               </button>
@@ -95,40 +105,36 @@ const Post = ({ data }) => {
         </div>
         <div className="postMainContent">
           <p dangerouslySetInnerHTML={{__html: text}}></p>
-          <img src={image} alt="ImagePost"
+          <img src={image} alt="Post Img"
             style={{display: image === "" ? "none" : "block"}}
           />
         </div>
         <div className="postBottom">
           <div className="likeContainer">
-            <img src={isLiked ? "post/redlike.png" : "post/whitelike.png"} alt="WhiteLike"
+            <img src={isLiked ? "post/redlike.png" : "post/whitelike.png"} alt="Like"
               onClick={async () => {
                 if (!isLiked) {
-                  await axios.put(`http://localhost:8080/incLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
-                    if (result.data.state === "Success") {
-                      refreshLikes();
-                    } else {
-                      user.setErrorMessage(result.data.message);
-                      user.toggleError();
-                    }
-                  });
+                  await increaseLikes();
                 } else {
-                  await axios.put(`http://localhost:8080/decLikesOnPost?userId=${user.id}&postId=${data.id}`).then(result => {
-                    if (result.data.state === "Success") {
-                      refreshLikes();
-                    } else {
-                      user.setErrorMessage(result.data.message);
-                      user.toggleError();
-                    }
-                  });
+                  await decreaseLikes();
                 }
               }}
             />
-            <p>{likes}</p>
+            <p className="likesCount">{likes}</p>
           </div>
           <button
             onClick={() => {
-              user.setSelectedPost({data, authorAvatar, refreshLikes});
+              user.setSelectedPost({
+                ...data,
+                isLiked: isLiked,
+                likesCount: likes,
+                authorImage: authorAvatar,
+                category: category,
+                text: text,
+                image: image,
+                decreaseLikes,
+                increaseLikes
+              });
               user.toggleComments();
             }}
           >
