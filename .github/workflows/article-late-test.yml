@@ -37,7 +37,7 @@ jobs:
     - name: Build and test project
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
   
-  front-end:
+  frontend-test:
     runs-on: ubuntu-latest
     
     steps:
@@ -52,4 +52,4 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
           
     - name: Build and test project
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; CI=false npm run build
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run build
