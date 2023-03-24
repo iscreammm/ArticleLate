@@ -3,20 +3,53 @@ package com.articlelate.restapi;
 import com.articlelate.restapi.utils.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class RestapiController {
 
-    static Dotenv dotenv = Dotenv.load();
+    private Dotenv dotenv;
+    private DataBase db;
+
+    public RestapiController() {
+        this.dotenv = Dotenv.load();
+        try {
+            this.db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public RestapiController(DataBase db){
+        this.dotenv = Dotenv.load();
+        this.db = db;
+    }
+
+    public RestapiController(Dotenv dotenv) {
+        this.dotenv = dotenv;
+        try {
+            this.db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     @GetMapping("/verifyLogin")
     public String verifyLogin(@RequestParam String login) {
@@ -26,8 +59,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
-
+            db.initialSetUp();
             Connection dbConnection = null;
             Statement statement = null;
 
@@ -42,6 +74,13 @@ public class RestapiController {
                 data = false;
             } else {
                 data = true;
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
         } catch (SQLException e) {
@@ -66,7 +105,7 @@ public class RestapiController {
         UserData user = gson.fromJson(dataJson, UserData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -82,6 +121,13 @@ public class RestapiController {
                 return gson.toJson(new Message<>("Error", "Логин занят", -1));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "INSERT INTO auth_data"
                     + "(login, pass) "
                     + "VALUES"
@@ -92,6 +138,13 @@ public class RestapiController {
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             int loginId = 0;
 
@@ -104,6 +157,13 @@ public class RestapiController {
 
             while (rs.next()) {
                 loginId = rs.getInt("id");
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             sql = "INSERT INTO user_info"
@@ -120,6 +180,13 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT id FROM user_info WHERE loginid = " + loginId;
 
             dbConnection = db.getDBConnection();
@@ -131,7 +198,15 @@ public class RestapiController {
                 data = rs.getInt("id");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось зарегистрировать пользователя", -1));
 
@@ -151,7 +226,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -165,6 +240,13 @@ public class RestapiController {
 
             if (!rs.next()) {
                 return gson.toJson(new Message<>("Error", "Неверный логин", -1));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             sql = "SELECT user_info.id FROM user_info"
@@ -183,7 +265,15 @@ public class RestapiController {
 
             data = rs.getInt("id");
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось выполнить вход", -1));
 
@@ -201,9 +291,8 @@ public class RestapiController {
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -221,6 +310,13 @@ public class RestapiController {
                 follows = rs.getInt("follows_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "SELECT COUNT(*) AS followers_count FROM relationships WHERE subscribeid = " + userId;
 
             dbConnection = db.getDBConnection();
@@ -232,6 +328,13 @@ public class RestapiController {
 
             while (rs.next()) {
                 followers = rs.getInt("followers_count");
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             sql = "SELECT * FROM user_info WHERE id = " + userId;
@@ -246,7 +349,15 @@ public class RestapiController {
                         follows, followers, rs.getString("info"), rs.getString("profilepicture")));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить профиль пользователя", -1));
 
@@ -267,7 +378,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -286,9 +397,16 @@ public class RestapiController {
                 while (rs.next()) {
                     time = rs.getTimestamp("posttime");
                 }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
-            String sql = "SELECT posts.id, authorid, user_info.identificator, user_info.name, posttime, posttext,"
+            String sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator, user_info.name, posttime, posttext,"
                     + " categories.name AS category, postpicture, postlikes"
                     + " FROM posts"
                     + " JOIN categories ON postcategoryid = categories.id"
@@ -305,15 +423,24 @@ public class RestapiController {
 
             while (rs.next()) {
                 postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты пользователя", -1));
 
@@ -333,7 +460,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -350,7 +477,15 @@ public class RestapiController {
                 data = true;
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить подписку на пользователя", -1));
 
@@ -372,7 +507,7 @@ public class RestapiController {
         RelationshipsData relations = gson.fromJson(dataJson, RelationshipsData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -387,7 +522,14 @@ public class RestapiController {
 
             statement.execute(sql);
 
-            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE followerid = " + relations.getFollowerId();
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
+            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE subscribeid = " + relations.getUserId();
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -398,7 +540,15 @@ public class RestapiController {
                 data = rs.getInt("follows_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось подписаться на пользователя", -1));
 
@@ -420,7 +570,7 @@ public class RestapiController {
         RelationshipsData relations = gson.fromJson(dataJson, RelationshipsData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -434,7 +584,14 @@ public class RestapiController {
 
             statement.execute(sql);
 
-            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE followerid = " + relations.getFollowerId();
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
+            sql = "SELECT COUNT(*) AS follows_count FROM relationships WHERE subscribeid = " + relations.getUserId();;
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -445,7 +602,15 @@ public class RestapiController {
                 data = rs.getInt("follows_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось отписаться от пользователя", -1));
 
@@ -467,7 +632,7 @@ public class RestapiController {
         ProfileData profile = gson.fromJson(dataJson, ProfileData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -482,10 +647,17 @@ public class RestapiController {
             if (rs.next()) {
                 String identificator = rs.getString("identificator");
 
-                if (profile.getIdentificator().substring(0, 4).equals("user")
+                if (profile.getIdentificator().startsWith("user")
                         && (!identificator.equals(profile.getIdentificator()))) {
                     return gson.toJson(new Message<>("Error", "Идентификатор не может начинаться с 'user'", -1));
                 }
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             sql = "SELECT id FROM user_info WHERE identificator = \'" + profile.getIdentificator() + "\'"
@@ -498,6 +670,13 @@ public class RestapiController {
 
             if (rs.next()) {
                 return gson.toJson(new Message<>("Error", "Данный идентификатор уже занят.", -1));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             if (profile.getImagePath().contains("profilePictures")) {
@@ -518,8 +697,29 @@ public class RestapiController {
                     picPath = rs.getString("profilepicture");
                 }
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 if (!picPath.contains("avatar")) {
-                    deleteFile("../client/public/" + picPath);
+                    Path path = Paths.get("");
+
+                    String filepath = path.toAbsolutePath().toString();
+
+                    char delimitter;
+
+                    if (filepath.charAt(0) == '/') {
+                        delimitter = '/';
+                    } else {
+                        delimitter = '\\';
+                    }
+
+                    filepath = filepath.substring(0, filepath.indexOf(delimitter + "server"));
+
+                    deleteFile(filepath + delimitter + "client" + delimitter + "public" + delimitter + picPath);
                 }
             }
 
@@ -532,37 +732,50 @@ public class RestapiController {
 
             statement.execute(sql);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить информацию профиля", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
             e.printStackTrace();
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+
         }
 
         return gson.toJson(new Message<>("Success", "", data));
     }
 
     @GetMapping("/verifyIdentificator")
-    public String verifyIdentificator(@RequestParam String identificator, @RequestParam int userId) {
+    public String verifyIdentificator(@RequestParam String identificator,
+                                      @RequestParam(required = false, defaultValue = "0") int userId) {
         boolean data = false;
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "SELECT * FROM user_info WHERE identificator = \'" + identificator + "\'"
-                    + " AND id != " + userId;
+            String sql = "SELECT * FROM user_info WHERE identificator = \'" + identificator + "\'";
+
+            if (userId != 0) {
+                sql += " AND id != " + userId;
+            }
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
@@ -575,7 +788,15 @@ public class RestapiController {
                 data = true;
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить доступность идентификатора", -1));
 
@@ -596,19 +817,21 @@ public class RestapiController {
 
         PostData post = gson.fromJson(dataJson, PostData.class);
 
+        String imagePath = "";
+
         try {
             if (!post.getImage().equals("")) {
-                data = loadImage(post.getImage(), "postPictures");
+                imagePath = loadImage(post.getImage(), "postPictures");
             }
 
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
 
             String sql = "INSERT INTO posts(authorid, posttime, postcategoryid, postpicture, posttext, postlikes)"
                     + " VALUES(" + post.getAuthorId() + ", \'" + new Timestamp(System.currentTimeMillis()) + "\'"
-                    + ", " + post.getCategoryId() + ", \'" + data + "\', \'" + post.getText() + "\'"
+                    + ", " + post.getCategoryId() + ", \'" + imagePath + "\', \'" + post.getText() + "\'"
                     + ", " + 0 + ")";
 
             dbConnection = db.getDBConnection();
@@ -616,17 +839,57 @@ public class RestapiController {
 
             statement.execute(sql);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
-        } catch (SQLException e) {
+            sql = "SELECT id, posttime FROM posts WHERE postpicture = \'" + imagePath + "\'";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            int postId = 0;
+            Timestamp postTime = new Timestamp(0);
+
+            while (rs.next()) {
+                postId = rs.getInt("id");
+                postTime = rs.getTimestamp("posttime");
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
+            JsonObject json = new JsonObject();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, hh:mm:ss aaa", Locale.ENGLISH);
+
+            json.addProperty("postId", postId);
+            json.addProperty("postTime", dateFormat.format(postTime));
+            json.addProperty("imagePath", imagePath);
+
+            data = json.toString();
+
+        }  catch (SQLException e) {
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось создать пост", -1));
 
-        } catch (ClassNotFoundException e) {
+        }  catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
             e.printStackTrace();
+
+        }  catch (Throwable e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -640,7 +903,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             boolean isLiked = isLiked(userId, postId);
 
@@ -657,11 +920,25 @@ public class RestapiController {
 
                 statement.execute(sql);
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 sql = "INSERT INTO likes (userid, postid) VALUES (" + userId +", "+ postId + ")";
 
                 dbConnection = db.getDBConnection();
                 statement = dbConnection.createStatement();
                 statement.execute(sql);
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             sql = "SELECT postlikes FROM posts WHERE id = " + postId;
@@ -675,7 +952,17 @@ public class RestapiController {
                 data = rs.getInt("postlikes");
             }
 
+            System.out.println(data);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось поставить лайк посту", -1));
 
@@ -695,7 +982,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             boolean isLiked = isLiked(userId, postId);
 
@@ -712,12 +999,26 @@ public class RestapiController {
 
                 statement.execute(sql);
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 sql = "DELETE FROM likes WHERE userId = " + userId + "AND postId = " + postId;
 
                 dbConnection = db.getDBConnection();
                 statement = dbConnection.createStatement();
 
                 statement.execute(sql);
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             sql = "SELECT postlikes FROM posts WHERE id = " + postId;
@@ -731,7 +1032,15 @@ public class RestapiController {
                 data = rs.getInt("postlikes");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось убрать лайк с поста", -1));
 
@@ -751,12 +1060,12 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
 
-            String sql = "SELECT posts.id, authorid, user_info.identificator, user_info.name, posttime, posttext,"
+            String sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator, user_info.name, posttime, posttext,"
                     + " categories.name AS category, postpicture, postlikes"
                     + " FROM posts"
                     + " JOIN categories ON postcategoryid = categories.id"
@@ -772,13 +1081,22 @@ public class RestapiController {
                 return gson.toJson(new Message<>("Error", "Пост был удален", -1));
             } else {
                 data = gson.toJson(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить пост", -1));
 
@@ -796,7 +1114,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -814,7 +1132,28 @@ public class RestapiController {
                 picPath = rs.getString("postpicture");
             }
 
-            deleteFile(picPath);
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
+            Path path = Paths.get("");
+
+            String filepath = path.toAbsolutePath().toString();
+
+            char delimitter;
+
+            if (filepath.charAt(0) == '/') {
+                delimitter = '/';
+            } else {
+                delimitter = '\\';
+            }
+
+            filepath = filepath.substring(0, filepath.indexOf(delimitter + "server"));
+
+            deleteFile(filepath + delimitter + "client" + delimitter + "public" + delimitter + picPath);
 
             sql = "DELETE FROM posts WHERE id = " + postId;
 
@@ -822,11 +1161,25 @@ public class RestapiController {
             statement = dbConnection.createStatement();
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             sql = "DELETE FROM likes WHERE postid = " + postId;
 
             dbConnection = db.getDBConnection();
             statement = dbConnection.createStatement();
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             sql = "DELETE FROM commentaries WHERE postid = " + postId;
 
@@ -834,7 +1187,15 @@ public class RestapiController {
             statement = dbConnection.createStatement();
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить пост", -1));
 
@@ -856,7 +1217,7 @@ public class RestapiController {
         PostData post = gson.fromJson(dataJson, PostData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -879,8 +1240,29 @@ public class RestapiController {
                     picPath = rs.getString("postpicture");
                 }
 
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+
                 if (!picPath.equals("")) {
-                    deleteFile("../client/public/" + picPath);
+                    Path path = Paths.get("");
+
+                    String filepath = path.toAbsolutePath().toString();
+
+                    char delimitter;
+
+                    if (filepath.charAt(0) == '/') {
+                        delimitter = '/';
+                    } else {
+                        delimitter = '\\';
+                    }
+
+                    filepath = filepath.substring(0, filepath.indexOf(delimitter + "server"));
+
+                    deleteFile(filepath + delimitter + "client" + delimitter + "public" + delimitter + picPath);
                 }
             }
 
@@ -894,17 +1276,25 @@ public class RestapiController {
 
             statement.execute(sql);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить содержимое поста", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
             e.printStackTrace();
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return gson.toJson(new Message<>("Error", "Не удалось загрузить изображение", -1));
         }
 
         return gson.toJson(new Message<>("Success", "", data));
@@ -919,7 +1309,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -936,6 +1326,13 @@ public class RestapiController {
 
                 while (rs.next()) {
                     time = rs.getTimestamp("commenttime");
+                }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
                 }
             }
 
@@ -957,6 +1354,13 @@ public class RestapiController {
                         rs.getString("identificator"), rs.getString("name"),
                         rs.getTimestamp("commenttime"), rs.getString("commenttext"),
                         rs.getString("profilepicture")));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             data = gson.toJson(commentList);
@@ -981,7 +1385,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -997,7 +1401,15 @@ public class RestapiController {
                 data = rs.getInt("id");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось проверить идентификатор", -1));
 
@@ -1019,7 +1431,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1037,24 +1449,31 @@ public class RestapiController {
                 while (rs.next()) {
                     time = rs.getTimestamp("posttime");
                 }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             String sql = "";
 
             if (categoryId == 0) {
 
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
                         + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId
                         + " ORDER BY posttime DESC LIMIT 3";
             } else {
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
-                        + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId + "AND categories.id = " + categoryId
+                        + " WHERE  posttime < \'" + time + "\' AND authorid != " + userId + " AND categories.id = " + categoryId
                         + " ORDER BY posttime DESC LIMIT 3";
             }
 
@@ -1067,15 +1486,24 @@ public class RestapiController {
 
             while (rs.next()) {
                 postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты новостной ленты", -1));
 
@@ -1097,7 +1525,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1115,13 +1543,20 @@ public class RestapiController {
                 while (rs.next()) {
                     time = rs.getTimestamp("posttime");
                 }
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
             }
 
             String sql = "";
 
             if (categoryId == 0) {
 
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
@@ -1129,7 +1564,7 @@ public class RestapiController {
                         + " WHERE  posttime < \'" + time + "\' AND authorid = relationships.subscribeid"
                         + " ORDER BY posttime DESC LIMIT 3";
             } else {
-                sql = "SELECT posts.id, authorid, user_info.identificator,"
+                sql = "SELECT posts.id, authorid, user_info.profilepicture, user_info.identificator,"
                         + " user_info.name, posttime, categories.name AS category, postpicture, posttext, postlikes"
                         + " FROM posts JOIN user_info ON authorid = user_info.id"
                         + " JOIN categories ON postcategoryid = categories.id"
@@ -1147,15 +1582,24 @@ public class RestapiController {
 
             while (rs.next()) {
                 postList.add(new Post(rs.getInt("id"), rs.getInt("authorid"),
-                        rs.getString("identificator"), rs.getString("name"),
-                        rs.getTimestamp("posttime"), rs.getString("posttext"),
-                        rs.getString("category"), rs.getString("postpicture"),
-                        rs.getInt("postlikes"), isLiked(userId, rs.getInt("id"))));
+                        rs.getString("profilepicture"), rs.getString("identificator"),
+                        rs.getString("name"), rs.getTimestamp("posttime"),
+                        rs.getString("posttext"), rs.getString("category"),
+                        rs.getString("postpicture"), rs.getInt("postlikes"),
+                        isLiked(userId, rs.getInt("id"))));
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
             }
 
             data = gson.toJson(postList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить посты ленты подписок", -1));
 
@@ -1172,19 +1616,23 @@ public class RestapiController {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
 
+        String data = "";
+
         CommentData commentData = gson.fromJson(dataJson, CommentData.class);
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
 
             handleTag(commentData.getCommentText(), commentData.getPostId());
 
+            Timestamp commentTime = new Timestamp(System.currentTimeMillis());
+
             String sql = "INSERT INTO commentaries(userid, postid, commenttime, commenttext)"
                     + " VALUES(" + commentData.getUserId() + ", "+ commentData.getPostId()
-                    +", \'" + new Timestamp(System.currentTimeMillis())
+                    +", \'" + commentTime
                     +"\', \'" + commentData.getCommentText() + "\')";
 
             dbConnection = db.getDBConnection();
@@ -1192,7 +1640,46 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
+            sql = "SELECT commentaries.id, user_info.name FROM commentaries"
+                    + " JOIN user_info ON userid = user_info.id"
+                    + " WHERE commentaries.userid = " + commentData.getUserId()
+                    + " AND commentaries.postid = " + commentData.getPostId()
+                    + " AND commentaries.commenttime = \'" + commentTime + "\'"
+                    + " AND commentaries.commenttext = \'" + commentData.getCommentText() + "\'";
+
+            dbConnection = db.getDBConnection();
+            statement = dbConnection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                JsonObject json = new JsonObject();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy, hh:mm:ss aaa", Locale.ENGLISH);
+
+                json.addProperty("commentId", rs.getInt("id"));
+                json.addProperty("name", rs.getString("name"));
+                json.addProperty("commentTime", dateFormat.format(commentTime));
+
+                data = json.toString();
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось добавить комментарий", -1));
 
@@ -1201,7 +1688,7 @@ public class RestapiController {
             e.printStackTrace();
         }
 
-        return gson.toJson(new Message<>("Success", "", 1));
+        return gson.toJson(new Message<>("Success", "", data));
     }
 
     @PutMapping("/changeComment")
@@ -1214,7 +1701,7 @@ public class RestapiController {
         int postId = 0;
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1226,6 +1713,13 @@ public class RestapiController {
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             sql = "SELECT postid FROM commentaries"
                     + " WHERE id = " + commentId;
@@ -1239,9 +1733,17 @@ public class RestapiController {
                 postId = (rs.getInt("postid"));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             handleTag(commentText, postId);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось изменить комментарий", -1));
 
@@ -1259,7 +1761,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1272,7 +1774,15 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить комментарий", -1));
 
@@ -1293,15 +1803,12 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
 
             Timestamp time = new Timestamp(0);
-
-            dbConnection = db.getDBConnection();
-            statement = dbConnection.createStatement();
 
             String sql = "SELECT * FROM notifications"
                     + " WHERE userid = " + userId + " AND id > " + prevNotificationId
@@ -1319,9 +1826,17 @@ public class RestapiController {
                         rs.getInt("postid")));
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             data = gson.toJson(notificationsList);
 
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось загрузить уведомления", -1));
 
@@ -1341,7 +1856,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1357,9 +1872,17 @@ public class RestapiController {
                 data = rs.getInt("notifications_count");
             }
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
-            return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
+            return gson.toJson(new Message<>("Error", "Не удалось получить количество уведомлений", -1));
 
         } catch (ClassNotFoundException e) {
             System.out.println("PostgreSQL JDBC Driver is not found");
@@ -1375,7 +1898,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1388,7 +1911,15 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
+
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить уведомление", -1));
 
@@ -1397,7 +1928,7 @@ public class RestapiController {
             e.printStackTrace();
         }
 
-        return gson.toJson(new Message<>("Success", "", 0));
+        return gson.toJson(new Message<>("Success", "", 1));
     }
 
     @DeleteMapping("/deleteAllNotification")
@@ -1406,7 +1937,7 @@ public class RestapiController {
         Gson gson = builder.create();
 
         try {
-            DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+            db.initialSetUp();
 
             Connection dbConnection = null;
             Statement statement = null;
@@ -1419,6 +1950,13 @@ public class RestapiController {
 
             statement.execute(sql);
 
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return gson.toJson(new Message<>("Error", "Не удалось удалить все уведомления", -1));
@@ -1428,11 +1966,13 @@ public class RestapiController {
             e.printStackTrace();
         }
 
-        return gson.toJson(new Message<>("Success", "", 0));
+        return gson.toJson(new Message<>("Success", "", 1));
     }
 
     private void deleteFile(String filePath) {
         File file = new File(filePath);
+
+        System.out.println(filePath);
 
         if (file.delete()) {
             System.out.println("File was deleted");
@@ -1462,7 +2002,7 @@ public class RestapiController {
     }
 
     private void createNotification(String tag, int postId) throws SQLException, ClassNotFoundException {
-        DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        db.initialSetUp();
 
         int userId = -1;
 
@@ -1474,12 +2014,17 @@ public class RestapiController {
         dbConnection = db.getDBConnection();
         statement = dbConnection.createStatement();
 
-        statement.execute(sql);
-
         ResultSet rs = statement.executeQuery(sql);
 
         if (rs.next()) {
             userId = rs.getInt("id");
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             sql = "INSERT INTO notifications(userId, postId)"
                     + " VALUES(" + userId + ", \'" + postId + "\'"
@@ -1489,11 +2034,32 @@ public class RestapiController {
             statement = dbConnection.createStatement();
 
             statement.execute(sql);
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
         }
     }
 
     private String loadImage(String url, String foldername) throws IOException {
-        File folder = new File("../client/public/" + foldername);
+        Path path = Paths.get("");
+
+        String filePath = path.toAbsolutePath().toString();
+        
+        char delimitter;
+        
+        if(filePath.charAt(0)=='/'){
+            delimitter = '/';
+        } else {
+            delimitter = '\\';
+        }
+        
+        filePath = filePath.substring(0, filePath.indexOf(delimitter + "server"));
+
+        File folder = new File(filePath + delimitter + "client" + delimitter + "public" + delimitter + foldername);
 
         if (!folder.exists()) {
             folder.mkdir();
@@ -1502,15 +2068,15 @@ public class RestapiController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         String filename = sdf.format(System.currentTimeMillis()) + ".jpg";
-        File imgFile = new File("../client/public/" + foldername, filename);
-
-        if (!imgFile.exists()) {
-            imgFile.createNewFile();
-        }
+        File imgFile = new File(filePath + delimitter + "client" + delimitter + "public" + delimitter + foldername, filename);
 
         byte[] imgData = Base64.getDecoder().decode(url);
 
         OutputStream stream = new FileOutputStream(imgFile);
+
+        if (!imgFile.exists()) {
+            imgFile.createNewFile();
+        }
 
         stream.write(imgData);
         stream.close();
@@ -1519,7 +2085,7 @@ public class RestapiController {
     }
 
     private boolean isLiked (int userId, int postId) throws SQLException, ClassNotFoundException {
-        DataBase db = new DataBase(dotenv.get("DB_URL"), dotenv.get("USER"), dotenv.get("PASS"));
+        db.initialSetUp();
 
         Connection dbConnection = null;
         Statement statement = null;
@@ -1529,14 +2095,19 @@ public class RestapiController {
         dbConnection = db.getDBConnection();
         statement = dbConnection.createStatement();
 
-        statement.execute(sql);
-
         boolean isLiked = false;
 
         ResultSet rs = statement.executeQuery(sql);
 
         if (rs.next()) {
             isLiked = true;
+        }
+
+        if (statement != null) {
+            statement.close();
+        }
+        if (dbConnection != null) {
+            dbConnection.close();
         }
 
         return isLiked;

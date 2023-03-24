@@ -7,25 +7,6 @@ public class PostData {
     private String text;
     private String image;
 
-    public PostData(int id, String text, int categoryId, String image) {
-        this.id = id;
-        this.text = text;
-        this.categoryId = categoryId;
-        this.image = image;
-
-        this.authorId = 0;
-        this.categoryId = 0;
-    }
-
-    public PostData(int authorId, int categoryId, String text, String image) {
-        this.authorId = authorId;
-        this.categoryId = categoryId;
-        this.text = text;
-        this.image = image;
-
-        this.id = 0;
-    }
-
     public int getId() {
         return id;
     }

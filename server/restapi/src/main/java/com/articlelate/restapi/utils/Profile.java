@@ -17,4 +17,28 @@ public class Profile {
         this.info = info;
         this.imagePath = imagePath;
     }
+
+    public String getIdentificator() {
+        return identificator;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getFollows() {
+        return follows;
+    }
+
+    public int getFollowers() {
+        return followers;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
 }
