@@ -14,10 +14,10 @@ public class DataBase {
         this.USER = USER;
         this.PASS = PASS;
 
-        initialSetUp();
+        //initialSetUp();
     }
 
-    private void initialSetUp() throws SQLException, ClassNotFoundException{
+    public String initialSetUp() throws SQLException, ClassNotFoundException{
         Connection dbConnection = null;
         Statement statement = null;
 
@@ -58,7 +58,7 @@ public class DataBase {
                 "CREATE TABLE IF NOT EXISTS commentaries (\n" +
                 "    id serial PRIMARY KEY,\n" +
                 "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
-                "    postid integer REFERENCES posts(id) NOT NULL,\n" +
+                "    postid integer REFERENCES posts(id) ON DELETE CASCADE,\n" +
                 "    commenttime timestamp without time zone NOT NULL,\n" +
                 "    commenttext character varying(3000) NOT NULL\n" +
                 ");"+
@@ -66,7 +66,7 @@ public class DataBase {
                 "CREATE TABLE IF NOT EXISTS notifications (\n" +
                 "    id serial PRIMARY KEY,\n" +
                 "    userid integer REFERENCES user_info(id) NOT NULL,\n" +
-                "    postid integer REFERENCES posts(id) NOT NULL\n" +
+                "    postid integer NOT NULL\n" +
                 ");"+
 
                 "CREATE TABLE IF NOT EXISTS relationships (\n" +
@@ -76,7 +76,7 @@ public class DataBase {
 
                 "CREATE TABLE IF NOT EXISTS likes (\n"+
                 "   userid integer REFERENCES user_info (id),\n"+
-                "   postid integer REFERENCES posts (id)\n" +
+                "   postid integer\n" +
                 ");";
 
         dbConnection = getDBConnection();
@@ -90,6 +90,7 @@ public class DataBase {
         if (dbConnection != null) {
             dbConnection.close();
         }
+        return "Ok";
     }
 
     public Connection getDBConnection() throws ClassNotFoundException, SQLException {
@@ -111,4 +112,3 @@ public class DataBase {
         return dbConnection;
     }
 }
-

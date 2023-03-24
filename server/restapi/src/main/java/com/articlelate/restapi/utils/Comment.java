@@ -21,4 +21,32 @@ public class Comment {
         this.text = text;
         this.imagePath = imagePath;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getIdentificator() {
+        return identificator;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
 }
