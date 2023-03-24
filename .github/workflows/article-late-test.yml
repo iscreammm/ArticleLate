@@ -36,4 +36,19 @@ jobs:
       
     - name: Build and test project
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
+  
+  front-end:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    
+    - name: Load project code
+      uses: actions/checkout@v3
       
+    - name: Build and test project
+      run:  npm run build
