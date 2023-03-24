@@ -77,7 +77,7 @@ describe('Comment tests', () => {
     expect(screen.getByText(commentData.text)).toBeVisible();
   });
 
-  test('Post delete and modify buttons are unaccessible', async () => {
+  test('Comment delete and modify buttons are unaccessible', async () => {
     const commentDataDifferentId = {
       authorId: 2,
       id: 1,

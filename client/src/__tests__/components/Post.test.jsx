@@ -72,7 +72,7 @@ describe('Post tests', () => {
     expect(screen.getByText("@user1")).toBeVisible();
     expect(screen.getByText("6 Марта 2023 21:58")).toBeVisible();
     expect(screen.getByText("Some post text")).toBeVisible();
-    expect(screen.getByAltText("Post Image").src).toBe(baseSrc + "image.jpg");
+    expect(screen.getByAltText("Post Img").src).toBe(baseSrc + "image.jpg");
     expect(screen.getByAltText("Like").src).toBe(baseSrc + whiteLikeSrc);
     expect(screen.getByText("1000")).toBeVisible();
   });
@@ -103,7 +103,7 @@ describe('Post tests', () => {
     expect(screen.getByText("@user1")).toBeVisible();
     expect(screen.getByText("6 Марта 2023 21:58")).toBeVisible();
     expect(screen.getByText("Some post text new")).toBeVisible();
-    expect(screen.getByAltText("Post Image").src).toBe(baseSrc + "imageNew.jpg");
+    expect(screen.getByAltText("Post Img").src).toBe(baseSrc + "imageNew.jpg");
     expect(screen.getByAltText("Like").src).toBe(baseSrc + whiteLikeSrc);
     expect(screen.getByText("1000")).toBeVisible();
   });

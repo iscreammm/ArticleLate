@@ -11,6 +11,7 @@ const CommentModal = () => {
   const user = useUser();
   const [isInsert, setIsInsert] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [newComment, setNewComment] = useState();
 
   if(!user.commentsOpen) {
     return null;
@@ -88,7 +89,7 @@ const CommentModal = () => {
                   }
                 }}
               />
-              <p>
+              <p className="likesCount">
                 {user.selectedPost.likesCount}
               </p>
             </div>
@@ -118,20 +119,31 @@ const CommentModal = () => {
                     commentText: commentText
                   }).then(result => {
                     if (result.data.state === "Success") {
+                      const data = JSON.parse(result.data.data);
+
+                      setNewComment({
+                        id: data.commentId,
+                        authorId: user.id,
+                        text: commentText,
+                        identificator: user.identificator,
+                        imagePath: user.avatar,
+                        name: data.name,
+                        time: data.commentTime
+                      });
                       setCommentText("");
                       setIsInsert(false);
                     } else {
                       user.setErrorMessage(result.data.message);
                       user.toggleError();
                     }
-                  })
+                  });
                 }}
               >
                 Отправить
               </button>
             </div>
           }
-          <CommentsList postId={user.selectedPost.id} />
+          <CommentsList postId={user.selectedPost.id} newComment={newComment} />
         </div>
       </div>
     </div>

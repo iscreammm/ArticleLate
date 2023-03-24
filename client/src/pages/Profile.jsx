@@ -24,7 +24,7 @@ const Profile = () => {
         });
       });
     });
-  }, [identifier]);
+  }, [identifier, user.id]);
   
   if (profileData === undefined) {
     return <></>

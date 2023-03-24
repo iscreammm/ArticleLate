@@ -49,7 +49,7 @@ const NotificationsModal = () => {
         </button>
         <div className="notifications">
           {notifications.map(notification => {
-            return <Notification key={notification.id} notifData={notification} />
+            return <Notification key={notification.id} data={notification} />
           })}
           {notifications.length === 0 ? <p className="noNotifications">Нет уведомлений</p> : <></>}
         </div>

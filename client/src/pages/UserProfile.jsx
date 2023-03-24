@@ -23,7 +23,7 @@ const UserProfile = () => {
     axios.get(`http://localhost:8080/getProfile?userId=${user.id}`).then(result => {
       setProfileData(JSON.parse(result.data.data));
     });
-  }, []);
+  }, [user.id]);
   
   if (profileData === undefined) {
     return <></>
@@ -47,7 +47,7 @@ const UserProfile = () => {
         <CreatePostModal isOpen={createPostOpen}
           toggle={toggleCreatePost}
           setNewPost={setNewPost} 
-          userName={profileData.name} 
+          userName={profileData.name}
         />
         <EditPostModal isOpen={editPostOpen}
           toggle={toggleEditPost}

@@ -27,6 +27,12 @@ const postData = {
   decreaseLikes: decreaseLikes
 }
 
+const commentData = {
+  commentId: 1,
+  name: "naso337",
+  commentTime: "Mar 9, 2023, 09:58:32 PM"
+}
+
 const postDataLiked = {
   authorId: 1,
   authorImage: "image.jpg",
@@ -152,7 +158,7 @@ describe('CommentModal tests', () => {
     const data = {
       state: "Success",
       message: "",
-      data: {}
+      data: JSON.stringify(commentData)
     }
 
     const dataError = {

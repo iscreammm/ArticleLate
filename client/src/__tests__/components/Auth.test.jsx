@@ -149,3 +149,51 @@ describe('Authorization form tests', () => {
   });
 
 });
+
+describe("Auth login input tests", () => {
+  let loginInput;
+  let loginBtn;
+
+  beforeEach(() => {
+    render(<Auth />);
+    loginInput = screen.getByPlaceholderText('Введите логин');
+    loginBtn = screen.getByRole('button', { name: 'Войти' });
+
+    userEvent.type(screen.getByPlaceholderText('Введите пароль'), "nasonaso");
+  });
+
+  test('Login input with 7 chars', () => {
+    userEvent.type(loginInput, "nasonas");
+
+    expect(loginInput.value.length).toBe(7);
+    expect(loginBtn.disabled).toBe(true);
+  });
+
+  test('Login input with 8 chars', () => {
+    userEvent.type(loginInput, "nasonaso");
+
+    expect(loginInput.value.length).toBe(8);
+    expect(loginBtn.disabled).toBe(false);
+  });
+
+  test('Login input with 16 chars', () => {
+    userEvent.type(loginInput, "nasonasonasonaso");
+
+    expect(loginInput.value.length).toBe(16);
+    expect(loginBtn.disabled).toBe(false);
+  });
+
+  test('Login input with 17 chars', () => {
+    userEvent.type(loginInput, "nasonasonasonason");
+
+    expect(loginInput.value.length).toBe(16);
+    expect(loginBtn.disabled).toBe(false);
+  });
+
+  test('Login input with 10 chars', () => {
+    userEvent.type(loginInput, "nasonasona");
+
+    expect(loginInput.value.length).toBe(10);
+    expect(loginBtn.disabled).toBe(false);
+  });
+});

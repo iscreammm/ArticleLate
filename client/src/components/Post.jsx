@@ -105,7 +105,7 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
         </div>
         <div className="postMainContent">
           <p dangerouslySetInnerHTML={{__html: text}}></p>
-          <img src={image} alt="Post Image"
+          <img src={image} alt="Post Img"
             style={{display: image === "" ? "none" : "block"}}
           />
         </div>
@@ -120,7 +120,7 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
                 }
               }}
             />
-            <p>{likes}</p>
+            <p className="likesCount">{likes}</p>
           </div>
           <button
             onClick={() => {
