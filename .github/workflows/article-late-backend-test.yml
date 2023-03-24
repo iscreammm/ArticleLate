@@ -1,6 +1,10 @@
-name: article-late-test
+name: article-late-backend-test
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - backDev
 
 jobs:
   backend-test:
@@ -36,20 +40,3 @@ jobs:
       
     - name: Build and test project
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
-  
-  frontend-test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Load project code
-      uses: actions/checkout@v3
-    
-    - name: Set up Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-          
-    - name: Build and test project
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run build
