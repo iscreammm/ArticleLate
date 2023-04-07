@@ -66,27 +66,66 @@ const newPostText = "Modified post text";
 describe("e2e tests", () => {
   before(async () => {
     await createUser(user1.loginData);
+
+    cy.wait(200);
+
     await createUser(user2.loginData);
+
+    cy.wait(200);
+
     await createUser(user3.loginData);
+    
+    cy.wait(200);
+
     await createUser(user4.loginData);
+    
+    cy.wait(200);
+
     await createUser(user5.loginData);
+    
+    cy.wait(200);
+
     await createUser(user6.loginData);
 
+    cy.wait(200);
+    
     await createPost(postData1);
+    
+    cy.wait(200);
+
     await createPost(postData2);
+    
+    cy.wait(200);
+
     await createPost(postData3);
 
+    cy.wait(200);
+    
     await createComment(commentData1.id, commentData1.postId, commentData1.text);
+    
+    cy.wait(200);
+    
     await createComment(commentData2.id, commentData2.postId, commentData2.text);
+    
+    cy.wait(200);
+    
     await createComment(commentData3.id, commentData3.postId, commentData3.text);
 
+    cy.wait(200);
+    
     await createSubscription(user1.id, user3.id);
 
+    cy.wait(200);
+    
     await createPost(postData4);
+
+    cy.wait(200);
   });
 
   it("Should successfully reg and auth user with login check", () => {
     login(inputString);
+
+    cy.wait(1000);
 
     expect(cy.findByText("Неверный логин").should('exist'));
 
@@ -98,6 +137,8 @@ describe("e2e tests", () => {
 
     cy.findByRole('button', { name: 'Проверить'}).click();
 
+    cy.wait(1000);
+
     expect(cy.findByText("Логин занят").should('exist'));
 
     cy.findByPlaceholderText('Введите логин').clear();
@@ -105,15 +146,21 @@ describe("e2e tests", () => {
 
     cy.findByRole('button', { name: 'Проверить'}).click();
 
+    cy.wait(1000);
+
     expect(cy.findByText("Логин свободен").should('exist'));
 
     cy.findByRole('button', { name: 'Зарегистрироваться'}).click();
+
+    cy.wait(1000);
     
     expect(cy.findByAltText("Authorization").should('exist'));
 
     fillAuthInputs(inputString);
 
     cy.findByRole('button', { name: 'Войти'}).click();
+
+    cy.wait(1000);
 
     cy.url().should('eq', baseURL);
   });
@@ -218,30 +265,34 @@ describe("e2e tests", () => {
 
     cy.findByAltText("Avatar").click();
 
+    cy.wait(1000);
+
     cy.get('[alt="Like"]').eq(1).click();
 
-    cy.wait(2000);
+    cy.wait(1000);
 
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton) => {
       secondButton.click();
     });
+
+    cy.wait(1000);
     
-    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.PNG');
-    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.PNG');
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    cy.wait(2000);
+    cy.wait(1000);
 
-    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.PNG');
-    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.PNG');
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.png');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    cy.wait(2000);
+    cy.wait(1000);
 
-    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.PNG');
-    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.PNG');
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
   });
 
   it("Shouldn't modify user data after click on decline btn", () => {
