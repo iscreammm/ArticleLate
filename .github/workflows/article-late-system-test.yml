@@ -29,11 +29,8 @@ jobs:
     - name: Build and test server
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package -Dmaven.test.skip=true
 
-    - name: Create server-image
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; mv restapi-0.0.1-SNAPSHOT.jar /home/runner/work/ArticleLate/ArticleLate/server ; cd /home/runner/work/ArticleLate/ArticleLate/server ; docker build -t server .
-      
-    - name: Run docker-compose.yml
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server ; docker compose up -d --build
+    - name: Run server
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env ; (java -jar restapi-0.0.1-SNAPSHOT.jar &)
 
     - name: Run client
       run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; (npm run start&)
