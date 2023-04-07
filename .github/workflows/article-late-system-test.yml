@@ -33,7 +33,7 @@ jobs:
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; mv restapi-0.0.1-SNAPSHOT.jar /home/runner/work/ArticleLate/ArticleLate/server ; cd /home/runner/work/ArticleLate/ArticleLate/server ; docker build -t server .
       
     - name: Run docker-compose.yml
-      run:  docker compose up -d --build
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/server ; docker compose up -d --build
 
     - name: Run client
       run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run start
