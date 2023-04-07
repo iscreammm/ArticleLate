@@ -235,18 +235,18 @@ describe("e2e tests", () => {
       secondButton.click();
     });
 
-    expect(cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png'));
-    expect(cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png'));
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src', 'post/redlike.png');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src', 'post/redlike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    expect(cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.png'));
-    expect(cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.png'));
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src', 'post/whitelike.png');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src', 'post/whitelike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    expect(cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png'));
-    expect(cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png'));
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src', 'post/redlike.png');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src', 'post/redlike.png');
   });
 
   it("Shouldn't modify user data after click on decline btn", () => {
