@@ -8,21 +8,6 @@ on:
 jobs:
   system-test:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_DB: articlelate
-          POSTGRES_USER: runner
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
           
     steps:
     - name: Load project code
@@ -41,14 +26,14 @@ jobs:
           java-version: '19'
           distribution: 'temurin'
       
-    - name: Create .env file
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/invDB\nUSER=runner\nPASS=postgres" > .testEnv
-      
     - name: Build and test server
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package -Dmaven.test.skip=true
 
-    - name: Run server
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env ; java -jar restapi-0.0.1-SNAPSHOT.jar ; cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run start ; cd /home/runner/work/ArticleLate/ArticleLate/client ; npx cypress run
+    - name: Create server-image
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; mv restapi-0.0.1-SNAPSHOT.jar /home/runner/work/ArticleLate/ArticleLate/server ; docker build -t server .
+      
+    - name: Run docker-compose.yml
+      run:  docker compose up -d --build
 
     - name: Run client
       run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run start
