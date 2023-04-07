@@ -48,7 +48,7 @@ jobs:
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
 
     - name: Run server
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env ; java -jar restapi-0.0.1-SNAPSHOT.jar
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env ; java -jar restapi-0.0.1-SNAPSHOT.jar ; cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run start ; cd /home/runner/work/ArticleLate/ArticleLate/client ; npx cypress run
 
     - name: Run client
       run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run start
