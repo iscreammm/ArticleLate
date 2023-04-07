@@ -231,10 +231,14 @@ describe("e2e tests", () => {
 
     cy.get('[alt="Like"]').eq(0).click();
 
+    cy.wait(500);
+
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
+
+    cy.wait(500);
 
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
@@ -311,6 +315,8 @@ describe("e2e tests", () => {
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton, thirdButton) => {
       firstButton.click();
     });
+    
+    cy.wait(500);
 
     cy.findByPlaceholderText("Введите комментарий").type("New comment text");
 
@@ -378,6 +384,8 @@ describe("e2e tests", () => {
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton, thirdButton) => {
       firstButton.click();
     });
+    
+    cy.wait(500);
 
     cy.findByPlaceholderText("Введите комментарий").type("@" + user2.identificator);
 
@@ -430,6 +438,8 @@ describe("e2e tests", () => {
       firstButton.click();
     });
 
+    cy.wait(500);
+
     cy.findByPlaceholderText("Введите комментарий").type("@" + user4.identificator);
 
     cy.findByRole('button', { name: 'Отправить'}).click();
@@ -460,6 +470,8 @@ describe("e2e tests", () => {
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton, thirdButton) => {
       firstButton.click();
     });
+
+    cy.wait(500);
 
     cy.findByPlaceholderText("Введите комментарий").type("@" + user5.identificator);
 

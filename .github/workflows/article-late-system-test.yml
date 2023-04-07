@@ -23,7 +23,7 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-          
+
     steps:
     - name: Load project code
       uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
           java-version: '19'
           distribution: 'temurin'
       
-    - name: Build and test server
+    - name: Build server
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package -Dmaven.test.skip=true
 
     - name: Run server
