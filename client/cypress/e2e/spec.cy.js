@@ -265,31 +265,27 @@ describe("e2e tests", () => {
 
     cy.findByAltText("Avatar").click();
 
-    cy.wait(1000);
-
     cy.get('[alt="Like"]').eq(1).click();
-
-    cy.wait(1000);
 
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton) => {
       secondButton.click();
     });
 
-    cy.wait(1000);
-    
+    cy.wait(5000);
+
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    cy.wait(1000);
+    cy.wait(5000);
 
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    cy.wait(1000);
+    cy.wait(5000);
 
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
