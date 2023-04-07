@@ -50,12 +50,9 @@ jobs:
     - name: Run server
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; java -jar restapi-0.0.1-SNAPSHOT.jar
 
-    - name: Build and test client
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run build
-
     - name: Run client
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm run start
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run start
 
     - name: Run e2e tests
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npx cypress run 
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npx cypress run
       
