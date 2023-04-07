@@ -36,5 +36,5 @@ jobs:
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server ; docker compose up -d --build
 
     - name: Run e2e tests
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npx cypress run
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npx cypress run
       
