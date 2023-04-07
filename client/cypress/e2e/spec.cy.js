@@ -235,11 +235,6 @@ describe("e2e tests", () => {
       secondButton.click();
     });
 
-    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src', 'post/redlike.png');
-    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src', 'post/redlike.png');
-
-    cy.get('[alt="Like"]').eq(0).click();
-
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src', 'post/whitelike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src', 'post/whitelike.png');
 
@@ -247,6 +242,11 @@ describe("e2e tests", () => {
 
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src', 'post/redlike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src', 'post/redlike.png');
+
+    cy.get('[alt="Like"]').eq(0).click();
+
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src', 'post/whitelike.png');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src', 'post/whitelike.png');
   });
 
   it("Shouldn't modify user data after click on decline btn", () => {
