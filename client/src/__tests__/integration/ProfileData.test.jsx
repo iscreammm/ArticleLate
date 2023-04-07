@@ -73,6 +73,7 @@ test('Profile data change test', async () => {
     expect(screen.getByText(profileData.info + inputString));
     expect(screen.getByText("@" + profileData.identificator + inputString));
     expect(screen.getByText(profileData.name + inputString));
+    expect(screen.queryByRole('button', { name: 'Сохранить' })).toBeNull();
   });
 
 });

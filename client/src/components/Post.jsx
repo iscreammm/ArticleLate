@@ -63,7 +63,7 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
         <div className="postInfo">
           <div className="postUserInfo" style={{width: data.authorId !== user.id ? "100%" : "67%"}}>
             <Link to={`/profile/${data.identificator}`}>
-              <img src={authorAvatar} alt="AvatarCircle" />
+              <img src={authorAvatar} alt="AvatarCirclePost" />
             </Link>
             <div style={{marginTop: "0.15vw", textAlign: "center"}}>
               <p style={{fontSize: '1.2em'}}>{data.name}</p>
@@ -100,7 +100,7 @@ const Post = ({ data, toggleEditPost, setPostToEdit, refreshedPost }) => {
           }
           <div className="postDate">
             <p>{getDateFormat(data.time)}</p>
-            <p><b>{category}</b></p>
+            <p className="postCategory">{category}</p>
           </div>
         </div>
         <div className="postMainContent">

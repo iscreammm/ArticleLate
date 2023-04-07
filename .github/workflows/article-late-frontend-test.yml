@@ -3,7 +3,6 @@ name: article-late-frontend-test
 on:
   push:
     branches:
-      - main
       - frontenddev
 
 jobs:

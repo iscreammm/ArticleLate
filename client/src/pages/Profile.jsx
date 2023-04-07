@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../components/utilities/userContext";
+import NotFound from "./NotFound";
 import PostsList from "../components/PostsList";
 import "../styles/profile.css";
 
@@ -11,21 +12,31 @@ const Profile = () => {
   const [profileId, setProfileId] = useState();
   const [profileData, setProfileData] = useState();
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/getIdByIdentificator?identificator=${identifier}`).then(result => {
-      setProfileId(result.data.data);
-      axios.get(`http://localhost:8080/getProfile?userId=${result.data.data}`).then(res => {
-        setProfileData(JSON.parse(res.data.data));
-        axios.get(`http://localhost:8080/getIsSubscribe?followerId=${user.id}&userId=${result.data.data}`).then(ress => {
-          if (ress.data.data) {
-            setIsSubscribed(true);
-          }
+      if (result.data.data === -1) {
+        setIsNotFound(true);
+      }
+      else {
+        setProfileId(result.data.data);
+        axios.get(`http://localhost:8080/getProfile?userId=${result.data.data}`).then(res => {
+          setProfileData(JSON.parse(res.data.data));
+          axios.get(`http://localhost:8080/getIsSubscribe?followerId=${user.id}&userId=${result.data.data}`).then(ress => {
+            if (ress.data.data) {
+              setIsSubscribed(true);
+            }
+          });
         });
-      });
+      }
     });
   }, [identifier, user.id]);
   
+  if(isNotFound) {
+    return <NotFound></NotFound>
+  }
+
   if (profileData === undefined) {
     return <></>
   }
@@ -90,7 +101,7 @@ const Profile = () => {
         <div className="infoColumn">
           <div className="infoText">
             <p>Подписки: {profileData.follows}</p>
-           <p>Подписчики: {profileData.followers}</p>
+            <p className="followersCount">Подписчики: {profileData.followers}</p>
           </div>
         </div>
       </div>
