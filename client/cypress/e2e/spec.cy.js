@@ -82,7 +82,9 @@ describe("e2e tests", () => {
 
     await createSubscription(user1.id, user3.id);
 
-    createPost(postData4);
+    await createPost(postData4);
+
+    cy.wait(200);
   });
 
   it("Should successfully reg and auth user with login check", () => {
