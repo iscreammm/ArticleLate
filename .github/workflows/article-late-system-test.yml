@@ -51,5 +51,5 @@ jobs:
       run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; (npm run start&)
 
     - name: Run e2e tests
-      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npx cypress run --browser chrome
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npx cypress run --browser chrome
       

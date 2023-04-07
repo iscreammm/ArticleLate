@@ -82,7 +82,7 @@ describe("e2e tests", () => {
 
     await createSubscription(user1.id, user3.id);
 
-    await createPost(postData4);
+    createPost(postData4);
   });
 
   it("Should successfully reg and auth user with login check", () => {
@@ -220,7 +220,7 @@ describe("e2e tests", () => {
 
     cy.get('[alt="Like"]').eq(1).click();
 
-    cy.wait(1500);
+    cy.wait(1000);
 
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton) => {
       secondButton.click();
@@ -231,14 +231,14 @@ describe("e2e tests", () => {
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    cy.wait(1500);
+    cy.wait(1000);
 
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.png');
 
     cy.get('[alt="Like"]').eq(0).click();
 
-    cy.wait(1500);
+    cy.wait(1000);
 
     cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
     cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
@@ -308,19 +308,25 @@ describe("e2e tests", () => {
 
     cy.findByAltText("Avatar").click();
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton) => {
       secondButton.click();
     });
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton, thirdButton) => {
       firstButton.click();
     });
-    
-    cy.findByPlaceholderText("Введите комментарий").should("exist");
+
+    cy.wait(1000);
 
     cy.findByPlaceholderText("Введите комментарий").type("New comment text");
 
     cy.findByRole('button', { name: 'Отправить'}).click();
+
+    cy.wait(1000);
 
     cy.findByText("New comment text").should('exist');
   });
@@ -377,24 +383,34 @@ describe("e2e tests", () => {
 
     cy.findByAltText("Avatar").click();
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton) => {
       secondButton.click();
     });
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton, thirdButton) => {
       firstButton.click();
     });
-    
-    cy.findByPlaceholderText("Введите комментарий").should("exist");
+
+    cy.wait(1000);
 
     cy.findByPlaceholderText("Введите комментарий").type("@" + user2.identificator);
 
     cy.findByRole('button', { name: 'Отправить'}).click();
+
+    cy.wait(1000);
     
     cy.get('.overlay').click("topLeft");
     cy.findByAltText("Exit").click();
 
+    cy.wait(1000);
+
     login(user2.loginData);
+
+    cy.wait(1000);
 
     cy.get('.notificationsCount').contains('1');
   });
@@ -430,30 +446,42 @@ describe("e2e tests", () => {
 
     cy.findByAltText("Avatar").click();
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton) => {
       secondButton.click();
     });
+
+    cy.wait(1000);
 
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton, thirdButton) => {
       firstButton.click();
     });
 
-    cy.findByPlaceholderText("Введите комментарий").should("exist");
+    cy.wait(1000);
 
     cy.findByPlaceholderText("Введите комментарий").type("@" + user4.identificator);
 
     cy.findByRole('button', { name: 'Отправить'}).click();
+
+    cy.wait(1000);
     
     cy.get('.overlay').click("topLeft");
     cy.findByAltText("Exit").click();
 
     login(user4.loginData);
 
+    cy.wait(1000);
+
     cy.findByAltText("Bell").click();
+
+    cy.wait(1000);
 
     cy.findByText("Вас упомянули под постом").should('exist');
     
     cy.findByRole('button', { name: 'Очистить'}).click();
+
+    cy.wait(1000);
 
     cy.findByText("Нет уведомлений").should('exist');
   });
@@ -461,28 +489,40 @@ describe("e2e tests", () => {
   it("Should successfully open post related to notification", () => {
     login(user1.loginData);
 
+    cy.wait(1000);
+
     cy.findByAltText("Avatar").click();
+
+    cy.wait(1000);
 
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton) => {
       firstButton.click();
     });
 
+    cy.wait(1000);
+
     cy.findAllByRole('button', { name: 'Комментировать'}).spread((firstButton, secondButton, thirdButton) => {
       firstButton.click();
     });
 
-    cy.findByPlaceholderText("Введите комментарий").should("exist");
+    cy.wait(1000);
 
     cy.findByPlaceholderText("Введите комментарий").type("@" + user5.identificator);
 
     cy.findByRole('button', { name: 'Отправить'}).click();
+
+    cy.wait(1000);
     
     cy.get('.overlay').click("topLeft");
     cy.findByAltText("Exit").click();
 
     login(user5.loginData);
 
+    cy.wait(1000);
+
     cy.findByAltText("Bell").click();
+
+    cy.wait(1000);
 
     cy.findByText("Вас упомянули под постом").click();
 
