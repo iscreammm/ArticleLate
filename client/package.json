@@ -9,6 +9,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.1.3",
+    "cypress-file-upload": "^5.0.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.3",
@@ -17,7 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts test && CI=false react-scripts build",
+    "build": "npx cypress run && react-scripts test && CI=false react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --env=jsdom --watchAll=false --coverage",
     "test:start": "react-scripts test --env=jsdom --watchAll=false --coverage && react-scripts start",
@@ -48,10 +49,13 @@
       "!src/components/App.jsx",
       "!src/components/utilities/RequireAuth.jsx",
       "!src/components/utilities/userContext.jsx",
-      "!src/pages/LoginPage.jsx"
+      "!src/pages/LoginPage.jsx",
+      "!src/pages/NotFound.jsx"
     ]
   },
   "devDependencies": {
-    "canvas": "^2.11.0"
+    "@testing-library/cypress": "^9.0.0",
+    "canvas": "^2.11.0",
+    "cypress": "^12.9.0"
   }
 }

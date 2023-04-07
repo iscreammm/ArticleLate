@@ -7,6 +7,7 @@ import Layout from './Layout';
 import { useUser } from './utilities/userContext';
 import LoginPage from '../pages/LoginPage';
 import RequireAuth from './utilities/RequireAuth';
+import NotFound from '../pages/NotFound';
 
 const App = () => {
   const user = useUser();
@@ -37,6 +38,7 @@ const App = () => {
             </RequireAuth>
           }></Route>
         </Route>
+        <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </>
   );

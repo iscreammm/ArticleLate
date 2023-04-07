@@ -92,3 +92,7 @@
   margin-right: 0.5vw;
   cursor: pointer;
 }
+
+.postCategory {
+  font-weight: bold;
+}

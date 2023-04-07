@@ -67,7 +67,7 @@ describe('Post tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByAltText("AvatarCircle").src).toBe(baseSrc + "image.jpg");
+    expect(screen.getByAltText("AvatarCirclePost").src).toBe(baseSrc + "image.jpg");
     expect(screen.getByText("naso337")).toBeVisible();
     expect(screen.getByText("@user1")).toBeVisible();
     expect(screen.getByText("6 Марта 2023 21:58")).toBeVisible();
@@ -98,7 +98,7 @@ describe('Post tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByAltText("AvatarCircle").src).toBe(baseSrc + "image.jpg");
+    expect(screen.getByAltText("AvatarCirclePost").src).toBe(baseSrc + "image.jpg");
     expect(screen.getByText("naso337")).toBeVisible();
     expect(screen.getByText("@user1")).toBeVisible();
     expect(screen.getByText("6 Марта 2023 21:58")).toBeVisible();
@@ -159,7 +159,7 @@ describe('Post tests', () => {
     userEvent.click(screen.getByAltText("Delete"));
 
     await waitFor(() => {
-      expect(screen.queryByAltText("AvatarCircle")).toBeNull();
+      expect(screen.queryByAltText("AvatarCirclePost")).toBeNull();
     });
   });
 
@@ -183,7 +183,7 @@ describe('Post tests', () => {
     await waitFor(() => {
       expect(setErrorMessage).toHaveBeenCalledWith(responseData.message);
       expect(toggleError).toHaveBeenCalledTimes(1);
-      expect(screen.getByAltText("AvatarCircle")).toBeVisible();
+      expect(screen.getByAltText("AvatarCirclePost")).toBeVisible();
     });
   });
 

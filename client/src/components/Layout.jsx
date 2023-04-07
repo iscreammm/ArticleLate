@@ -14,9 +14,11 @@ const Layout = () => {
   const [notificationsCount, setNotificationsCount] = useState(0);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/getNotificationsCount?userId=${user.id}`).then(result => {
-      setNotificationsCount(result.data.data);
-    });
+    if (user.id) {
+      axios.get(`http://localhost:8080/getNotificationsCount?userId=${user.id}`).then(result => {
+        setNotificationsCount(result.data.data);
+      });
+    }
   }, [user.id]);
 
   return (

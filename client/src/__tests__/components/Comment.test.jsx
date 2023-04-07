@@ -94,8 +94,8 @@ describe('Comment tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.queryByAltText("Modify")).toBeNull();
-    expect(screen.queryByAltText("Delete")).toBeNull();
+    expect(screen.queryByAltText("ModifyComment")).toBeNull();
+    expect(screen.queryByAltText("DeleteComment")).toBeNull();
   });
 
   test('Comment delete', async () => {
@@ -117,7 +117,7 @@ describe('Comment tests', () => {
       </MemoryRouter>
     );
 
-    const deleteBtn = screen.getByAltText("Delete");
+    const deleteBtn = screen.getByAltText("DeleteComment");
     mockCallDelete(responseDataError);
 
     userEvent.click(deleteBtn);
@@ -156,7 +156,7 @@ describe('Comment tests', () => {
     );
 
 
-    userEvent.click(screen.getByAltText("Modify"));
+    userEvent.click(screen.getByAltText("ModifyComment"));
 
     expect(screen.getByRole('button', { name: 'Сохранить'})).toBeVisible();
 
