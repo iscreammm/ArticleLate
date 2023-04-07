@@ -83,8 +83,6 @@ describe("e2e tests", () => {
     await createSubscription(user1.id, user3.id);
 
     await createPost(postData4);
-
-    cy.wait(200);
   });
 
   it("Should successfully reg and auth user with login check", () => {
@@ -228,22 +226,22 @@ describe("e2e tests", () => {
       secondButton.click();
     });
     
-    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
-    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.PNG');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.PNG');
 
     cy.get('[alt="Like"]').eq(0).click();
 
     cy.wait(2000);
 
-    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.png');
-    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.png');
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'whitelike.PNG');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'whitelike.PNG');
 
     cy.get('[alt="Like"]').eq(0).click();
 
     cy.wait(2000);
 
-    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.png');
-    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.png');
+    cy.get('[alt="Like"]').eq(0).should('have.attr', 'src').should('include', 'redlike.PNG');
+    cy.get('[alt="Like"]').eq(2).should('have.attr', 'src').should('include', 'redlike.PNG');
   });
 
   it("Shouldn't modify user data after click on decline btn", () => {
