@@ -1,14 +1,14 @@
-name: article-late-backend-test
+name: article-late-system-test
 
 on:
   push:
     branches:
-      - backDev
+      - main
 
 jobs:
-  backend-test:
+  system-test:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres
@@ -23,11 +23,18 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-    
+          
     steps:
     - name: Load project code
       uses: actions/checkout@v3
-    
+
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -37,5 +44,18 @@ jobs:
     - name: Create .env file
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/articlelate\nUSER=runner\nPASS=postgres" > .env ; echo -e "DB_URL=jdbc:postgresql://localhost:5432/invDB\nUSER=runner\nPASS=postgres" > .testEnv
       
-    - name: Build and test project
+    - name: Build and test server
       run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi ; mvn package
+
+    - name: Run server
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/server/restapi/target ; java -jar restapi-0.0.1-SNAPSHOT.jar
+
+    - name: Build and test client
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm install ; npm run build
+
+    - name: Run client
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npm run start
+
+    - name: Run e2e tests
+      run:  cd /home/runner/work/ArticleLate/ArticleLate/client ; npx cypress run 
+      
